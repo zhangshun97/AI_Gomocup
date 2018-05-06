@@ -1,3 +1,12 @@
+## Development log
+
+### Shun Zhang
+
+### Donghao Li
+
+### Pingxuan Huang
+
+---
 ## pbrain-pyrandom
 
 #### A Python Piskvork template
