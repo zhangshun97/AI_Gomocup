@@ -2,9 +2,10 @@ import random
 import pisqpipe as pp
 from pisqpipe import DEBUG_EVAL, DEBUG
 
-pp.infotext = 'name="pbrain-pyrandom", author="Jan Stransky", version="1.0", country="Czech Republic", www="https://github.com/stranskyjan/pbrain-pyrandom"'
+pp.infotext = 'name="pbrain-pyrandom", author="Jan Stransky", version="1.0", ' \
+              'country="Czech Republic", www="https://github.com/stranskyjan/pbrain-pyrandom"'
 
-MAX_BOARD = 100
+MAX_BOARD = 20  # zs: adapted from the three openings
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 
 
@@ -26,10 +27,12 @@ def brain_restart():
 
 
 def isFree(x, y):
+    """whether (x, y) is available"""
     return 0 <= x < pp.width and 0 <= y < pp.height and board[x][y] == 0
 
 
 def brain_my(x, y):
+    """my turn: take the step on (x,y)"""
     if isFree(x, y):
         board[x][y] = 1
     else:
@@ -37,6 +40,7 @@ def brain_my(x, y):
 
 
 def brain_opponents(x, y):
+    """oppoent's turn: take the step on (x,y)"""
     if isFree(x, y):
         board[x][y] = 2
     else:
@@ -44,6 +48,7 @@ def brain_opponents(x, y):
 
 
 def brain_block(x, y):
+    """???"""
     if isFree(x, y):
         board[x][y] = 3
     else:
@@ -51,6 +56,7 @@ def brain_block(x, y):
 
 
 def brain_takeback(x, y):
+    """take back the chess on (x,y)"""
     if 0 <= x < pp.width and 0 <= y < pp.height and board[x][y] != 0:
         board[x][y] = 0
         return 0
@@ -58,6 +64,7 @@ def brain_takeback(x, y):
 
 
 def brain_turn():
+    """my turn: take a step randomly"""
     if pp.terminateAI:
         return
     i = 0
@@ -70,6 +77,7 @@ def brain_turn():
         if isFree(x, y):
             break
     if i > 1:
+        # zs: ???
         pp.pipeOut("DEBUG {} coordinates didn't hit an empty field".format(i))
     pp.do_mymove(x, y)
 
