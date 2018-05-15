@@ -1,16 +1,30 @@
 import random
-import pisqpipe as pp
-from pisqpipe import DEBUG_EVAL, DEBUG
 
-pp.infotext = 'name="pbrain-pyrandom", author="Jan Stransky", version="1.0", ' \
-              'country="Czech Republic", www="https://github.com/stranskyjan/pbrain-pyrandom"'
 
-MAX_BOARD = 100
+MAX_BOARD = 10  # zs: just for testing
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 
 
+class PP:
+    # zs: to simulate the pisqpipe package
+    def __init__(self):
+        self.height = MAX_BOARD
+        self.width = MAX_BOARD
+        self.terminateAI = None
+
+    def pipeOut(self, what):
+        print(what)
+
+    def do_mymove(self, x, y):
+        brain_my(x, y)
+        self.pipeOut("{},{}".format(x, y))
+
+    def do_oppmove(self, x, y):
+        brain_opponents(x, y)
+        self.pipeOut("{},{}".format(x, y))
+
+
 def brain_init():
-    # zs: here pp.width and pp.height are default as 20
     if pp.width < 5 or pp.height < 5:
         pp.pipeOut("ERROR size of the board")
         return
@@ -80,7 +94,8 @@ def brain_turn():
     if i > 1:
         # zs: ???
         pp.pipeOut("DEBUG {} coordinates didn't hit an empty field".format(i))
-    pp.do_mymove(x, y)
+    # pp.do_mymove(x, y)
+    pp.do_oppmove(x, y)
 
 
 def brain_end():
@@ -91,36 +106,39 @@ def brain_about():
     pp.pipeOut(pp.infotext)
 
 
-if DEBUG_EVAL:
-    import win32gui
+def brain_show():
+    for row in board:
+        print(' '.join([str(i) for i in row]))
 
 
-    def brain_eval(x, y):
-        # TODO check if it works as expected
-        wnd = win32gui.GetForegroundWindow()
-        dc = win32gui.GetDC(wnd)
-        rc = win32gui.GetClientRect(wnd)
-        c = str(board[x][y])
-        win32gui.ExtTextOut(dc, rc[2] - 15, 3, 0, None, c, ())
-        win32gui.ReleaseDC(wnd, dc)
-
-# "overwrites" functions in pisqpipe module
-pp.brain_init = brain_init
-pp.brain_restart = brain_restart
-pp.brain_my = brain_my
-pp.brain_opponents = brain_opponents
-pp.brain_block = brain_block
-pp.brain_takeback = brain_takeback
-pp.brain_turn = brain_turn
-pp.brain_end = brain_end
-pp.brain_about = brain_about
-if DEBUG_EVAL:
-    pp.brain_eval = brain_eval
+def brain_play():
+    while 1:
+        print('(if you want to quit, ENTER quit)')
+        x = input("Your turn, please give a coordinate 'x y':")
+        print()
+        if x == 'quit':
+            print('You quit.')
+            return None
+        x = x.split()
+        try:
+            brain_my(int(x[0]), int(x[1]))
+        except ValueError and IndexError:
+            print('Invalid input!')
+            continue
+        break
+    # brain_show()
+    return 1
 
 
 def main():
-    pp.main()
+    brain_init()
+    brain_show()
+
+    while brain_play() is not None:
+        brain_turn()
+        brain_show()
 
 
 if __name__ == "__main__":
+    pp = PP()
     main()
