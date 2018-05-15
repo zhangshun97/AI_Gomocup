@@ -98,7 +98,8 @@ def brain_turn():
     pp.do_oppmove(x, y)
 
 
-def brain_end():
+def brain_end(x, y):
+
     pass
 
 
