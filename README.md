@@ -4,11 +4,13 @@
 (2018/05/25 20:49:06)
 - Add `class Board`:
 	- usage: `your_board = Board(input_board)`
+	- Note that this gives you a **deep copy** of `input_board`, which is very flexible while coding
 	- get all the empty places: `your_board.availables`
-	- check whether (x, y) is free to take: `your_board.is_free(x, y)`
-	- update the your_board after a step (x, y): `your_board.update(player, (x, y))`
+	- check whether `(x, y)` is free to take: `your_board.is_free(x, y)`
+	- update the your_board after a step `(x, y)`: `your_board.update(player, (x, y))`
 		- Note that `player` is the one takes move `(x, y)`
-		- Note that this function also returns 1 or 0, 1 means player wins after taking this move, 0 means nothing special happens
+		- Note that this function also returns 1 or 0, 
+		  1 means player wins after taking this move, 0 means nothing special happens
 		- So I suggest you to do as follows:
 		```
 		if your_board.update(player, (x, y)):
