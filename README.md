@@ -19,7 +19,7 @@
 	- more details please refer to *example.py*
 
 - Add `class MCTS`:
-	- not finished yet
+	- seems finished but stupid
 
 ### Donghao Li
 

@@ -1,8 +1,192 @@
 import random
+import copy
+import numpy as np
+import time
 
 
-MAX_BOARD = 10  # zs: just for testing
+MAX_BOARD = 7  # zs: just for testing
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
+
+
+class Board:
+
+    def __init__(self, input_board):
+        self.width = len(input_board[0])
+        self.height = len(input_board)
+        self.board = copy.deepcopy(input_board)
+        self.availables = [
+            (i, j) for i in range(self.height) for j in range(self.width) if input_board[i][j] == 0
+        ]
+        self.winner = None
+
+    def is_free(self, x, y):
+        return 1 if self.board[x][y] == 0 else 0
+
+    def update(self, player, move):
+        """
+        update the board and check if player wins, so one should use like this:
+            if board.update(player, move):
+                winner = board.winner
+        :param player: the one to take the move
+        :param move: a tuple (x, y)
+        :return: 1 denotes player wins and 0 denotes not
+        """
+        assert len(move) == 2, "move is invalid, len = {}".format(len(move))
+        self.board[move[0]][move[1]] = player
+        self.availables.remove(move)
+
+        """check if player win"""
+        x_this, y_this = move
+        # get the boundaries
+        up = min(x_this, 4)
+        down = min(self.height-1-x_this, 4)
+        left = min(y_this, 4)
+        right = min(self.width-1-y_this, 4)
+        # \
+        up_left = min(up, left)
+        down_right = min(down, right)
+        for i in range(up_left + down_right - 3):
+            a = [
+                self.board[x_this - up_left + i + j][y_this - up_left + i + j] for j in range(5)
+            ]
+            assert len(a) == 5, "error when check if win on board"
+            if len(set(a)) == 1 and a[0] > 0:
+                self.winner = player
+                return 1
+        # /
+        up_right = min(up, right)
+        down_left = min(down, left)
+        for i in range(up_right + down_left - 3):
+            a = [
+                self.board[x_this - up_right + i + j][y_this + up_right - i - j] for j in range(5)
+            ]
+            assert len(a) == 5, "error when check if win on board"
+            if len(set(a)) == 1 and a[0] > 0:
+                self.winner = player
+                return 1
+        # --
+        for i in range(left + right - 3):
+            a = [
+                self.board[x_this][y_this - left + i + j] for j in range(5)
+            ]
+            assert len(a) == 5, "error when check if win on board"
+            if len(set(a)) == 1 and a[0] > 0:
+                self.winner = player
+                return 1
+        # |
+        for i in range(up + down - 3):
+            a = [
+                self.board[x_this - up + i + j][y_this] for j in range(5)
+            ]
+            assert len(a) == 5, "error when check if win on board"
+            if len(set(a)) == 1 and a[0] > 0:
+                self.winner = player
+                return 1
+        # no one wins
+        return 0
+
+
+class MCTS:
+
+    def __init__(self, input_board, players_in_turn, confidence=2, time_limit=5, max_simulation=10):
+        self.time_limit = float(time_limit)
+        self.max_simulation = max_simulation
+        self.MCTSboard = Board(input_board)  # a deep copy Board class object
+        self.confidence = confidence         # confidence level of exploration
+        self.player_turn = players_in_turn
+        self.player = self.player_turn[0]    # always the AI first when calling this Algorithm
+        self.plays = dict()                  # to record the number of simulations of a node
+        self.wins = dict()                   # to record the number of winnings of a node
+        self.max_depth = 1
+        # self.tree = dict()
+
+    def get_player(self, play_turn):
+        """play one by one"""
+        p = play_turn.pop()
+        play_turn.append(p)
+        return p
+
+    def get_action(self):
+        if len(self.MCTSboard.availables) == 1:
+            return self.MCTSboard.availables[0]  # the only choice
+
+        self.plays = dict()
+        self.wins = dict()
+        simulations = 0
+        begin_time = time.time()
+        while time.time() - begin_time < self.time_limit:
+            board_deep_copy = copy.deepcopy(self.MCTSboard)
+            fixed_play_turn = copy.deepcopy(self.player_turn)
+            # run MCTS
+            self.run_simulations(board_deep_copy, fixed_play_turn)
+            simulations += 1
+        print("total simulations:{}".format(simulations))
+
+        move = self.select_one_move()
+        print('Maximum depth searched:', self.max_depth)
+
+        return move
+
+    def select_one_move(self):
+        percent_wins, move = max(
+            (self.wins.get((self.player, move), 0) /
+             self.plays.get((self.player, move), 1),
+             move)
+            for move in self.MCTSboard.availables)  # choose a move with highest winning rate
+
+        return move
+
+    def run_simulations(self, cur_board, play_turn):
+        plays = self.plays
+        wins = self.wins
+        availables = cur_board.availables
+
+        player = self.get_player(play_turn)  # which player this turn
+        visited_states = set()               # record all the moves
+        winner = -1
+        expand = True
+
+        # Simulation
+        for t in range(1, self.max_simulation + 1):
+            # Selection
+            # 如果所有着法都有统计信息，则获取UCB最大的着法
+            if all(plays.get((player, move)) for move in availables):
+                log_total = np.log(
+                    sum(plays[(player, move)] for move in availables))
+                value, move = max(
+                    ((wins[(player, move)] / plays[(player, move)]) +
+                     np.sqrt(self.confidence * log_total / plays[(player, move)]), move)
+                    for move in availables)
+            else:
+                # 否则随机选择一个着法
+                move = random.choice(availables)
+
+            win = cur_board.update(player, move)
+
+            # Expand
+            # 每次模拟最多扩展一次，每次扩展只增加一个着法
+            if expand and (player, move) not in plays:
+                expand = False
+                plays[(player, move)] = 0
+                wins[(player, move)] = 0
+                if t > self.max_depth:
+                    self.max_depth = t
+
+            visited_states.add((player, move))
+
+            is_full = not len(availables)
+            if is_full or win:             # 游戏结束，没有落子位置或有玩家获胜
+                break
+
+            player = self.get_player(play_turn)
+
+        # Back-propagation
+        for player, move in visited_states:
+            if (player, move) not in plays:
+                continue
+            plays[(player, move)] += 1     # 当前路径上所有着法的模拟次数加1
+            if player == winner:
+                wins[(player, move)] += 1  # 获胜玩家的所有着法的胜利次数加1
 
 
 class PP:
@@ -79,27 +263,41 @@ def brain_takeback(x, y):
 
 
 def brain_turn():
-    """my turn: take a step randomly"""
+    """
+    MCTS
+    Useful materials:
+        class:
+            Board
+            MCTS
+    """
     if pp.terminateAI:
         return
+
+    MCTS_AI = MCTS(board,
+                   players_in_turn=[1, 2],  # brain is 1
+                   confidence=2,
+                   time_limit=10,
+                   max_simulation=200)
     i = 0
     while True:
-        x = random.randint(0, pp.width)
-        y = random.randint(0, pp.height)
-        i += 1
+        move = MCTS_AI.get_action()
+        x, y = move
+        if MCTS_AI.MCTSboard.winner:
+            print("Winner: {}".format(MCTS_AI.MCTSboard.winner))
+            break
+
         if pp.terminateAI:
             return
+
         if isFree(x, y):
             break
     if i > 1:
-        # zs: ???
+        # zs: maybe useful to debug
         pp.pipeOut("DEBUG {} coordinates didn't hit an empty field".format(i))
-    # pp.do_mymove(x, y)
-    pp.do_oppmove(x, y)
+    pp.do_mymove(x, y)
 
 
 def brain_end(x, y):
-
     pass
 
 
@@ -122,7 +320,7 @@ def brain_play():
             return None
         x = x.split()
         try:
-            brain_my(int(x[0]), int(x[1]))
+            brain_opponents(int(x[0]), int(x[1]))
         except ValueError and IndexError:
             print('Invalid input!')
             continue

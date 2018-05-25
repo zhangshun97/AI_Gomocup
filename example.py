@@ -14,10 +14,12 @@ board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 
 class Board:
 
-    def __init__(self, input_board, width=pp.width, height=pp.height):
+    def __init__(self, input_board):
+        self.width = len(input_board[0])
+        self.height = len(input_board)
         self.board = copy.deepcopy(input_board)
         self.availables = [
-            (i, j) for i in range(height) for j in range(width) if input_board[i][j] == 0
+            (i, j) for i in range(self.height) for j in range(self.width) if input_board[i][j] == 0
         ]
         self.winner = None
 
@@ -41,9 +43,9 @@ class Board:
         x_this, y_this = move
         # get the boundaries
         up = min(x_this, 4)
-        down = min(19-x_this, 4)
+        down = min(self.height-1-x_this, 4)
         left = min(y_this, 4)
-        right = min(19-y_this, 4)
+        right = min(self.width-1-y_this, 4)
         # \
         up_left = min(up, left)
         down_right = min(down, right)
@@ -90,17 +92,17 @@ class Board:
 
 class MCTS:
 
-    def __init__(self, players_in_turn, confidence=2, time_limit=5, max_simulation=9999):
+    def __init__(self, input_board, players_in_turn, confidence=2, time_limit=5, max_simulation=10):
         self.time_limit = float(time_limit)
         self.max_simulation = max_simulation
-        self.MCTSboard = Board(board)        # a deepcopy
+        self.MCTSboard = Board(input_board)  # a deep copy Board class object
         self.confidence = confidence         # confidence level of exploration
         self.player_turn = players_in_turn
         self.player = self.player_turn[0]    # always the AI first when calling this Algorithm
         self.plays = dict()                  # to record the number of simulations of a node
         self.wins = dict()                   # to record the number of winnings of a node
         self.max_depth = 1
-        self.tree = dict()
+        # self.tree = dict()
 
     def get_player(self, play_turn):
         """play one by one"""
@@ -163,7 +165,7 @@ class MCTS:
                 # 否则随机选择一个着法
                 move = random.choice(availables)
 
-            cur_board.update(player, move)
+            win = cur_board.update(player, move)
 
             # Expand
             # 每次模拟最多扩展一次，每次扩展只增加一个着法
@@ -177,12 +179,18 @@ class MCTS:
             visited_states.add((player, move))
 
             is_full = not len(availables)
-            # TODO: board.get_winner()
-            # win, winner = self.has_a_winner(board)
-            # if is_full or win:  # 游戏结束，没有落子位置或有玩家获胜
-            #     break
+            if is_full or win:             # 游戏结束，没有落子位置或有玩家获胜
+                break
 
             player = self.get_player(play_turn)
+
+        # Back-propagation
+        for player, move in visited_states:
+            if (player, move) not in plays:
+                continue
+            plays[(player, move)] += 1     # 当前路径上所有着法的模拟次数加1
+            if player == winner:
+                wins[(player, move)] += 1  # 获胜玩家的所有着法的胜利次数加1
 
 
 def brain_init():
@@ -242,26 +250,27 @@ def brain_takeback(x, y):
 
 def brain_turn():
     """
-    my turn: take a step randomly
-
+    MCTS
     Useful materials:
-        Func:
-            isFree(x,y)
-        Vars:
-            board
-
+        class:
+            Board
+            MCTS
     """
     if pp.terminateAI:
         return
+
+    MCTS_AI = MCTS(board,
+                   players_in_turn=[1, 2],  # brain is 1
+                   confidence=2,
+                   time_limit=2,
+                   max_simulation=20)
     i = 0
     while True:
-        x = random.randint(0, pp.width)
-        y = random.randint(0, pp.height)
-        i += 1
+        move = MCTS_AI.get_action()
+        x, y = move
+
         if pp.terminateAI:
             return
-
-
 
         if isFree(x, y):
             break

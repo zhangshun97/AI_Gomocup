@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="92e57147-0543-4b2a-896c-fbf61577d8e9" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example.py" beforeDir="false" afterPath="$PROJECT_DIR$/example.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -12,7 +14,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/AI_Gomocup$test.coverage" NAME="test Coverage Results" MODIFIED="1527240213121" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AI_Gomocup$test.coverage" NAME="test Coverage Results" MODIFIED="1527257058816" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AI_Gomocup$ttt.coverage" NAME="ttt Coverage Results" MODIFIED="1527250879917" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AI_Gomocup$example.coverage" NAME="example Coverage Results" MODIFIED="1526364777959" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
@@ -27,14 +29,17 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="example.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="example.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/example.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="24" column="48" lean-forward="true" selection-start-line="24" selection-start-column="48" selection-end-line="24" selection-end-column="48" />
+            <state relative-caret-position="261">
+              <caret line="265" column="37" lean-forward="true" selection-start-line="265" selection-start-column="37" selection-end-line="265" selection-end-column="37" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
                 <element signature="e#90#251#0" />
+                <element signature="e#801#2754#0" />
+                <element signature="e#3642#3736#0" />
+                <element signature="e#5016#6823#0" />
                 <element signature="e#359#670#0" />
                 <element signature="e#457#509#0" />
                 <element signature="e#572#649#0" />
@@ -46,7 +51,6 @@
                 <element signature="e#1343#1469#0" />
                 <element signature="e#1502#1660#0" />
                 <element signature="e#1615#1647#0" />
-                <element signature="e#1685#2103#0" />
                 <element signature="e#1992#2080#0" />
                 <element signature="e#2127#2131#0" />
                 <element signature="e#2157#2180#0" />
@@ -67,6 +71,21 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="169">
+              <caret line="294" column="35" lean-forward="true" selection-start-line="294" selection-start-column="35" selection-end-line="294" selection-end-column="35" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+                <element signature="e#631#2931#0" />
+                <element signature="e#3566#3660#0" />
+                <element signature="e#4758#6551#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -83,9 +102,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/pisqpipe.py" />
-        <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/ttt.py" />
         <option value="$PROJECT_DIR$/example.py" />
+        <option value="$PROJECT_DIR$/test.py" />
       </list>
     </option>
   </component>
@@ -141,7 +160,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.ttt">
+  <component name="RunManager" selected="Python.test">
     <configuration name="example" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="AI_Gomocup" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -206,8 +225,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.ttt" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.ttt" />
         <item itemvalue="Python.example" />
       </list>
     </recent_temporary>
@@ -231,10 +250,10 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3287483" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.41403025" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.3287483" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.3287483" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.3287483" />
       <window_info anchor="right" id="Remote Host" order="3" />
       <window_info content_ui="combo" id="Project" order="0" weight="0.24964234" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
@@ -257,17 +276,17 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" id="Remote Host" order="3" />
-      <window_info content_ui="combo" id="Project" order="0" weight="0.24964234" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24964234" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3287483" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3287483" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39889959" />
       <window_info anchor="right" id="Database" order="4" />
-      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.3287483" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="SciView" order="5" />
@@ -295,6 +314,9 @@
           <folding>
             <element signature="e#0#13#0" expanded="true" />
             <element signature="e#90#251#0" />
+            <element signature="e#801#2754#0" />
+            <element signature="e#3642#3736#0" />
+            <element signature="e#5016#6823#0" />
             <element signature="e#359#670#0" />
             <element signature="e#457#509#0" />
             <element signature="e#572#649#0" />
@@ -306,7 +328,6 @@
             <element signature="e#1343#1469#0" />
             <element signature="e#1502#1660#0" />
             <element signature="e#1615#1647#0" />
-            <element signature="e#1685#2103#0" />
             <element signature="e#1992#2080#0" />
             <element signature="e#2127#2131#0" />
             <element signature="e#2157#2180#0" />
@@ -348,6 +369,9 @@
           <folding>
             <element signature="e#0#13#0" expanded="true" />
             <element signature="e#90#251#0" />
+            <element signature="e#801#2754#0" />
+            <element signature="e#3642#3736#0" />
+            <element signature="e#5016#6823#0" />
             <element signature="e#359#670#0" />
             <element signature="e#457#509#0" />
             <element signature="e#572#649#0" />
@@ -359,7 +383,6 @@
             <element signature="e#1343#1469#0" />
             <element signature="e#1502#1660#0" />
             <element signature="e#1615#1647#0" />
-            <element signature="e#1685#2103#0" />
             <element signature="e#1992#2080#0" />
             <element signature="e#2127#2131#0" />
             <element signature="e#2157#2180#0" />
@@ -390,6 +413,9 @@
           <folding>
             <element signature="e#0#13#0" expanded="true" />
             <element signature="e#90#251#0" />
+            <element signature="e#801#2754#0" />
+            <element signature="e#3642#3736#0" />
+            <element signature="e#5016#6823#0" />
             <element signature="e#359#670#0" />
             <element signature="e#457#509#0" />
             <element signature="e#572#649#0" />
@@ -401,7 +427,6 @@
             <element signature="e#1343#1469#0" />
             <element signature="e#1502#1660#0" />
             <element signature="e#1615#1647#0" />
-            <element signature="e#1685#2103#0" />
             <element signature="e#1992#2080#0" />
             <element signature="e#2127#2131#0" />
             <element signature="e#2157#2180#0" />
@@ -433,6 +458,9 @@
           <folding>
             <element signature="e#0#13#0" expanded="true" />
             <element signature="e#90#251#0" />
+            <element signature="e#801#2754#0" />
+            <element signature="e#3642#3736#0" />
+            <element signature="e#5016#6823#0" />
             <element signature="e#359#670#0" />
             <element signature="e#457#509#0" />
             <element signature="e#572#649#0" />
@@ -444,7 +472,6 @@
             <element signature="e#1343#1469#0" />
             <element signature="e#1502#1660#0" />
             <element signature="e#1615#1647#0" />
-            <element signature="e#1685#2103#0" />
             <element signature="e#1992#2080#0" />
             <element signature="e#2127#2131#0" />
             <element signature="e#2157#2180#0" />
@@ -476,6 +503,9 @@
           <folding>
             <element signature="e#0#13#0" expanded="true" />
             <element signature="e#90#251#0" />
+            <element signature="e#801#2754#0" />
+            <element signature="e#3642#3736#0" />
+            <element signature="e#5016#6823#0" />
             <element signature="e#359#670#0" />
             <element signature="e#457#509#0" />
             <element signature="e#572#649#0" />
@@ -487,7 +517,6 @@
             <element signature="e#1343#1469#0" />
             <element signature="e#1502#1660#0" />
             <element signature="e#1615#1647#0" />
-            <element signature="e#1685#2103#0" />
             <element signature="e#1992#2080#0" />
             <element signature="e#2127#2131#0" />
             <element signature="e#2157#2180#0" />
@@ -512,6 +541,9 @@
           <folding>
             <element signature="e#0#13#0" expanded="true" />
             <element signature="e#90#251#0" />
+            <element signature="e#801#2754#0" />
+            <element signature="e#3642#3736#0" />
+            <element signature="e#5016#6823#0" />
             <element signature="e#359#670#0" />
             <element signature="e#457#509#0" />
             <element signature="e#572#649#0" />
@@ -523,7 +555,6 @@
             <element signature="e#1343#1469#0" />
             <element signature="e#1502#1660#0" />
             <element signature="e#1615#1647#0" />
-            <element signature="e#1685#2103#0" />
             <element signature="e#1992#2080#0" />
             <element signature="e#2127#2131#0" />
             <element signature="e#2157#2180#0" />
@@ -531,13 +562,6 @@
             <element signature="e#2254#2537#0" />
             <element signature="e#2912#2921#0" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="407">
-          <caret line="132" selection-start-line="132" selection-end-line="132" />
         </state>
       </provider>
     </entry>
@@ -567,11 +591,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/example.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="24" column="48" lean-forward="true" selection-start-line="24" selection-start-column="48" selection-end-line="24" selection-end-column="48" />
+        <state relative-caret-position="261">
+          <caret line="265" column="37" lean-forward="true" selection-start-line="265" selection-start-column="37" selection-end-line="265" selection-end-column="37" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
             <element signature="e#90#251#0" />
+            <element signature="e#801#2754#0" />
+            <element signature="e#3642#3736#0" />
+            <element signature="e#5016#6823#0" />
             <element signature="e#359#670#0" />
             <element signature="e#457#509#0" />
             <element signature="e#572#649#0" />
@@ -583,13 +610,25 @@
             <element signature="e#1343#1469#0" />
             <element signature="e#1502#1660#0" />
             <element signature="e#1615#1647#0" />
-            <element signature="e#1685#2103#0" />
             <element signature="e#1992#2080#0" />
             <element signature="e#2127#2131#0" />
             <element signature="e#2157#2180#0" />
             <element signature="e#2202#2537#0" />
             <element signature="e#2254#2537#0" />
             <element signature="e#2912#2921#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="169">
+          <caret line="294" column="35" lean-forward="true" selection-start-line="294" selection-start-column="35" selection-end-line="294" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+            <element signature="e#631#2931#0" />
+            <element signature="e#3566#3660#0" />
+            <element signature="e#4758#6551#0" />
           </folding>
         </state>
       </provider>
