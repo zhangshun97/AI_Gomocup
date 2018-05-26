@@ -262,12 +262,16 @@ def brain_turn():
     MCTS_AI = MCTS(board,
                    players_in_turn=[1, 2],  # brain is 1
                    confidence=2,
-                   time_limit=2,
-                   max_simulation=20)
+                   time_limit=5,
+                   max_simulation=200)
     i = 0
     while True:
         move = MCTS_AI.get_action()
         x, y = move
+
+        if MCTS_AI.MCTSboard.winner:
+            print("Winner: {}".format(MCTS_AI.MCTSboard.winner))
+            break
 
         if pp.terminateAI:
             return
