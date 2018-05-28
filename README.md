@@ -18,8 +18,31 @@
 		```
 	- more details please refer to *example.py*
 
+(2018/05/28 23:05:00)
+- MCTS 2.0 finished, which is the basic form of MCTS, but still powerful on small board like 8x8.
 - Add `class MCTS`:
-	- seems finished but stupid
+    - usage:
+    ```
+    MCTS_AI = MCTS(board,
+                   players_in_turn=[1, 2],  # brain is 1
+                   n_in_line=5,
+                   confidence=2,
+                   time_limit=10,
+                   max_simulation=5,
+                   max_simulation_one_play=50)
+    move = MCTS_AI.get_action()
+    ```
+- Add `class Node`:
+    - usage:
+    ```
+    your_node = Node(None,
+                     players_in_turn=players_in_turn,  # here is a reverse, because root is your opponent
+                     num_child=len(self.MCTSboard.availables),
+                     possible_moves_for_child=self.MCTSboard.availables,
+                     possible_moves_for_expansion=self.MCTSboard.availables)
+    ```
+    - this class is mainly built for the MCTS tree
+
 
 ### Donghao Li
 

@@ -19,7 +19,7 @@
     <SUITE FILE_PATH="coverage/AI_Gomocup$ttt.coverage" NAME="ttt Coverage Results" MODIFIED="1527493100013" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AI_Gomocup$example.coverage" NAME="example Coverage Results" MODIFIED="1526364777959" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AI_Gomocup$git_n_in_row.coverage" NAME="git_n_in_row Coverage Results" MODIFIED="1527491475494" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AI_Gomocup$test2_0.coverage" NAME="test2.0 Coverage Results" MODIFIED="1527516829558" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AI_Gomocup$test2_0.coverage" NAME="test2.0 Coverage Results" MODIFIED="1527519367729" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AI_Gomocup$random.coverage" NAME="random Coverage Results" MODIFIED="1527511084248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/anaconda/envs/CV/lib/python3.6" />
   </component>
   <component name="FileEditorManager">
@@ -79,29 +79,30 @@
       <file leaf-file-name="test2.0.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test2.0.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="421">
-              <caret line="222" column="18" lean-forward="true" selection-start-line="222" selection-start-column="18" selection-end-line="222" selection-end-column="18" />
+            <state relative-caret-position="85">
+              <caret line="366" column="17" selection-start-line="366" selection-start-column="17" selection-end-line="366" selection-end-column="17" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
                 <element signature="e#1022#1412#0" />
                 <element signature="e#1163#1203#0" />
-                <element signature="e#992#3540#0" />
                 <element signature="e#1249#1566#1" />
                 <element signature="e#2784#4990#0" />
                 <element signature="e#4899#5619#0" />
                 <element signature="e#5780#5952#0" />
-                <element signature="e#5046#6086#0" />
-                <element signature="e#7137#8188#0" />
                 <element signature="e#7694#7919#0" />
-                <element signature="e#8188#8365#0" />
                 <element signature="e#7796#8207#0" />
                 <element signature="e#10248#10340#1" />
                 <element signature="e#8232#8487#0" />
                 <element signature="e#8515#8624#0" />
                 <element signature="e#8649#8755#0" />
                 <element signature="e#8782#8931#0" />
+                <element signature="e#9163#9384#0" />
                 <element signature="e#9160#9286#0" />
                 <element signature="e#9319#9477#0" />
+                <element signature="e#10328#10332#0" />
+                <element signature="e#10358#10381#0" />
+                <element signature="e#10763#11214#0" />
+                <element signature="e#10961#11069#0" />
               </folding>
             </state>
           </provider>
@@ -316,15 +317,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="824" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5007153" side_tool="true" weight="0.4085282" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49928468" weight="0.3204952" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49928468" weight="0.45804676" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.3287483" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.3287483" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.44016507" />
       <window_info anchor="right" id="Remote Host" order="3" />
       <window_info content_ui="combo" id="Project" order="0" weight="0.24964234" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
@@ -386,7 +386,7 @@
           <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="13" />
+      <option name="time" value="14" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -641,29 +641,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test2.0.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="421">
-          <caret line="222" column="18" lean-forward="true" selection-start-line="222" selection-start-column="18" selection-end-line="222" selection-end-column="18" />
+        <state relative-caret-position="85">
+          <caret line="366" column="17" selection-start-line="366" selection-start-column="17" selection-end-line="366" selection-end-column="17" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
             <element signature="e#1022#1412#0" />
             <element signature="e#1163#1203#0" />
-            <element signature="e#992#3540#0" />
             <element signature="e#1249#1566#1" />
             <element signature="e#2784#4990#0" />
             <element signature="e#4899#5619#0" />
             <element signature="e#5780#5952#0" />
-            <element signature="e#5046#6086#0" />
-            <element signature="e#7137#8188#0" />
             <element signature="e#7694#7919#0" />
-            <element signature="e#8188#8365#0" />
             <element signature="e#7796#8207#0" />
             <element signature="e#10248#10340#1" />
             <element signature="e#8232#8487#0" />
             <element signature="e#8515#8624#0" />
             <element signature="e#8649#8755#0" />
             <element signature="e#8782#8931#0" />
+            <element signature="e#9163#9384#0" />
             <element signature="e#9160#9286#0" />
             <element signature="e#9319#9477#0" />
+            <element signature="e#10328#10332#0" />
+            <element signature="e#10358#10381#0" />
+            <element signature="e#10763#11214#0" />
+            <element signature="e#10961#11069#0" />
           </folding>
         </state>
       </provider>
