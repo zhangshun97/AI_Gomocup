@@ -3,7 +3,6 @@ import copy
 import numpy as np
 import time
 
-
 MAX_BOARD = 6  # zs: just for testing
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 
@@ -40,10 +39,10 @@ class Board:
         """check if player win"""
         x_this, y_this = move
         # get the boundaries
-        up = min(x_this, self.n_in_line-1)
-        down = min(self.height-1-x_this, self.n_in_line-1)
-        left = min(y_this, self.n_in_line-1)
-        right = min(self.width-1-y_this, self.n_in_line-1)
+        up = min(x_this, self.n_in_line - 1)
+        down = min(self.height - 1 - x_this, self.n_in_line - 1)
+        left = min(y_this, self.n_in_line - 1)
+        right = min(self.width - 1 - y_this, self.n_in_line - 1)
         # \
         up_left = min(up, left)
         down_right = min(down, right)
@@ -90,7 +89,7 @@ class Board:
 
 class MCTS:
 
-    def __init__(self, input_board, players_in_turn, n_in_line=5, confidence=2, time_limit=5, max_simulation=10):
+    def __init__(self, input_board, players_in_turn, n_in_line=5, confidence=2, time_limit=5.0, max_simulation=10):
         self.time_limit = float(time_limit)
         self.max_simulation = max_simulation
         self.MCTSboard = Board(input_board, n_in_line)  # a deep copy Board class object
@@ -104,7 +103,7 @@ class MCTS:
 
     def get_player(self, play_turn):
         """play one by one"""
-        p = play_turn.pop()
+        p = play_turn.pop(0)
         play_turn.append(p)
         return p
 
@@ -117,15 +116,15 @@ class MCTS:
         simulations = 0
         begin_time = time.time()
         while time.time() - begin_time < self.time_limit:
+            # run MCTS
             board_deep_copy = copy.deepcopy(self.MCTSboard)
             fixed_play_turn = copy.deepcopy(self.player_turn)
-            # run MCTS
             self.run_simulations(board_deep_copy, fixed_play_turn)
             simulations += 1
-        print("total simulations:{}".format(simulations))
+        print("total simulations in one action:{}".format(simulations))
 
         move = self.select_one_move()
-        print('Maximum depth searched:', self.max_depth)
+        print('Maximum depth searched in one action:', self.max_depth)
 
         return move
 
@@ -144,26 +143,35 @@ class MCTS:
         availables = cur_board.availables
 
         player = self.get_player(play_turn)  # which player this turn
-        visited_states = set()               # record all the moves
+        visited_states = set()  # record all the moves
         winner = -1
         expand = True
 
+        print('=' * 50)
         # Simulation
         for t in range(1, self.max_simulation + 1):
             # Selection
             # 如果所有着法都有统计信息，则获取UCB最大的着法
             if all(plays.get((player, move)) for move in availables):
                 log_total = np.log(
-                    sum(plays[(player, move)] for move in availables))
+                    sum([plays[(player, move)] for move in availables]))
                 value, move = max(
                     ((wins[(player, move)] / plays[(player, move)]) +
                      np.sqrt(self.confidence * log_total / plays[(player, move)]), move)
                     for move in availables)
+                print(wins[(player, move)], value, move)
+                print('-' * 40, player)
             else:
                 # 否则随机选择一个着法
                 move = random.choice(availables)
+                print(move)
 
             win = cur_board.update(player, move)
+            # DEBUG
+            # if t % 5 == 0:
+            print('-' * 40)
+            for row in cur_board.board:
+                print(' '.join([str(i) for i in row]))
 
             # Expand
             # 每次模拟最多扩展一次，每次扩展只增加一个着法
@@ -177,16 +185,19 @@ class MCTS:
             visited_states.add((player, move))
 
             is_full = not len(availables)
-            if is_full or win:             # 游戏结束，没有落子位置或有玩家获胜
-                break
+            if is_full or win:  # 游戏结束，没有落子位置或有玩家获胜
+                # print('-' * 40)
+                # for row in cur_board.board:
+                #     print(' '.join([str(i) for i in row]))
+                break  # checked
 
             player = self.get_player(play_turn)
 
         # Back-propagation
         for player, move in visited_states:
-            if (player, move) not in plays:
+            if (player, move) not in plays.keys():
                 continue
-            plays[(player, move)] += 1     # 当前路径上所有着法的模拟次数加1
+            plays[(player, move)] += 1  # 当前路径上所有着法的模拟次数加1
             if player == winner:
                 wins[(player, move)] += 1  # 获胜玩家的所有着法的胜利次数加1
 
@@ -279,7 +290,7 @@ def brain_turn():
                    players_in_turn=[1, 2],  # brain is 1
                    n_in_line=4,
                    confidence=2,
-                   time_limit=10,
+                   time_limit=0.3,
                    max_simulation=200)
     i = 0
     while True:
