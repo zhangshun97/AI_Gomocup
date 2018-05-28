@@ -8,7 +8,7 @@ import numpy as np
 pp.infotext = 'name="pbrain-pyrandom", author="Jan Stransky", version="1.0", ' \
               'country="Czech Republic", www="https://github.com/stranskyjan/pbrain-pyrandom"'
 
-MAX_BOARD = 100
+MAX_BOARD = 20
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 
 

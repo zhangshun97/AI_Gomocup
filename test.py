@@ -4,16 +4,18 @@ import numpy as np
 import time
 
 
-MAX_BOARD = 7  # zs: just for testing
+MAX_BOARD = 6  # zs: just for testing
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 
 
 class Board:
 
-    def __init__(self, input_board):
+    def __init__(self, input_board, n_in_line=5):
+        assert type(n_in_line) == int, "n_in_line para should be INT!"
         self.width = len(input_board[0])
         self.height = len(input_board)
         self.board = copy.deepcopy(input_board)
+        self.n_in_line = n_in_line
         self.availables = [
             (i, j) for i in range(self.height) for j in range(self.width) if input_board[i][j] == 0
         ]
@@ -38,47 +40,47 @@ class Board:
         """check if player win"""
         x_this, y_this = move
         # get the boundaries
-        up = min(x_this, 4)
-        down = min(self.height-1-x_this, 4)
-        left = min(y_this, 4)
-        right = min(self.width-1-y_this, 4)
+        up = min(x_this, self.n_in_line-1)
+        down = min(self.height-1-x_this, self.n_in_line-1)
+        left = min(y_this, self.n_in_line-1)
+        right = min(self.width-1-y_this, self.n_in_line-1)
         # \
         up_left = min(up, left)
         down_right = min(down, right)
-        for i in range(up_left + down_right - 3):
+        for i in range(up_left + down_right - self.n_in_line + 2):
             a = [
-                self.board[x_this - up_left + i + j][y_this - up_left + i + j] for j in range(5)
+                self.board[x_this - up_left + i + j][y_this - up_left + i + j] for j in range(self.n_in_line)
             ]
-            assert len(a) == 5, "error when check if win on board"
+            assert len(a) == self.n_in_line, "error when check if win on board"
             if len(set(a)) == 1 and a[0] > 0:
                 self.winner = player
                 return 1
         # /
         up_right = min(up, right)
         down_left = min(down, left)
-        for i in range(up_right + down_left - 3):
+        for i in range(up_right + down_left - self.n_in_line + 2):
             a = [
-                self.board[x_this - up_right + i + j][y_this + up_right - i - j] for j in range(5)
+                self.board[x_this - up_right + i + j][y_this + up_right - i - j] for j in range(self.n_in_line)
             ]
-            assert len(a) == 5, "error when check if win on board"
+            assert len(a) == self.n_in_line, "error when check if win on board"
             if len(set(a)) == 1 and a[0] > 0:
                 self.winner = player
                 return 1
         # --
-        for i in range(left + right - 3):
+        for i in range(left + right - self.n_in_line + 2):
             a = [
-                self.board[x_this][y_this - left + i + j] for j in range(5)
+                self.board[x_this][y_this - left + i + j] for j in range(self.n_in_line)
             ]
-            assert len(a) == 5, "error when check if win on board"
+            assert len(a) == self.n_in_line, "error when check if win on board"
             if len(set(a)) == 1 and a[0] > 0:
                 self.winner = player
                 return 1
         # |
-        for i in range(up + down - 3):
+        for i in range(up + down - self.n_in_line + 2):
             a = [
-                self.board[x_this - up + i + j][y_this] for j in range(5)
+                self.board[x_this - up + i + j][y_this] for j in range(self.n_in_line)
             ]
-            assert len(a) == 5, "error when check if win on board"
+            assert len(a) == self.n_in_line, "error when check if win on board"
             if len(set(a)) == 1 and a[0] > 0:
                 self.winner = player
                 return 1
@@ -88,15 +90,15 @@ class Board:
 
 class MCTS:
 
-    def __init__(self, input_board, players_in_turn, confidence=2, time_limit=5, max_simulation=10):
+    def __init__(self, input_board, players_in_turn, n_in_line=5, confidence=2, time_limit=5, max_simulation=10):
         self.time_limit = float(time_limit)
         self.max_simulation = max_simulation
-        self.MCTSboard = Board(input_board)  # a deep copy Board class object
-        self.confidence = confidence         # confidence level of exploration
+        self.MCTSboard = Board(input_board, n_in_line)  # a deep copy Board class object
+        self.confidence = confidence                    # confidence level of exploration
         self.player_turn = players_in_turn
-        self.player = self.player_turn[0]    # always the AI first when calling this Algorithm
-        self.plays = dict()                  # to record the number of simulations of a node
-        self.wins = dict()                   # to record the number of winnings of a node
+        self.player = self.player_turn[0]               # always the AI first when calling this Algorithm
+        self.plays = dict()                             # to record the number of simulations of a node
+        self.wins = dict()                              # to record the number of winnings of a node
         self.max_depth = 1
         # self.tree = dict()
 
@@ -275,6 +277,7 @@ def brain_turn():
 
     MCTS_AI = MCTS(board,
                    players_in_turn=[1, 2],  # brain is 1
+                   n_in_line=4,
                    confidence=2,
                    time_limit=10,
                    max_simulation=200)
@@ -321,7 +324,7 @@ def brain_play():
         x = x.split()
         try:
             brain_opponents(int(x[0]), int(x[1]))
-        except ValueError and IndexError:
+        except ValueError or IndexError:
             print('Invalid input!')
             continue
         break
