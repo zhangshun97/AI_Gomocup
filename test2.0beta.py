@@ -3,8 +3,10 @@ import copy
 import numpy as np
 import time
 
-MAX_BOARD = 8  # zs: just for testing
+MAX_BOARD = 20  # zs: just for testing
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
+
+global MCTS_AI
 
 
 class Node:
@@ -52,9 +54,9 @@ class Board:
         self.height = len(input_board)
         self.board = copy.deepcopy(input_board)
         self.n_in_line = n_in_line
-        self.availables = [
+        self.availables = set([
             (i, j) for i in range(self.height) for j in range(self.width) if input_board[i][j] == 0
-        ]
+        ])
         self.winner = None
 
     def is_free(self, x, y):
@@ -203,7 +205,7 @@ class MCTS:
             cur_node = select_node
 
         "Expansion: randomly expand a node"
-        expand_move = random.choice(cur_node.possible_moves_for_expansion)
+        expand_move = random.choice(list(cur_node.possible_moves_for_expansion))
         expand_node = Node(expand_move, parent=cur_node)
         return expand_node
 
@@ -229,7 +231,7 @@ class MCTS:
                 break
 
             player = self.get_player(player)
-            move = random.choice(availables)
+            move = random.choice(list(availables))
             win = cur_board.update(player, move)
 
         "Back propagation"
@@ -276,13 +278,6 @@ def brain_turn():
     if pp.terminateAI:
         return
 
-    MCTS_AI = MCTS(board,
-                   players_in_turn=[1, 2],  # brain is 1
-                   n_in_line=5,
-                   confidence=2,
-                   time_limit=10,
-                   max_simulation=5,
-                   max_simulation_one_play=50)
     i = 0
     while True:
         move = MCTS_AI.get_action()
@@ -309,13 +304,28 @@ def brain_init():
     if pp.width > MAX_BOARD or pp.height > MAX_BOARD:
         pp.pipeOut("ERROR Maximal board size is {}".format(MAX_BOARD))
         return
+
+    global MCTS_AI
+    MCTS_AI = MCTS(board,
+                   players_in_turn=[1, 2],  # brain is 1
+                   n_in_line=5,
+                   confidence=2,
+                   time_limit=10,
+                   max_simulation=2,
+                   max_simulation_one_play=200)
+
     pp.pipeOut("OK")
+    return MCTS_AI
 
 
 def brain_restart():
     for x in range(pp.width):
         for y in range(pp.height):
             board[x][y] = 0
+
+    global MCTS_AI
+    MCTS_AI = brain_init()
+
     pp.pipeOut("OK")
 
 
@@ -367,20 +377,26 @@ def brain_about():
 def brain_show():
     st = '  '
     for i in range(len(board[0])):
-        st += str(i) + ' '
+        if i > 9:
+            st += str(i) + ' '
+        else:
+            st += ' ' + str(i) + ' '
     print(st)
     c = 0
     for row in board:
-        print(c, end=' ')
+        if c > 9:
+            print(c, end=' ')
+        else:
+            print('', c, end=' ')
         c += 1
         st = ''
         for ii in row:
             if ii == 1:
-                st += 'O '
+                st += 'O  '
             elif ii == 2:
-                st += 'X '
+                st += 'X  '
             else:
-                st += '- '
+                st += '-  '
         print(st)
 
 

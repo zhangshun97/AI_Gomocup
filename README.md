@@ -5,7 +5,7 @@
 - Add `class Board`:
 	- usage: `your_board = Board(input_board)`
 	- Note that this gives you a **deep copy** of `input_board`, which is very flexible while coding
-	- get all the empty places: `your_board.availables`
+	- get all the empty places: `your_board.availables`, which is a `set`
 	- check whether `(x, y)` is free to take: `your_board.is_free(x, y)`
 	- update the your_board after a step `(x, y)`: `your_board.update(player, (x, y))`
 		- Note that `player` is the one takes move `(x, y)`
