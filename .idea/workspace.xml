@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="92e57147-0543-4b2a-896c-fbf61577d8e9" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/test2.0.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ttt.py" beforeDir="false" afterPath="$PROJECT_DIR$/ttt.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/example2.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -27,7 +24,7 @@
       <file leaf-file-name="pisqpipe.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pisqpipe.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1700">
+            <state relative-caret-position="226">
               <caret line="105" column="4" selection-start-line="105" selection-start-column="4" selection-end-line="105" selection-end-column="4" />
             </state>
           </provider>
@@ -36,8 +33,8 @@
       <file leaf-file-name="example.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/example.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4811">
-              <caret line="10" column="14" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
+            <state relative-caret-position="221">
+              <caret line="306" lean-forward="true" selection-end-line="327" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -76,17 +73,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test2.0.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="test2.0.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test2.0.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="366" column="17" selection-start-line="366" selection-start-column="17" selection-end-line="366" selection-end-column="17" />
+            <state relative-caret-position="229">
+              <caret line="246" lean-forward="true" selection-start-line="246" selection-end-line="246" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
+                <element signature="e#181#1657#0" />
+                <element signature="e#680#3797#0" />
                 <element signature="e#1022#1412#0" />
                 <element signature="e#1163#1203#0" />
                 <element signature="e#1249#1566#1" />
                 <element signature="e#2784#4990#0" />
+                <element signature="e#4815#9265#0" />
                 <element signature="e#4899#5619#0" />
                 <element signature="e#5780#5952#0" />
                 <element signature="e#7694#7919#0" />
@@ -103,6 +103,28 @@
                 <element signature="e#10358#10381#0" />
                 <element signature="e#10763#11214#0" />
                 <element signature="e#10961#11069#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="example2.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/example2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1279">
+              <caret line="250" column="96" lean-forward="true" selection-start-line="250" selection-start-column="96" selection-end-line="250" selection-end-column="96" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+                <element signature="e#396#1927#0" />
+                <element signature="e#1948#5365#0" />
+                <element signature="e#2002#2392#0" />
+                <element signature="e#2431#2471#0" />
+                <element signature="e#2533#2924#1" />
+                <element signature="e#3120#5326#0" />
+                <element signature="e#5385#10091#0" />
+                <element signature="e#5549#6422#0" />
+                <element signature="e#6466#6644#0" />
+                <element signature="e#9301#9523#0" />
               </folding>
             </state>
           </provider>
@@ -134,6 +156,8 @@
         <option value="$PROJECT_DIR$/ttt.py" />
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/test2.0.py" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/example2.py" />
       </list>
     </option>
   </component>
@@ -317,6 +341,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="824" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5007153" side_tool="true" weight="0.4085282" />
@@ -324,9 +349,9 @@
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49928468" weight="0.45804676" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.3287483" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.44016507" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.44016507" />
       <window_info anchor="right" id="Remote Host" order="3" />
-      <window_info content_ui="combo" id="Project" order="0" weight="0.24964234" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24964234" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="right" id="SciView" order="3" />
@@ -347,17 +372,17 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" id="Remote Host" order="3" />
-      <window_info content_ui="combo" id="Project" order="0" weight="0.24964234" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24964234" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49928468" visible="true" weight="0.3204952" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49928468" visible="true" weight="0.45804676" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.44566712" />
       <window_info anchor="right" id="Database" order="4" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.3287483" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.44016507" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5007153" side_tool="true" weight="0.4085282" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="SciView" order="5" />
@@ -566,23 +591,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor />
-          <second_editor>
-            <js_state />
-          </second_editor>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pisqpipe.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1700">
-          <caret line="105" column="4" selection-start-line="105" selection-start-column="4" selection-end-line="105" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/git_n_in_row.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1484">
@@ -629,10 +637,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="118">
+            <caret line="43" column="50" selection-start-line="43" selection-start-column="50" selection-end-line="43" selection-end-column="50" />
+          </first_editor>
+          <second_editor>
+            <js_state />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pisqpipe.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="105" column="4" selection-start-line="105" selection-start-column="4" selection-end-line="105" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/example.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4811">
-          <caret line="10" column="14" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
+        <state relative-caret-position="221">
+          <caret line="306" lean-forward="true" selection-end-line="327" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
@@ -641,14 +668,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test2.0.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="366" column="17" selection-start-line="366" selection-start-column="17" selection-end-line="366" selection-end-column="17" />
+        <state relative-caret-position="229">
+          <caret line="246" lean-forward="true" selection-start-line="246" selection-end-line="246" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
+            <element signature="e#181#1657#0" />
+            <element signature="e#680#3797#0" />
             <element signature="e#1022#1412#0" />
             <element signature="e#1163#1203#0" />
             <element signature="e#1249#1566#1" />
             <element signature="e#2784#4990#0" />
+            <element signature="e#4815#9265#0" />
             <element signature="e#4899#5619#0" />
             <element signature="e#5780#5952#0" />
             <element signature="e#7694#7919#0" />
@@ -665,6 +695,26 @@
             <element signature="e#10358#10381#0" />
             <element signature="e#10763#11214#0" />
             <element signature="e#10961#11069#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1279">
+          <caret line="250" column="96" lean-forward="true" selection-start-line="250" selection-start-column="96" selection-end-line="250" selection-end-column="96" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+            <element signature="e#396#1927#0" />
+            <element signature="e#1948#5365#0" />
+            <element signature="e#2002#2392#0" />
+            <element signature="e#2431#2471#0" />
+            <element signature="e#2533#2924#1" />
+            <element signature="e#3120#5326#0" />
+            <element signature="e#5385#10091#0" />
+            <element signature="e#5549#6422#0" />
+            <element signature="e#6466#6644#0" />
+            <element signature="e#9301#9523#0" />
           </folding>
         </state>
       </provider>
