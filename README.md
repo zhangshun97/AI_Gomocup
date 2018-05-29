@@ -43,6 +43,9 @@
     ```
     - this class is mainly built for the MCTS tree
 
+(2018/05/29 17:15:00)
+- MCTS 3.0, neighbor search
+
 
 ### Donghao Li
 

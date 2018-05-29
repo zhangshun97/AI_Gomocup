@@ -1,6 +1,6 @@
 import random
 import copy
-import numpy as np
+import math as np
 import time
 
 MAX_BOARD = 6  # zs: just for testing

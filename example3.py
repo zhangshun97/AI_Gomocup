@@ -1,9 +1,14 @@
 import random
+import pisqpipe as pp
+from pisqpipe import DEBUG_EVAL, DEBUG
+import time
 import copy
 import math as np
-import time
 
-MAX_BOARD = 10
+pp.infotext = 'name="pbrain-pyrandom", author="Jan Stransky", version="1.0", ' \
+              'country="Czech Republic", www="https://github.com/stranskyjan/pbrain-pyrandom"'
+
+MAX_BOARD = 20
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 
 
@@ -244,17 +249,12 @@ class MCTS:
                 self.simulate_and_bp(board_deep_copy, node_to_expand)
 
             num_nodes += 1
-        print("total nodes expanded in one action:{}".format(num_nodes))
+        # print("total nodes expanded in one action:{}".format(num_nodes))
 
         percent_wins, move = max(
             (child.win_num / child.sim_num, child.move)
             for child in self.root.children
         )  # choose a move with highest winning rate
-        for child in self.root.children:
-            if child.win_num / child.sim_num > 0.4:
-                print(child.win_num / child.sim_num, child.move)
-        print('=-'*20)
-        print(percent_wins, move)
 
         return move
 
@@ -265,7 +265,6 @@ class MCTS:
             # check if current node is fully expanded
             if len(cur_node.children) < cur_node.max_num_expansion:
                 break
-            # print('ddd')
             ucb, select_node = 0, None
             for child in cur_node.children:
 
@@ -311,77 +310,18 @@ class MCTS:
         while cur_node:
             cur_node.sim_num += 1
             if win and cur_node.player == player:
-                # print('--------', player)
-                # for row in cur_board.board:
-                #     print(' '.join([str(i) for i in row]))
                 cur_node.win_num += 1
             cur_node = cur_node.parent
-        # print(expand_node.move, expand_node.sim_num, expand_node.win_num)
-        # print(expand_node.parent.move, expand_node.parent.sim_num, expand_node.parent.win_num)
-
-
-class PP:
-    # zs: to simulate the pisqpipe package
-    def __init__(self):
-        self.height = MAX_BOARD
-        self.width = MAX_BOARD
-        self.terminateAI = None
-
-    def pipeOut(self, what):
-        print(what)
-
-    def do_mymove(self, x, y):
-        brain_my(x, y)
-        self.pipeOut("{},{}".format(x, y))
-
-    def do_oppmove(self, x, y):
-        brain_opponents(x, y)
-        self.pipeOut("{},{}".format(x, y))
-
-
-def brain_turn():
-    """
-    MCTS
-    Useful materials:
-        class:
-            Board
-            MCTS
-    """
-    if pp.terminateAI:
-        return
-
-    MCTS_AI = MCTS(board,
-                   players_in_turn=[1, 2],  # brain is 1
-                   n_in_line=5,
-                   confidence=2,
-                   time_limit=10,
-                   max_simulation=40,
-                   max_simulation_one_play=200)
-
-    i = 0
-    while True:
-        move = MCTS_AI.get_action()
-        x, y = move
-
-        if pp.terminateAI:
-            return
-
-        if isFree(x, y):
-            break
-    if i > 1:
-        # zs: maybe useful to debug
-        pp.pipeOut("DEBUG {} coordinates didn't hit an empty field".format(i))
-    pp.do_mymove(x, y)
 
 
 def brain_init():
+    # zs: here pp.width and pp.height are default as 20
     if pp.width < 5 or pp.height < 5:
         pp.pipeOut("ERROR size of the board")
         return
     if pp.width > MAX_BOARD or pp.height > MAX_BOARD:
         pp.pipeOut("ERROR Maximal board size is {}".format(MAX_BOARD))
         return
-
     pp.pipeOut("OK")
 
 
@@ -389,7 +329,6 @@ def brain_restart():
     for x in range(pp.width):
         for y in range(pp.height):
             board[x][y] = 0
-
     pp.pipeOut("OK")
 
 
@@ -430,7 +369,41 @@ def brain_takeback(x, y):
     return 2
 
 
-def brain_end(x, y):
+def brain_turn():
+    """
+    MCTS
+    Useful materials:
+        class:
+            Board
+            MCTS
+    """
+    if pp.terminateAI:
+        return
+
+    MCTS_AI = MCTS(board,
+                   players_in_turn=[1, 2],  # brain is 1
+                   n_in_line=5,
+                   confidence=2,
+                   time_limit=10,
+                   max_simulation=40,
+                   max_simulation_one_play=200)
+    i = 0
+    while True:
+        move = MCTS_AI.get_action()
+        x, y = move
+
+        if pp.terminateAI:
+            return
+
+        if isFree(x, y):
+            break
+    if i > 1:
+        # zs: maybe useful to debug
+        pp.pipeOut("DEBUG {} coordinates didn't hit an empty field".format(i))
+    pp.do_mymove(x, y)
+
+
+def brain_end():
     pass
 
 
@@ -438,61 +411,36 @@ def brain_about():
     pp.pipeOut(pp.infotext)
 
 
-def brain_show():
-    st = '  '
-    for i in range(len(board[0])):
-        if i > 9:
-            st += str(i) + ' '
-        else:
-            st += ' ' + str(i) + ' '
-    print(st)
-    c = 0
-    for row in board:
-        if c > 9:
-            print(c, end=' ')
-        else:
-            print('', c, end=' ')
-        c += 1
-        st = ''
-        for ii in row:
-            if ii == 1:
-                st += 'O  '
-            elif ii == 2:
-                st += 'X  '
-            else:
-                st += '-  '
-        print(st)
+if DEBUG_EVAL:
+    import win32gui
 
 
-def brain_play():
-    while 1:
-        print('(if you want to quit, ENTER quit)')
-        x = input("Your turn, please give a coordinate 'x y':")
-        print()
-        if x == 'quit':
-            print('You quit.')
-            return None
-        x = x.split()
-        try:
-            brain_opponents(int(x[0]), int(x[1]))
-        except ValueError or IndexError:
-            print('Invalid input!')
-            continue
-        break
-    # brain_show()
-    return 0
+    def brain_eval(x, y):
+        # TODO check if it works as expected
+        wnd = win32gui.GetForegroundWindow()
+        dc = win32gui.GetDC(wnd)
+        rc = win32gui.GetClientRect(wnd)
+        c = str(board[x][y])
+        win32gui.ExtTextOut(dc, rc[2] - 15, 3, 0, None, c, ())
+        win32gui.ReleaseDC(wnd, dc)
+
+# "overwrites" functions in pisqpipe module
+pp.brain_init = brain_init
+pp.brain_restart = brain_restart
+pp.brain_my = brain_my
+pp.brain_opponents = brain_opponents
+pp.brain_block = brain_block
+pp.brain_takeback = brain_takeback
+pp.brain_turn = brain_turn
+pp.brain_end = brain_end
+pp.brain_about = brain_about
+if DEBUG_EVAL:
+    pp.brain_eval = brain_eval
 
 
 def main():
-    brain_init()
-    brain_turn()
-    brain_show()
-
-    while brain_play() is not None:
-        brain_turn()
-        brain_show()
+    pp.main()
 
 
 if __name__ == "__main__":
-    pp = PP()
     main()

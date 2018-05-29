@@ -3,7 +3,7 @@ import pisqpipe as pp
 from pisqpipe import DEBUG_EVAL, DEBUG
 import time
 import copy
-import numpy as np
+import math as np
 
 pp.infotext = 'name="pbrain-pyrandom", author="Jan Stransky", version="1.0", ' \
               'country="Czech Republic", www="https://github.com/stranskyjan/pbrain-pyrandom"'
