@@ -47,6 +47,9 @@
 - MCTS 3.0, neighbor search
 - TODO: update the simulations of player 2, which should also stick to the move which leads to win, 1-lose.
 
+(2018/05/30 20:26:01)
+- Points 1.0
+- TODO: deep search and pruning
 
 ### Donghao Li
 
