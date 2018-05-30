@@ -3,7 +3,7 @@ import copy
 import math as np
 import time
 
-MAX_BOARD = 10
+MAX_BOARD = 20
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 
 
@@ -248,17 +248,17 @@ class MCTS:
                 self.simulate_and_bp(board_deep_copy, node_to_expand)
 
             num_nodes += 1
-        # print("total nodes expanded in one action:{}".format(num_nodes))
+        print("total nodes expanded in one action:{}".format(num_nodes))
 
         percent_wins, move = max(
             (child.win_num / child.sim_num + child.winner, child.move)
             for child in self.root.children
         )  # choose a move with highest winning rate
-        # for child in self.root.children:
-        #     if child.win_num / child.sim_num > 0.4:
-        #         print(child.win_num / child.sim_num, child.move)
-        # print('=-'*20)
-        # print(percent_wins, move)
+        for child in self.root.children:
+            if child.win_num / child.sim_num > 0.4:
+                print(child.win_num / child.sim_num, child.move)
+        print('=-'*20)
+        print(percent_wins, move)
 
         return move
 
@@ -361,7 +361,7 @@ def brain_turn():
                    n_in_line=5,
                    confidence=1.96,
                    time_limit=4,
-                   max_simulation=10,  # should not be too large
+                   max_simulation=20,  # should not be too large
                    max_simulation_one_play=200)
 
     i = 0
@@ -491,7 +491,6 @@ def brain_play():
 
 def main():
     brain_init()
-    brain_turn()
     brain_show()
 
     while brain_play() is not None:
