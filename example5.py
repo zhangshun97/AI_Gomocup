@@ -464,13 +464,16 @@ class PointBoard:
 
 
 def brain_init():
-    # zs: here pp.width and pp.height are default as 20
     if pp.width < 5 or pp.height < 5:
         pp.pipeOut("ERROR size of the board")
         return
     if pp.width > MAX_BOARD or pp.height > MAX_BOARD:
         pp.pipeOut("ERROR Maximal board size is {}".format(MAX_BOARD))
         return
+
+    global Point_Board
+    Point_Board = PointBoard(board)
+
     pp.pipeOut("OK")
 
 
@@ -478,6 +481,10 @@ def brain_restart():
     for x in range(pp.width):
         for y in range(pp.height):
             board[x][y] = 0
+
+    global Point_Board
+    Point_Board = PointBoard(board)
+
     pp.pipeOut("OK")
 
 
