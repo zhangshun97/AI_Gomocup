@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-MAX_BOARD = 20
+MAX_BOARD = 10
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 empty = 0
 black = 1
@@ -20,6 +20,7 @@ class Board:
         self.AI = AI()
         self.found_sol = False
         self.sol_seq = []
+        self.checked = False
 
         self.turn = 1
 
@@ -82,22 +83,22 @@ class Board:
             y = self.AI.find_threats(6, self.p1_c, self.size, self.board)
             z = self.AI.find_threats(7, self.p1_c, self.size, self.board)
 
-            if x != False or y != False or z != False:
-                if x != False:
-                    if y == False and z != False:
+            if x or y or z:
+                if x:
+                    if not y and z:
                         merged_threat = {**x, **z}
-                    elif y != False and z == False:
+                    elif y and not z:
                         merged_threat = {**x, **y}
-                    elif y != False and z != False:
+                    elif y and z:
                         merged_threat = {**x, **y, **z}
-                    elif y == False and z == False:
+                    else:
                         merged_threat = x
                 else:
-                    if y == False and z != False:
+                    if not y and z:
                         merged_threat = z
-                    elif y != False and z == False:
+                    elif y and not z:
                         merged_threat = y
-                    elif y != False and z != False:
+                    elif y and z:
                         merged_threat = {**x, **y, **z}
                 # print(merged_threat)
                 v = list(merged_threat.values())
@@ -129,6 +130,12 @@ class Board:
 
 
 class AI:
+
+    def __init__(self):
+        self.get_opp = {
+            black: white,
+            white: black,
+        }
     # Defining of all threat variations
     def four(self, array, colour):  # accepts an array of length 5
         x = list(array)
@@ -148,10 +155,7 @@ class AI:
         return [False]
 
     def three(self, array, colour):  # accepts array 7
-        if colour == black:
-            opp = white
-        else:
-            opp = black
+        opp = self.get_opp[colour]
         # 0011100 or 2011100 or 0011102
         if array[2] == colour and array[3] == colour and array[4] == colour and array[5] == empty and array[1] == empty:
             if array[0] == empty and array[6] == empty:
@@ -198,10 +202,7 @@ class AI:
 
     def threat_algo(self, array, colour, length):
         ## colour = player's colour by default
-        if colour == white:
-            opp = black
-        else:
-            opp = white
+        opp = self.get_opp[colour]
         if length == 5:
             # print(array)
             x = self.four(array, opp)
@@ -239,7 +240,7 @@ class AI:
             for col in range(size - (length - 1)):
                 array = board[row, col:col + length]
                 i = self.threat_algo(array, colour, length)
-                if i[0] == True:
+                if i[0]:
                     threat_list.update({(row, col + i[1]): i[2]})
 
         ## Read vertically
@@ -247,7 +248,7 @@ class AI:
             for row in range(size - (length - 1)):
                 array = board[row:row + length, col]
                 i = self.threat_algo(array, colour, length)
-                if i[0] == True:
+                if i[0]:
                     threat_list.update({(row + i[1], col): i[2]})
 
         ## Read diagonally
@@ -402,7 +403,7 @@ class AI:
                     array = board[row, col:col + length]
                     if spec == 0:
                         i = win_algo(array, colour, length)
-                        if i[0] == True:
+                        if i[0]:
                             cost_squares = []
                             for each in i[1]:
                                 cost_squares.append([row, col + each])
@@ -417,7 +418,7 @@ class AI:
                     array = board[row:row + length, col]
                     if spec == 0:
                         i = win_algo(array, colour, length)
-                        if i[0] == True:
+                        if i[0]:
                             cost_squares = []
                             for each in i[1]:
                                 cost_squares.append([row + each, col])
@@ -435,7 +436,7 @@ class AI:
                     # print(array)
                     if spec == 0:
                         i = win_algo(array, colour, length)
-                        if i[0] == True:
+                        if i[0]:
                             cost_squares = []
                             for each in i[1]:
                                 cost_squares.append([row + each, col + each])
@@ -451,7 +452,7 @@ class AI:
                     # print(array)
                     if spec == 0:
                         i = win_algo(array, colour, length)
-                        if i[0] == True:
+                        if i[0]:
                             cost_squares = []
                             for each in i[1]:
                                 cost_squares.append([row + each, col + length - 1 - each])
@@ -755,20 +756,21 @@ def brain_turn():
     global game, white, black, empty
 
     # decide who takes black
-    c = 0
-    for i in range(game.height):
-        for j in range(game.width):
-            game.board[i, j] = board[i][j]
-            if board[i][j] != empty:
-                c += 1
-    if c % 2 == 0:
-        black = 1
-        white = 2
-    else:
-        black = 2
-        white = 1
-    game.AI_c = 1
-    game.p1_c = 2
+    if not game.checked:
+        c = 0
+        for i in range(game.height):
+            for j in range(game.width):
+                game.board[i, j] = board[i][j]
+                if board[i][j] != empty:
+                    c += 1
+        if c % 2 == 0:
+            black = 1
+            white = 2
+        else:
+            black = 2
+            white = 1
+        game.AI_c = 1
+        game.p1_c = 2
 
     x, y = game.get_next_move()
 
