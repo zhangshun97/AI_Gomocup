@@ -116,16 +116,17 @@ class Board:
                 # print("Best Placements: ",best_threat)
                 AI_pos = random.choice(best_threat)
             else:
-                root_node = self.AI.node(None)
-                sol = self.AI.threat_space_search(self.board, root_node, self.p1_c, self.AI_c, self.size)
+                # root_node = self.AI.node(None)
+                # sol = self.AI.threat_space_search(self.board, root_node, self.p1_c, self.AI_c, self.size)
 
-                if sol:
-                    self.found_sol = True
-                    self.sol_seq = sol[1:]
-                    # print(self.sol_seq)
-                    AI_pos = self.sol_seq.pop(0)
-                else:
-                    AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
+                # if sol:
+                #     self.found_sol = True
+                #     self.sol_seq = sol[1:]
+                #     # print(self.sol_seq)
+                #     AI_pos = self.sol_seq.pop(0)
+                # else:
+                #     AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
+                AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
 
         self.board[AI_pos[0], AI_pos[1]] = self.AI_c
 
