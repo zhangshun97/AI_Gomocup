@@ -516,14 +516,17 @@ class AI:
         ## where we intend to place beside player's seed
         ## (Note: colour is player's colour, not AI's colour)
         if turn == 2:
-            index = [np.where(board == p1_c)[0][0], np.where(board == p1_c)[1][0]]
-            # If row index > column index i.e. bottom left triangle,
-            # then place on top of opponent seed. Vice versa
-            if index[0] > index[1]:
-                return [index[0] - 1, index[1]]
-            else:
-                # else case includes when both indices are equal
-                return [index[0] + 1, index[1]]
+            try:
+                index = [np.where(board == p1_c)[0][0], np.where(board == p1_c)[1][0]]
+                # If row index > column index i.e. bottom left triangle,
+                # then place on top of opponent seed. Vice versa
+                if index[0] > index[1]:
+                    return [index[0] - 1, index[1]]
+                else:
+                    # else case includes when both indices are equal
+                    return [index[0] + 1, index[1]]
+            except IndexError:
+                return [len(board) // 2, len(board[0]) // 2]
         ## This is where we consider connecting as many consecutive seeds
         ##  as possible
         else:

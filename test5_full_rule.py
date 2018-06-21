@@ -1,7 +1,4 @@
-import random
 import copy
-import math as np
-import time
 
 MAX_BOARD = 10
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
@@ -178,6 +175,9 @@ class PointBoard:
             self.dynamic_update(player, move)
 
     def get_move(self, opponent_move):
+        def abs(a, b):
+            return a + b if a + b >= 0 else -a - b
+
         if self.if_board_not_empty is None:
             self.if_board_not_empty = sum(
                 sum(row) for row in self.board
@@ -204,7 +204,7 @@ class PointBoard:
                         elif self.values[i][j] == point:
                             moves.append((i, j))
                 _, move = max(
-                    (- np.fabs(move_[0] - opponent_move[0]) - np.fabs(move_[1] - opponent_move[1]), move_)
+                    (- abs(move_[0], - opponent_move[0]) - abs(move_[1], - opponent_move[1]), move_)
                     for move_ in moves
                 )
             else:
