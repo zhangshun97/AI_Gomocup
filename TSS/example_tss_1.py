@@ -46,7 +46,7 @@ class Board:
 
         self.turn += 1
         if self.found_sol:
-            print("solution found!")
+            # print("solution found!")
             if len(self.sol_seq) > 0:
                 AI_pos = self.sol_seq.pop(0)
             else:
@@ -84,18 +84,16 @@ class Board:
             if merged_threat:
                 AI_pos = min(merged_threat, key=merged_threat.get)
             else:
-                print('begin search...')
-                root_node = self.AI.node(None)
-                sol = self.AI.threat_space_search(self.board, root_node, self.p1_c, self.AI_c, self.size)
-                if sol:
-                    self.found_sol = True
-                    self.sol_seq = sol[1:]
-                    # print(self.sol_seq)
-                    AI_pos = self.sol_seq.pop(0)
-                else:
-                    AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
-                # AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
-                print('end search')
+                # root_node = self.AI.node(None)
+                # sol = self.AI.threat_space_search(self.board, root_node, self.p1_c, self.AI_c, self.size)
+                # if sol:
+                #     self.found_sol = True
+                #     self.sol_seq = sol[1:]
+                #     # print(self.sol_seq)
+                #     AI_pos = self.sol_seq.pop(0)
+                # else:
+                #     AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
+                AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
 
         self.board[AI_pos[0], AI_pos[1]] = self.AI_c
 
