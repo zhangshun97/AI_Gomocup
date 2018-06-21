@@ -50,11 +50,9 @@ class Board:
             if len(self.sol_seq) > 0:
                 AI_pos = self.sol_seq.pop(0)
             else:
-                tt0 = time.clock()
                 x = self.AI.find_threats(5, self.p1_c, self.size, self.board)
                 y = self.AI.find_threats(6, self.p1_c, self.size, self.board)
                 z = self.AI.find_threats(7, self.p1_c, self.size, self.board)
-                print("1find threats time: {}".format(time.clock() - tt0))
 
                 merged_threat = dict()
                 if x:
@@ -71,11 +69,9 @@ class Board:
         elif self.turn == 2:
             AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
         else:
-            tt0 = time.clock()
             x = self.AI.find_threats(5, self.p1_c, self.size, self.board)
             y = self.AI.find_threats(6, self.p1_c, self.size, self.board)
             z = self.AI.find_threats(7, self.p1_c, self.size, self.board)
-            print("2find threats time: {}".format(time.clock() - tt0))
 
             merged_threat = dict()
             if x:
@@ -89,10 +85,8 @@ class Board:
                 AI_pos = min(merged_threat, key=merged_threat.get)
             else:
                 print('begin search...')
-                tt0 = time.clock()
                 root_node = self.AI.node(None)
                 sol = self.AI.threat_space_search(self.board, root_node, self.p1_c, self.AI_c, self.size)
-                print("search time: {}".format(time.clock() - tt0))
                 if sol:
                     self.found_sol = True
                     self.sol_seq = sol[1:]
@@ -492,9 +486,7 @@ class AI:
             else:
                 return False
 
-        ttt0 = time.clock()
         make_threats(board, root_node, root_node, 0)
-        print("make threats: {}".format(time.clock() - ttt0))
         if found_sol:
             return sol_seq
         else:
