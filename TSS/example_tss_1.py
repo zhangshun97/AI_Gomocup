@@ -29,7 +29,7 @@ class Board:
 
         self.turn = 1
 
-        ## These conditions determine who starts
+        # These conditions determine who starts
         if p1_c == white:
             self.p1_c = white
             self.AI_c = black
@@ -46,87 +46,62 @@ class Board:
 
         self.turn += 1
         if self.found_sol:
+            print("solution found!")
             if len(self.sol_seq) > 0:
                 AI_pos = self.sol_seq.pop(0)
             else:
+                tt0 = time.clock()
                 x = self.AI.find_threats(5, self.p1_c, self.size, self.board)
                 y = self.AI.find_threats(6, self.p1_c, self.size, self.board)
                 z = self.AI.find_threats(7, self.p1_c, self.size, self.board)
+                print("1find threats time: {}".format(time.clock() - tt0))
 
-                if x != False or y != False or z != False:
-                    if x != False:
-                        if y == False and z != False:
-                            merged_threat = {**x, **z}
-                        elif y != False and z == False:
-                            merged_threat = {**x, **y}
-                        elif y != False and z != False:
-                            merged_threat = {**x, **y, **z}
-                        elif y == False and z == False:
-                            merged_threat = x
-                    else:
-                        if y == False and z != False:
-                            merged_threat = z
-                        elif y != False and z == False:
-                            merged_threat = y
-                        elif y != False and z != False:
-                            merged_threat = {**x, **y, **z}
-                    # print(merged_threat)
-                    v = list(merged_threat.values())
-                    k = list(merged_threat.keys())
-                    m = min(v)
-                    indices = [i for i, j in enumerate(v) if j == m]
-                    best_threat = []
-                    for each in indices:
-                        best_threat.append(k[each])
-                    # print("Best Placements: ",best_threat)
-                    AI_pos = random.choice(best_threat)
+                merged_threat = dict()
+                if x:
+                    merged_threat.update(x)
+                if y:
+                    merged_threat.update(y)
+                if z:
+                    merged_threat.update(z)
+
+                if merged_threat:
+                    AI_pos = min(merged_threat, key=merged_threat.get)
+
         # we will run the AI method here
         elif self.turn == 2:
             AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
         else:
+            tt0 = time.clock()
             x = self.AI.find_threats(5, self.p1_c, self.size, self.board)
             y = self.AI.find_threats(6, self.p1_c, self.size, self.board)
             z = self.AI.find_threats(7, self.p1_c, self.size, self.board)
+            print("2find threats time: {}".format(time.clock() - tt0))
 
-            if x or y or z:
-                if x:
-                    if not y and z:
-                        merged_threat = {**x, **z}
-                    elif y and not z:
-                        merged_threat = {**x, **y}
-                    elif y and z:
-                        merged_threat = {**x, **y, **z}
-                    else:
-                        merged_threat = x
-                else:
-                    if not y and z:
-                        merged_threat = z
-                    elif y and not z:
-                        merged_threat = y
-                    elif y and z:
-                        merged_threat = {**x, **y, **z}
-                # print(merged_threat)
-                v = list(merged_threat.values())
-                k = list(merged_threat.keys())
-                m = min(v)
-                indices = [i for i, j in enumerate(v) if j == m]
-                best_threat = []
-                for each in indices:
-                    best_threat.append(k[each])
-                # print("Best Placements: ",best_threat)
-                AI_pos = random.choice(best_threat)
+            merged_threat = dict()
+            if x:
+                merged_threat.update(x)
+            if y:
+                merged_threat.update(y)
+            if z:
+                merged_threat.update(z)
+
+            if merged_threat:
+                AI_pos = min(merged_threat, key=merged_threat.get)
             else:
-                # root_node = self.AI.node(None)
-                # sol = self.AI.threat_space_search(self.board, root_node, self.p1_c, self.AI_c, self.size)
-
-                # if sol:
-                #     self.found_sol = True
-                #     self.sol_seq = sol[1:]
-                #     # print(self.sol_seq)
-                #     AI_pos = self.sol_seq.pop(0)
-                # else:
-                #     AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
-                AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
+                print('begin search...')
+                tt0 = time.clock()
+                root_node = self.AI.node(None)
+                sol = self.AI.threat_space_search(self.board, root_node, self.p1_c, self.AI_c, self.size)
+                print("search time: {}".format(time.clock() - tt0))
+                if sol:
+                    self.found_sol = True
+                    self.sol_seq = sol[1:]
+                    # print(self.sol_seq)
+                    AI_pos = self.sol_seq.pop(0)
+                else:
+                    AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
+                # AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
+                print('end search')
 
         self.board[AI_pos[0], AI_pos[1]] = self.AI_c
 
@@ -144,7 +119,9 @@ class AI:
         }
 
     # Defining of all threat variations
-    def four(self, array, colour):  # accepts an array of length 5
+    def four(self, array, colour):
+        # accepts an array of length 5
+        # 11110 or 01111 or 10111 or 11011 or 11101
         x = list(array)
         # print(x.count(colour), x.count(empty))
         if x.count(colour) == 4 and x.count(empty) == 1:
@@ -152,7 +129,8 @@ class AI:
         return [False]
 
     def broken_three(self, array, colour):
-        # 010110 or 011010 (flip!) accepts array 6
+        # accepts an array of length 6
+        # 010110 or 011010 (flip!)
         if array[0] == empty and array[1] == colour and \
                 array[5] == empty and array[4] == colour:
             if array[2] == empty and array[3] == colour:
@@ -161,7 +139,8 @@ class AI:
                 return [True, 3]
         return [False]
 
-    def three(self, array, colour):  # accepts array 7
+    def three(self, array, colour):
+        # accepts an array of length 7
         opp = self.get_opp[colour]
         # 0011100 or 2011100 or 0011102
         if array[2] == colour and array[3] == colour and array[4] == colour and array[5] == empty and array[1] == empty:
@@ -174,12 +153,16 @@ class AI:
         return [False]
 
     def straight_four(self, array, colour):
+        # accepts an array of length 6
+        # 011110
         if array[0] == empty and array[5] == empty and array[1] == colour and \
                 array[2] == colour and array[3] == colour and array[4] == colour:
             return True
         return False
 
     def five(self, array, colour):
+        # accepts an array of length 5
+        # 11111
         x = list(array)
         if x.count(colour) == 5:
             return True
@@ -213,36 +196,38 @@ class AI:
         if length == 5:
             # print(array)
             x = self.four(array, opp)
-            if x[0]:
+            if x[0]:  # if opp has a four
                 x.append(1)
                 return x
             x = self.four(array, colour)
-            if x[0]:
+            if x[0]:  # if AI has a four
                 x.append(2)
                 return x
         elif length == 6:
             x = self.broken_three(array, opp)
-            if x[0]:
+            if x[0]:  # if opp has a broken-three
                 x.append(3)
                 return x
             x = self.broken_three(array, colour)
-            if x[0]:
+            if x[0]:  # if AI has a broken-three
                 x.append(5)
                 return x
         elif length == 7:
             x = self.three(array, opp)
-            if x[0]:
+            if x[0]:  # if opp has a three
                 y = random.choice([x[1], x[2]])
+                # y = x[1]
                 return [True, y, 4]
             x = self.three(array, colour)
-            if x[0]:
+            if x[0]:  # if AI has a three
                 y = random.choice([x[1], x[2]])
+                # y = x[1]
                 return [True, y, 6]
         return [False]
 
     def find_threats(self, length, colour, size, board):
         threat_list = {}
-        ## Read horizontally
+        # Read horizontally
         for row in range(size):
             for col in range(size - (length - 1)):
                 array = board[row, col:col + length]
@@ -250,7 +235,7 @@ class AI:
                 if i[0]:
                     threat_list.update({(row, col + i[1]): i[2]})
 
-        ## Read vertically
+        # Read vertically
         for col in range(size):
             for row in range(size - (length - 1)):
                 array = board[row:row + length, col]
@@ -258,7 +243,7 @@ class AI:
                 if i[0]:
                     threat_list.update({(row + i[1], col): i[2]})
 
-        ## Read diagonally
+        # Read diagonally
         for row in range(size - (length - 1)):
             for col in range(size - (length - 1)):
                 array = []
@@ -328,14 +313,16 @@ class AI:
                 for i in range(size):
                     for j in range(size):
                         if old_board[i][j] == empty:
-                            modified_board = np.copy(old_board)
+                            modified_board = np.copy(old_board)  # a deepcopy
                             modified_board[i][j] = AI_c
                             bool_l = 0
                             bool_ll = 0
-                            a = loop_board(size, 5, AI_c, modified_board, 0)
-                            b = loop_board(size, 6, AI_c, modified_board, 0)
-                            c = loop_board(size, 7, AI_c, modified_board, 0)
-                            merged_threat_list = a + b + c
+                            # Check whether AI has chance to form a double-threat or to win
+                            merged_threat_list = list()
+                            merged_threat_list.extend(loop_board(size, 5, AI_c, modified_board, 0))
+                            merged_threat_list.extend(loop_board(size, 6, AI_c, modified_board, 0))
+                            merged_threat_list.extend(loop_board(size, 7, AI_c, modified_board, 0))
+
                             if len(merged_threat_list) == 1:
                                 # print("Position: ",i,j)
                                 # print("Threat List: ", merged_threat_list)
@@ -343,6 +330,7 @@ class AI:
                                 x.set_parent(parent_node)
                                 parent_node.set_child(x)
                                 for each in merged_threat_list[0]:
+                                    # defender executes all the replies
                                     modified_board[each[0]][each[1]] = p1_c
                                 new_boards.append([modified_board, x])
                             elif len(merged_threat_list) == 2:
@@ -353,8 +341,9 @@ class AI:
 
                                 confirmed = False
                                 confirmed2 = False
+                                sol_board = modified_board.copy()
                                 for t in merged_threat_list[0]:
-                                    sol_board = modified_board.copy()
+                                    # defender executes all the replies
                                     sol_board[t[0], t[1]] = p1_c
                                 for p in merged_threat_list[1]:
                                     if not confirmed:
@@ -388,17 +377,22 @@ class AI:
                                     sol_seq = []
                                     store_seq(x)
                                     found_sol = True
-                                    ##for each in merged_threat_list:
-                                    ##    y = self.node(each)
-                                    ##    y.set_parent(x)
-                                    ##    x.set_child(y)
+                                    # for each in merged_threat_list:
+                                    #     y = self.node(each)
+                                    #     y.set_parent(x)
+                                    #     x.set_child(y)
 
-                if len(new_boards) != 0 and found_sol == False:
+                if len(new_boards) != 0 and not found_sol:
                     for each in new_boards:
                         # print('test')
                         make_threats(each[0], root_node, each[1], depth + 1)
 
         def loop_board(size, length, colour, board, spec):
+            """
+            :return:  a threat list of double threats if spec == 0
+                      otherwise, if spec == 1
+                          return whether there is one step to the goal state
+            """
             ### Iterates through the board, returns a list of
             ### lists of cost_squares, each sub-list corresponding
             ### to a threat in the modified board.
@@ -492,16 +486,15 @@ class AI:
 
         def sol_algo(array, colour, length):
             if length == 5:
-                x = self.five(array, colour)
-                if x:
-                    return x
+                return self.five(array, colour)
             elif length == 6:
-                x = self.straight_four(array, colour)
-                if x:
-                    return x
-            return False
+                return self.straight_four(array, colour)
+            else:
+                return False
 
+        ttt0 = time.clock()
         make_threats(board, root_node, root_node, 0)
+        print("make threats: {}".format(time.clock() - ttt0))
         if found_sol:
             return sol_seq
         else:
@@ -809,20 +802,21 @@ def brain_turn():
     global game, white, black, empty
 
     # decide who takes black
-    c = 0
-    for i in range(game.height):
-        for j in range(game.width):
-            game.board[i, j] = board[i][j]
-            if board[i][j] != empty:
-                c += 1
-    if c % 2 == 0:
-        black = 1
-        white = 2
-    else:
-        black = 2
-        white = 1
-    game.AI_c = 1
-    game.p1_c = 2
+    if not game.checked:
+        c = 0
+        for i in range(game.height):
+            for j in range(game.width):
+                game.board[i, j] = board[i][j]
+                if board[i][j] != empty:
+                    c += 1
+        if c % 2 == 0:
+            black = 1
+            white = 2
+        else:
+            black = 2
+            white = 1
+        game.AI_c = 1
+        game.p1_c = 2
 
     x, y = game.get_next_move()
 
