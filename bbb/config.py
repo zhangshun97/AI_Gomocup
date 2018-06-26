@@ -4,7 +4,7 @@ class Config:
         # config
         self.opening = True  # 使用开局库
         self.searchDeep = 4  # 搜索深度
-        self.countLimit = 20  # gen函数返回的节点数量上限，超过之后将会按照分数进行截断
+        self.countLimit = 10  # gen函数返回的节点数量上限，超过之后将会按照分数进行截断
         self.timeLimit = 100  # 时间限制，秒
         self.vcxDeep = 5  # 算杀深度
         self.random = False  # 在分数差不多的时候是不是随机选择一个走

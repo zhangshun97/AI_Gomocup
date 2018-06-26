@@ -1,4 +1,5 @@
 from role import role
+import numpy as np
 from negamax import deeping as m
 from board import Board
 from config import Config
@@ -12,8 +13,15 @@ class AI:
     def __init__(self, board):
         self.theBoard = Board(board)
         self.turnChecked = False  # 用来对应非空开局，确定先后手
+        self.start = True
 
     def get_move(self):
+        if self.start:
+            self.start = False
+            if np.sum(self.theBoard.board):
+                pass
+            else:
+                return self.theBoard.size // 2, self.theBoard.size // 2
         p = self.theBoard.maxmin(config.searchDeep)
         return p
 

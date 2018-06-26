@@ -542,7 +542,7 @@ class Board:
         # 这个函数的作用是生成待选的列表，就是可以下子的空位
         points = self.gen(R.AI, starSpread=True)
         # points = self.genEE(deep)
-        # print(points)
+        print(points)
         for i in range(len(points)):
             p = points[i]
             # 尝试下一个子
@@ -557,7 +557,7 @@ class Board:
             if v > best:
                 best = v
                 bestPoints = [p]
-        # print(bestPoints)
+        print(bestPoints)
         result_index = np.random.randint(len(bestPoints))
         result = bestPoints[result_index]
         return result
