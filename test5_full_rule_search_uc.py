@@ -1,7 +1,12 @@
 import copy
+import numpy as np
 
 MAX_BOARD = 10
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
+board[1][5] = 2
+board[1][6] = 1
+board[1][7] = 2
+board[2][6] = 1
 # the full-rule based table
 # here always assume AI is 1, the opponent is 2 and vacancy is 0
 get_points = {
@@ -139,6 +144,7 @@ get_points = {
 }
 
 Point_Board = None
+hashingTable = np.random.randint(9223372036854775807, size=(2, MAX_BOARD, MAX_BOARD), dtype='int64')
 
 
 class PointBoard:
@@ -146,7 +152,7 @@ class PointBoard:
     def __init__(self, input_board, players=(1, 2)):
         self.height = len(input_board)
         self.width = len(input_board[0])
-        self.board = copy.deepcopy(input_board)
+        self.board = np.array(input_board).copy()
         self.my_player = players[0]
         self.opponent_player = players[1]
         self.get_opponent = {
@@ -154,15 +160,17 @@ class PointBoard:
             players[1]: players[0],
         }
         self.if_board_not_empty = None
-        self.values = copy.deepcopy(input_board)  # for attack
-        self.opponent_values = copy.deepcopy(input_board)  # for defence
-        self.n_in_line = 5  # default as standard Gomoku
+        self.values = np.array(input_board).copy()           # for attack
+        self.opponent_values = np.array(input_board).copy()  # for defence
+        self.n_in_line = 5                                   # default as standard Gomoku
+        self.initialized = False
+        self.hashingCode = np.random.randint(9223372036854775807, size=1, dtype='int64')
         # get the initial values for me
-        for x in range(self.height):  # |
+        for x in range(self.height):     # |
             for y in range(self.width):  # \
                 self.get_value(player=self.board[x][y], move=(x, y))
         # get the initial values for opponent
-        for x in range(self.height):  # |
+        for x in range(self.height):     # |
             for y in range(self.width):  # \
                 self.get_value(player=self.board[x][y], move=(x, y))
 
@@ -175,9 +183,6 @@ class PointBoard:
             self.dynamic_update(player, move)
 
     def get_move(self, opponent_move):
-        def abs(a, b):
-            return a + b if a + b >= 0 else -a - b
-
         if self.if_board_not_empty is None:
             self.if_board_not_empty = sum(
                 sum(row) for row in self.board
@@ -204,10 +209,11 @@ class PointBoard:
                         elif self.values[i][j] == point:
                             moves.append((i, j))
                 _, move = max(
-                    (- abs(move_[0], - opponent_move[0]) - abs(move_[1], - opponent_move[1]), move_)
+                    (- np.abs(move_[0] - opponent_move[0]) - np.abs(move_[1] - opponent_move[1]), move_)
                     for move_ in moves
                 )
             else:
+                # TODO: to modify that AI will pick the far move
                 point, move = max(
                     (self.values[i][j], (i, j))
                     for i in range(self.height)
@@ -401,10 +407,13 @@ class PointBoard:
             # print('|=-' * 20)
             # print(key, coordinate)
 
-    def dynamic_update(self, player, move):
+    def dynamic_update(self, player, move, update_board=True):
         # update the board
         x_this, y_this = move
-        self.board[x_this][y_this] = player
+        if update_board:
+            self.board[x_this][y_this] = player
+            # for transition table, Zobrist
+            self.hashingCode = self.hashingCode ^ hashingTable[player-1][x_this][y_this]
 
         # get the boundaries
         up = min(x_this, self.n_in_line - 1)
@@ -456,6 +465,88 @@ class PointBoard:
             self.update_an_coordinate(player, coordinate)
             self.update_an_coordinate(self.get_opponent[player], coordinate)
 
+    def get_potential_moves(self, value_depth=2):
+        """this is intended for MINI-MAX search"""
+
+    def minimax_search(self, value_depth=2, search_depth=2):
+        move = (1, 1)
+        original_values = copy.deepcopy(self.values)
+        original_opp_values = copy.deepcopy(self.opponent_values)
+
+        def constructTree(rule, hashingCode, n=search_depth):
+            '''
+            construct a tree using given information, and return the root node
+            :param n:  the height of tree
+            :param rule: root node's type, 1 for max, 0 for min
+            :return: root node
+            '''
+            node = Node(rule=rule)
+            if n == 1:
+                for neighbor in neighbors:
+                    successors.append(Node(rule=1 - rule,
+                                           isLeaf=True,
+                                           value=self.values[neighbor],
+                                           ))
+            else:
+                for neighbor in neighbors:
+                    new_neighbors = get_new_neighbors(self.neighbors, self.availables, neighbor)
+                    new_availables = self.availables
+                    successors.append(constructTree(n - 1, t, 1 - rule))
+            node.successor = successors
+            return node
+
+        return move
+
+
+class Node:
+    def __init__(self, rule=0, isLeaf=False, value=None, hashingCode=None):
+        if rule == 1:
+            self.rule = 'max'
+        else:
+            self.rule = 'min'
+        self.successor = []
+        self.parent = None
+        self.isLeaf = isLeaf
+        self.value = value
+        self.visited = False
+        self.hashingCode = hashingCode
+
+    def set_successor(self, successors):
+        for successor in successors:
+            self.successor.append(successor)
+            successor.parent = self
+
+
+def value(node, alpha, beta):
+    if node.isLeaf:
+        return node.value
+    if node.rule == 'max':
+        return maxValue(node, alpha, beta)
+    if node.rule == 'min':
+        return minValue(node, alpha, beta)
+
+
+def maxValue(node, alpha, beta):
+    v = float("-inf")
+    for successor in node.successor:
+        v = max(v, value(successor, alpha, beta))
+        successor.visited = True
+        if v >= beta:
+            return v
+        alpha = max(v, alpha)
+    return v
+
+
+def minValue(node, alpha, beta):
+    v = float("inf")
+    for successor in node.successor:
+        v = min(v, value(successor, alpha, beta))
+        successor.visited = True
+        if v <= alpha:
+            return v
+        beta = min(beta, v)
+    return v
+
 
 class PP:
     # zs: to simulate the pisqpipe package
@@ -477,35 +568,28 @@ class PP:
 
 
 def brain_turn():
-    """
-    MCTS
-    Useful materials:
-        class:
-            Board
-            MCTS
-    """
+
     if pp.terminateAI:
         return
 
     global Point_Board
-    opp_move = Point_Board.get_opponent_move()
-    if opp_move:
+    if Point_Board.initialized:
+        opp_move = Point_Board.get_opponent_move()
         Point_Board.dynamic_update(2, opp_move)
-
-    i = 0
-    while True:
         point, move = Point_Board.get_move(opp_move)
-        x, y = move
-        Point_Board.dynamic_update(1, move)
+    else:
+        Point_Board = PointBoard(board)
+        print(np.array(Point_Board.values))
+        print(np.array(Point_Board.opponent_values))
+        PointBoard.turn_checked = True
+        point, move = Point_Board.get_move(None)
 
-        if pp.terminateAI:
-            return
+    if point < 8:
+        # MINI-MAX search with alpha-beta pruning
+        move = Point_Board.minimax_search(value_depth=2)
+    Point_Board.dynamic_update(1, move)
+    x, y = move
 
-        if isFree(x, y):
-            break
-    if i > 1:
-        # zs: maybe useful to debug
-        pp.pipeOut("DEBUG {} coordinates didn't hit an empty field".format(i))
     pp.do_mymove(x, y)
 
 
