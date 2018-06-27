@@ -10,10 +10,12 @@ total = 0
 
 R = role()
 config = Config()
-
+np.set_printoptions(precision=0)
 
 # 冲四的分其实肯定比活三高，但是如果这样的话容易形成盲目冲四的问题，所以如果发现电脑有无意义的冲四，则将分数降低到和活三一样
 # 而对于冲四活三这种杀棋，则将分数提高。
+
+
 def fixScore(type_score):
     # 这里的 type_score 是一个对应 pattern 的得分
     if score['BLOCKED_FOUR'] <= type_score < score['FOUR']:
@@ -79,10 +81,12 @@ class Board:
                     # AI has score, while opp has 0
                     self.AIScore[i, j] = scorePoint(self, (i, j), R.AI)
                     self.oppScore[i, j] = 0
+                    self.steps.append((i, j))
                 elif self.board[i, j] == R.opp:
                     # opp has score, while AI has 0
                     self.oppScore[i, j] = scorePoint(self, (i, j), R.opp)
                     self.AIScore[i, j] = 0
+                    self.steps.append((i, j))
                 else:
                     assert 0, "board exists a role other than {0,1,2}"
 
@@ -138,9 +142,9 @@ class Board:
         # /
         for i in range(-radius, radius):
             x, y = position[0] + i, position[1] - i
-            if x < 0 or y < 0:
+            if x < 0 or y >= self.size:
                 continue
-            elif x >= self.size or y >= self.size:
+            elif x >= self.size or y < 0:
                 break
             else:
                 update((x, y), 3)
@@ -155,6 +159,7 @@ class Board:
             self.steps.append(position)
             self.updateScore(position)
             self.allSteps.append(position)
+            # print(position, '=====', self.oppScore[position])
 
     # the last step
     def last(self, player):
@@ -234,6 +239,8 @@ class Board:
     # 而对结果的排序，是要根据role来的
 
     def gen(self, player, onlyThrees=False, starSpread=False):
+        if config.debugGen:
+            print("====== GEN for {} ======".format(player))
         fives = []
         AIfours = []
         oppfours = []
@@ -285,8 +292,11 @@ class Board:
                     lastPoint2 = self.allSteps[0]
                 else:
                     lastPoint2 = self.allSteps[1]
-            # print("sss", lastPoint1, lastPoint2)
+
             # 根据双方最后的进攻点周围展开搜索
+            if config.debug:
+                print("1 attack point: {}, 2 attack point: {}".format(lastPoint1, lastPoint2))
+
             startI = min(lastPoint1[0] - 5, lastPoint2[0] - 5)
             startJ = min(lastPoint1[1] - 5, lastPoint2[1] - 5)
             startI = max(0, startI)
@@ -299,7 +309,6 @@ class Board:
         for i in range(startI, endI + 1):
             for j in range(startJ, endJ + 1):
                 p = (i, j)
-                # print(i,j, self.board[i, j])
                 if self.board[i][j] == R.empty:
                     neighbor = (2, 2)
                     if len(self.steps) < 6:
@@ -324,7 +333,7 @@ class Board:
                         # 我们假定任何时候，绝大多数情况下进攻的路线都可以按次序连城一条折线，那么每次每一个子，一定都是在上一个己方棋子的八个方向之一。
                         # 因为既可能自己进攻，也可能防守对面，所以是最后两个子的米子方向上
                         # 那么极少数情况，进攻路线无法连成一条折线呢?很简单，我们对前双方两步不作star限制就好，这样可以 兼容一条折线中间伸出一段的情况
-                        if lastPoint1 and lastPoint2:
+                        if lastPoint1 and lastPoint2 and config.star:
                             # 距离必须在5步以内
                             if (np.abs(i - lastPoint1[0]) > 5 or np.abs(j - lastPoint1[1]) > 5) and \
                                     (np.abs(i - lastPoint2[0]) > 5 or np.abs(j - lastPoint2[1]) > 5):
@@ -365,19 +374,25 @@ class Board:
                         elif scoreOpp >= score['THREE']:
                             oppthrees.append(p)
                         elif scoreAI >= score['TWO']:
-                            AItwos.insert(0, p)
+                            AItwos.append(p)
                         elif scoreOpp >= score['TWO']:
-                            opptwos.insert(0, p)
+                            opptwos.append(p)
                         else:
                             neighbors.append(p)
-        # print(
-        #     fives,
-        #     AIfours,
-        #     AItwothrees,
-        #     AIblockedfours,
-        #     AIthrees,
-        # )
-        # print("for {}".format(player))
+        if config.debugGen:
+            print(
+                'fives', fives, '\n',
+                'AIfours', AIfours, '\n',
+                'AI23', AItwothrees, '\n',
+                'AI4s', AIblockedfours, '\n',
+                'AI3s', AIthrees, '\n',
+            )
+            print(
+                'oppfours', oppfours, '\n',
+                'opp23s', opptwothrees, '\n',
+                'opp4s', oppblockedfours, '\n',
+                'opp3s', oppthrees, '\n',
+            )
         # 如果成五，是必杀棋，直接返回
         if fives:
             return fives
@@ -537,9 +552,14 @@ class Board:
         self.MIN = - score['FIVE'] * 10
         bestPoints = []
         best = self.MIN
+
+        if config.debug:
+            print(self.AIScore)
+
         # 这个函数的作用是生成待选的列表，就是可以下子的空位
         points = self.gen(R.AI, starSpread=True)
         # points = self.genEE(deep)
+
         if config.debug2:
             print(points)
         for i in range(len(points)):
@@ -548,8 +568,9 @@ class Board:
                 print('++++++++++++++++++ {} ++++++++++++++++++'.format(p))
             # 尝试下一个子
             self.put(p, R.AI, True)
+            # print("piint {}: {}".format(p, self.AIScore[p]))
             # 找最大值
-            v = self.get_min(R.opp, deep - 1)
+            v = self.get_min(R.opp, deep - 1, self.MIN, self.MAX)
             # 记得把尝试下的子移除
             self.remove(p)
             # 如果跟之前的一个好，则把当前位子加入待选位子
@@ -566,20 +587,22 @@ class Board:
         result = bestPoints[result_index]
         return result
 
-    def get_min(self, player, deep):
+    def get_min(self, player, deep, alpha, beta):
         # 重点来了，评价函数，这个函数返回的是对当前局势的估分
-        v = self.evaluate(player)
         if config.debug:
-            print('MIN====== {}: {} ======'.format(player, v))
-            print(self.board)
+            print('MIN====== {} ======'.format(player))
+            # print(self.board)
 
         if deep <= 0:
-            return v
+            r = self.evaluate(player)
+            if config.debug:
+                print('MIN====== {} ======'.format(r))
+            return r
 
-        best = self.MAX
+        v = self.MAX
         points = self.gen(player, starSpread=True)
-        if config.debug:
-            print(points)
+        if config.debug3:
+            print('2 ===> ', points)
         # points = self.genEE(deep)
 
         for i in range(len(points)):
@@ -587,38 +610,46 @@ class Board:
             if self.win(player, p):
                 return self.MIN
             self.put(p, player, True)
-            v = self.get_max(R.get_opponent(player), deep - 1)
+            v = min(v, self.get_max(R.get_opponent(player), deep - 1, alpha, beta))
             # 记得把尝试下的子移除
             self.remove(p)
-            if v < best:
-                best = v
-        return best
+            # 进行剪枝操作
+            if v <= alpha:
+                return v
+            beta = min(beta, v)
 
-    def get_max(self, player, deep):
-        v = self.evaluate(player)
+        return v
+
+    def get_max(self, player, deep, alpha, beta):
         if config.debug:
-            print('MAX====== {}: {} ======'.format(player, v))
+            print('MAX====== {} ======'.format(player))
             print(self.board)
 
         if deep <= 0:
-            return v
+            r = self.evaluate(player)
+            if config.debug:
+                print('MAX====== {} ======'.format(r))
+            return r
 
-        best = self.MIN
+        v = self.MIN
         points = self.gen(player, starSpread=True)
         # points = self.genEE(deep)
-        if config.debug:
-            print(points)
+        if config.debug3:
+            print('1 ===> ', points)
         for i in range(len(points)):
             p = points[i]
             if self.win(player, p):
                 return self.MAX
             self.put(p, player, True)
-            v = self.get_min(R.get_opponent(player), deep - 1)
+            v = max(v, self.get_min(R.get_opponent(player), deep - 1, alpha, beta))
             # 记得把尝试下的子移除
             self.remove(p)
-            if v > best:
-                best = v
-        return best
+            # 进行剪枝操作
+            if v >= beta:
+                return v
+            alpha = max(alpha, v)
+
+        return v
 
     def win(self, player, position=None):
         if position is None:
@@ -734,3 +765,28 @@ class Board:
             return True
 
         return False
+
+
+if __name__ == '__main__':
+
+    board = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 2, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 2, 2, 1, 0, 0, 2, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 2, 2, 1, 1, 1, 2, 0, 0, 0, 0],
+        [0, 0, 2, 1, 2, 1, 2, 2, 1, 2, 0, 0, 0, 0, 0],
+        [0, 1, 2, 2, 1, 2, 2, 1, 2, 1, 0, 0, 0, 0, 0],
+        [1, 2, 1, 1, 0, 2, 1, 2, 0, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 2, 1, 0, 0, 0, 0, 2, 0, 0, 0],
+        [0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ]
+
+    BB = Board(board)
+
+    print(BB.evaluate(1))

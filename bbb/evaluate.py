@@ -119,9 +119,9 @@ def evaluate_position(b, position, player, direction=-1):
                 if empty != -1:
                     empty += 1
                     continue
-                else:
-                    block += 1
-                    break
+            else:
+                block += 1
+                break
 
         count += secondCount
 

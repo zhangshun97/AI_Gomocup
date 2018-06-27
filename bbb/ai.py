@@ -1,6 +1,5 @@
 from role import role
 import numpy as np
-from negamax import deeping as m
 from board import Board
 from config import Config
 
