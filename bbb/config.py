@@ -18,3 +18,4 @@ class Config:
 
         # 调试
         self.debug = False  # 打印详细的debug信息
+        self.debug2 = False

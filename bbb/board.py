@@ -3,24 +3,13 @@ from role import role
 from zobrist import Zobrist
 from evaluate import evaluate_position as scorePoint
 from config import Config
+from score import score
 
 count = 0
 total = 0
 
 R = role()
 config = Config()
-
-score = {
-    'ONE': 10,
-    'TWO': 100,
-    'THREE': 1000,
-    'FOUR': 100000,
-    'FIVE': 10000000,
-    'BLOCKED_ONE': 1,
-    'BLOCKED_TWO': 10,
-    'BLOCKED_THREE': 100,
-    'BLOCKED_FOUR': 10000
-}
 
 
 # 冲四的分其实肯定比活三高，但是如果这样的话容易形成盲目冲四的问题，所以如果发现电脑有无意义的冲四，则将分数降低到和活三一样
@@ -223,7 +212,9 @@ class Board:
         # 不过这里做了这一步，可以减少电脑胡乱冲四的毛病
         self.AIMaxScore = fixScore(self.AIMaxScore)
         self.oppMaxScore = fixScore(self.oppMaxScore)
-        result = (1 if player == R.AI else -1) * (self.AIMaxScore - self.oppMaxScore)
+        # TODO: check if 1/-1 is needed
+        # result = (1 if player == R.AI else -1) * (self.AIMaxScore - self.oppMaxScore)
+        result = self.AIMaxScore - self.oppMaxScore
 
         return result
 
@@ -379,7 +370,14 @@ class Board:
                             opptwos.insert(0, p)
                         else:
                             neighbors.append(p)
-
+        # print(
+        #     fives,
+        #     AIfours,
+        #     AItwothrees,
+        #     AIblockedfours,
+        #     AIthrees,
+        # )
+        # print("for {}".format(player))
         # 如果成五，是必杀棋，直接返回
         if fives:
             return fives
@@ -542,9 +540,12 @@ class Board:
         # 这个函数的作用是生成待选的列表，就是可以下子的空位
         points = self.gen(R.AI, starSpread=True)
         # points = self.genEE(deep)
-        print(points)
+        if config.debug2:
+            print(points)
         for i in range(len(points)):
             p = points[i]
+            if config.debug:
+                print('++++++++++++++++++ {} ++++++++++++++++++'.format(p))
             # 尝试下一个子
             self.put(p, R.AI, True)
             # 找最大值
@@ -552,12 +553,15 @@ class Board:
             # 记得把尝试下的子移除
             self.remove(p)
             # 如果跟之前的一个好，则把当前位子加入待选位子
+            if config.debug2:
+                print("{} , score {}".format(p, v))
             if v == best:
                 bestPoints.append(p)
             if v > best:
                 best = v
                 bestPoints = [p]
-        print(bestPoints)
+        if config.debug2:
+            print(bestPoints)
         result_index = np.random.randint(len(bestPoints))
         result = bestPoints[result_index]
         return result
@@ -565,16 +569,23 @@ class Board:
     def get_min(self, player, deep):
         # 重点来了，评价函数，这个函数返回的是对当前局势的估分
         v = self.evaluate(player)
-        # print(player, v)
-        if deep <= 0 or self.win():
+        if config.debug:
+            print('MIN====== {}: {} ======'.format(player, v))
+            print(self.board)
+
+        if deep <= 0:
             return v
 
         best = self.MAX
         points = self.gen(player, starSpread=True)
+        if config.debug:
+            print(points)
         # points = self.genEE(deep)
 
         for i in range(len(points)):
             p = points[i]
+            if self.win(player, p):
+                return self.MIN
             self.put(p, player, True)
             v = self.get_max(R.get_opponent(player), deep - 1)
             # 记得把尝试下的子移除
@@ -585,16 +596,22 @@ class Board:
 
     def get_max(self, player, deep):
         v = self.evaluate(player)
-        # print(player, v)
-        if deep <= 0 or self.win():
+        if config.debug:
+            print('MAX====== {}: {} ======'.format(player, v))
+            print(self.board)
+
+        if deep <= 0:
             return v
 
         best = self.MIN
         points = self.gen(player, starSpread=True)
         # points = self.genEE(deep)
-
+        if config.debug:
+            print(points)
         for i in range(len(points)):
             p = points[i]
+            if self.win(player, p):
+                return self.MAX
             self.put(p, player, True)
             v = self.get_min(R.get_opponent(player), deep - 1)
             # 记得把尝试下的子移除
@@ -603,14 +620,19 @@ class Board:
                 best = v
         return best
 
-    def win(self):
-        for i in range(self.height):
-            for j in range(self.width):
-                t = self.board[i][j]
-                if t != R.empty:
-                    r = self.isFive((i, j), t)
-                    if r:
-                        return t
+    def win(self, player, position=None):
+        if position is None:
+            for i in range(self.height):
+                for j in range(self.width):
+                    t = self.board[i][j]
+                    if t == R.empty:
+                        r = self.isFive((i, j), player)
+                        if r:
+                            return player
+        else:
+            r = self.isFive(position, player)
+            if r:
+                return player
 
         return False
 
@@ -620,60 +642,53 @@ class Board:
         count = 1
 
         def reset():
+            nonlocal count
             count = 1
 
         # --
-        i = p[1] + 1
-        while 1:
+        for i in range(p[1] + 1, size + 1):
             if i >= size:
                 break
             t = self.board[p[0]][i]
             if t != player:
                 break
             count += 1
-            i += 1
-        i = p[1] - 1
-        while 1:
+
+        for i in range(p[1] - 1, -1, -1):
             if i < 0:
                 break
             t = self.board[p[0]][i]
             if t != player:
                 break
             count += 1
-            i -= 1
 
         if count >= 5:
             return True
 
         # |
         reset()
-        i = p[0] + 1
-        while 1:
+        for i in range(p[0] + 1, size + 1):
             if i >= size:
                 break
             t = self.board[i][p[1]]
             if t != player:
                 break
             count += 1
-            i += 1
-        i = p[0] - 1
-        while 1:
+
+        for i in range(p[0] - 1, -1, -1):
             if i < 0:
                 break
             t = self.board[i][p[1]]
             if t != player:
                 break
             count += 1
-            i -= 1
 
         if count >= 5:
             return True
 
         # \
         reset()
-
-        i = 1
-        while 1:
+        for i in range(1, size + 1):
             x, y = p[0] + i, p[1] + i
             if x >= size or y >= size:
                 break
@@ -681,9 +696,8 @@ class Board:
             if t != player:
                 break
             count += 1
-            i += 1
-        i = 1
-        while 1:
+
+        for i in range(1, size + 1):
             x, y = p[0] - i, p[1] - i
             if x < 0 or y < 0:
                 break
@@ -691,7 +705,6 @@ class Board:
             if t != player:
                 break
             count += 1
-            i += 1
 
         if count >= 5:
             return True
@@ -699,8 +712,7 @@ class Board:
         # /
         reset()
 
-        i = 1
-        while 1:
+        for i in range(1, size + 1):
             x, y = p[0] + i, p[1] - i
             if x >= size or y < 0:
                 break
@@ -708,9 +720,8 @@ class Board:
             if t != player:
                 break
             count += 1
-            i += 1
-        i = 1
-        while 1:
+
+        for i in range(1, size + 1):
             x, y = p[0] - i, p[1] + i
             if x < 0 or y >= size:
                 break
@@ -718,7 +729,6 @@ class Board:
             if t != player:
                 break
             count += 1
-            i += 1
 
         if count >= 5:
             return True

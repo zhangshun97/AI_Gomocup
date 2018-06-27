@@ -1,19 +1,7 @@
 from role import role
-
-score = {
-    'ONE': 10,
-    'TWO': 100,
-    'THREE': 1000,
-    'FOUR': 100000,
-    'FIVE': 10000000,
-    'BLOCKED_ONE': 1,
-    'BLOCKED_TWO': 10,
-    'BLOCKED_THREE': 100,
-    'BLOCKED_FOUR': 10000
-}
+from score import score
 
 R = role()
-
 
 # evaluate for a certain position
 # not for the whole board
@@ -22,17 +10,16 @@ R = role()
 # a direction param is added for accelerating
 #    if given direction, then only the direction will be checked
 
+
 def evaluate_position(b, position, player, direction=-1):
     result = 0
-    radius = 8
+    # radius = 8
     count = 0
     block = 0
     empty = -1
     secondCount = 0  # count for another direction
     board1 = b.board
-
-    assert len(board1) == len(board1[0]), "board is not a square"
-    size = len(board1)
+    size = b.size
 
     def reset():
         nonlocal count, block, empty, secondCount
@@ -45,8 +32,7 @@ def evaluate_position(b, position, player, direction=-1):
     if direction == -1 or direction == 0:  # direction = undefined or 0
         reset()
 
-        i = position[1] + 1
-        while 1:
+        for i in range(position[1] + 1, size + 1):
             if i >= size:
                 block += 1
                 break
@@ -58,7 +44,7 @@ def evaluate_position(b, position, player, direction=-1):
                     continue
                 else:
                     break
-            i += 1
+
             if t == player:
                 count += 1
                 continue
@@ -66,8 +52,7 @@ def evaluate_position(b, position, player, direction=-1):
                 block += 1
                 break
 
-        i = position[1] - 1
-        while 1:
+        for i in range(position[1] - 1, -1, -1):
             if i < 0:
                 block += 1
                 break
@@ -78,7 +63,7 @@ def evaluate_position(b, position, player, direction=-1):
                     continue
                 else:
                     break
-            i -= 1
+
             if t == player:
                 secondCount += 1
                 if empty != -1:
@@ -98,8 +83,7 @@ def evaluate_position(b, position, player, direction=-1):
     if direction == -1 or direction == 1:
         reset()
 
-        i = position[0] + 1
-        while 1:
+        for i in range(position[0] + 1, size + 1):
             if i >= size:
                 break
 
@@ -110,7 +94,7 @@ def evaluate_position(b, position, player, direction=-1):
                     continue
                 else:
                     break
-            i += 1
+
             if t == player:
                 count += 1
                 continue
@@ -118,8 +102,7 @@ def evaluate_position(b, position, player, direction=-1):
                 block += 1
                 break
 
-        i = position[0] - 1
-        while 1:
+        for i in range(position[0] - 1, -1, -1):
             if i < 0:
                 block += 1
                 break
@@ -130,7 +113,7 @@ def evaluate_position(b, position, player, direction=-1):
                     continue
                 else:
                     break
-            i -= 1
+
             if t == player:
                 secondCount += 1
                 if empty != -1:
@@ -150,8 +133,7 @@ def evaluate_position(b, position, player, direction=-1):
     if direction == -1 or direction == 2:
         reset()
 
-        i = 1
-        while 1:
+        for i in range(1, size + 1):
             x = position[0] + i
             y = position[1] + i
             if x >= size or y >= size:
@@ -166,7 +148,7 @@ def evaluate_position(b, position, player, direction=-1):
                     continue
                 else:
                     break
-            i += 1
+
             if t == player:
                 count += 1
                 continue
@@ -174,8 +156,7 @@ def evaluate_position(b, position, player, direction=-1):
                 block += 1
                 break
 
-        i = 1
-        while 1:
+        for i in range(1, size + 1):
             x = position[0] - i
             y = position[1] - i
             if x < 0 or y < 0:
@@ -189,7 +170,7 @@ def evaluate_position(b, position, player, direction=-1):
                     continue
                 else:
                     break
-            i += 1
+
             if t == player:
                 secondCount += 1
                 if empty != -1:
@@ -209,8 +190,7 @@ def evaluate_position(b, position, player, direction=-1):
     if direction == -1 or direction == 3:
         reset()
 
-        i = 1
-        while 1:
+        for i in range(1, size + 1):
             x = position[0] + i
             y = position[1] - i
             if y < 0 or x >= size:
@@ -224,7 +204,7 @@ def evaluate_position(b, position, player, direction=-1):
                     continue
                 else:
                     break
-            i += 1
+
             if t == player:
                 count += 1
                 continue
@@ -232,8 +212,7 @@ def evaluate_position(b, position, player, direction=-1):
                 block += 1
                 break
 
-        i = 1
-        while 1:
+        for i in range(1, size + 1):
             x = position[0] - i
             y = position[1] + i
             if x < 0 or y >= size:
@@ -247,7 +226,7 @@ def evaluate_position(b, position, player, direction=-1):
                     continue
                 else:
                     break
-            i += 1
+
             if t == player:
                 secondCount += 1
                 if empty != -1:
@@ -293,7 +272,7 @@ def countToScore(count, block, empty=None):
             if count == 4:
                 return score['BLOCKED_FOUR']
     elif empty == 1 or empty == count - 1:
-        # the first squaure is empty
+        # the first square is empty
         if count >= 6:
             return score['FIVE']
         if block == 0:
