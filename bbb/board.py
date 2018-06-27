@@ -69,26 +69,21 @@ class Board:
         self.role = {}
         self.scoreHum = {}
         self.scoreCom = {}
+        emptys = []
 
+        # 注意初始化分数的更新顺序！
         for i in range(self.height):
             for j in range(self.width):
                 # get score for both players
                 if self.board[i, j] == R.empty:
                     if self.hasNeighbor((i, j), 1, 1) or self.hasNeighbor((i, j), 2, 2):
-                        self.AIScore[i, j] = scorePoint(self, (i, j), R.AI)
-                        self.oppScore[i, j] = scorePoint(self, (i, j), R.opp)
-                elif self.board[i, j] == R.AI:
-                    # AI has score, while opp has 0
-                    self.AIScore[i, j] = scorePoint(self, (i, j), R.AI)
-                    self.oppScore[i, j] = 0
-                    self.steps.append((i, j))
-                elif self.board[i, j] == R.opp:
-                    # opp has score, while AI has 0
-                    self.oppScore[i, j] = scorePoint(self, (i, j), R.opp)
-                    self.AIScore[i, j] = 0
-                    self.steps.append((i, j))
+                        emptys.append((i, j))
                 else:
-                    assert 0, "board exists a role other than {0,1,2}"
+                    self.updateScore((i, j))
+                    self.steps.append((i, j))
+        for p in emptys:
+            self.AIScore[p] = scorePoint(self, p, R.AI)
+            self.oppScore[p] = scorePoint(self, p, R.opp)
 
     # 只更新一个点附近的分数
     # 参见 evaluate 中的代码，为了优化性能，在更新分数的时候可以指定只更新某一个方向的分数
@@ -99,14 +94,14 @@ class Board:
                 AIS = scorePoint(self, position, R.AI, direction)
                 self.AIScore[position] = AIS
                 # print(AIS, '----')
-                self.statisticTable[position] += AIS
+                # self.statisticTable[position] += AIS
             else:
                 self.AIScore[position] = 0
 
             if role_ != R.get_opponent(R.opp):
                 oppS = scorePoint(self, position, R.opp, direction)
                 self.oppScore[position] = oppS
-                self.statisticTable[position] += oppS
+                # self.statisticTable[position] += oppS
             else:
                 self.oppScore[position] = 0
 
@@ -200,7 +195,7 @@ class Board:
 
     # 棋面估分
     # 这里只算当前分，而不是在空位下一步之后的分
-    def evaluate(self, player):
+    def evaluate(self, player=None):
         # 这里都是用正整数初始化的，所以初始值是0
         self.AIMaxScore = 0
         self.oppMaxScore = 0
@@ -768,20 +763,19 @@ class Board:
 
 
 if __name__ == '__main__':
-
     board = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 2, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 0, 2, 2, 1, 0, 0, 2, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 2, 2, 1, 1, 1, 2, 0, 0, 0, 0],
-        [0, 0, 2, 1, 2, 1, 2, 2, 1, 2, 0, 0, 0, 0, 0],
-        [0, 1, 2, 2, 1, 2, 2, 1, 2, 1, 0, 0, 0, 0, 0],
-        [1, 2, 1, 1, 0, 2, 1, 2, 0, 1, 1, 0, 0, 0, 0],
-        [0, 0, 0, 1, 0, 2, 1, 0, 0, 0, 0, 2, 0, 0, 0],
-        [0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
