@@ -551,6 +551,17 @@ if hhh:
                                             #     print(board1)
                                             #     print(point_1, point_2)
                                             pointCache[pattern] = (point_1, point_2)
+                                            #####
+                                            pattern = i1_ + i2_ * 10 + i3_ * 10 ** 2 + \
+                                                      i4_ * 10 ** 3 + i5_ * 10 ** 4 + i6_ * 10 ** 4 + \
+                                                      i7_ * 10 ** 3 + i8_ * 10 ** 2 + i9_ * 10 + i10_ + 10 ** 5 * 100
+
+                                            pointCache[pattern] = (point_1, 0)
+                                            pattern = i1_ + i2_ * 10 + i3_ * 10 ** 2 + \
+                                                      i4_ * 10 ** 3 + i5_ * 10 ** 4 + i6_ * 10 ** 4 + \
+                                                      i7_ * 10 ** 3 + i8_ * 10 ** 2 + i9_ * 10 + i10_ + 10 ** 5 * 103
+
+                                            pointCache[pattern] = (0, point_2)
 
     with open('pointCache.txt', 'w') as f:
         f.write(str(pointCache))

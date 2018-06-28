@@ -166,11 +166,16 @@ class Board:
         if_remove = -1 if remove else 1
         radius = 6
         player = self.board[position[0]][position[1]]
+        # 先更新自己的
+        # if player == R.AI:
+        #     self.oppScore[position[0]][position[1]] = 0
+        # elif player == R.opp:
+        #     self.AIScore[position[0]][position[1]] = 0
         player = R.oppp if player == 2 else player * R.AIp
         updatedPositions = []
         # update no matter empty or not
         # --
-        for dd in range(1, radius):
+        for dd in range(0, radius):
             x, y = position[0], position[1] - dd
             if y < 0:
                 break
@@ -185,7 +190,7 @@ class Board:
             self.patternCache[R.opp][x][y][0] += player * 10 ** (5 - dd) * if_remove
             updatedPositions.append((x, y))
         # |
-        for dd in range(1, radius):
+        for dd in range(0, radius):
             x, y = position[0] - dd, position[1]
             if x < 0:
                 break
@@ -200,7 +205,7 @@ class Board:
             self.patternCache[R.opp][x][y][1] += player * 10 ** (5 - dd) * if_remove
             updatedPositions.append((x, y))
         # \
-        for dd in range(1, radius):
+        for dd in range(0, radius):
             x, y = position[0] - dd, position[1] - dd
             if x < 0 or y < 0:
                 break
@@ -215,7 +220,7 @@ class Board:
             self.patternCache[R.opp][x][y][2] += player * 10 ** (5 - dd) * if_remove
             updatedPositions.append((x, y))
         # /
-        for dd in range(1, radius):
+        for dd in range(0, radius):
             x, y = position[0] - dd, position[1] + dd
             if x < 0 or y >= self.width:
                 break
@@ -867,13 +872,30 @@ class Board:
 
 
 if __name__ == '__main__':
+    # board = [
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    # ]
     board = [
+        [0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 1, 1, 2, 2, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -887,6 +909,5 @@ if __name__ == '__main__':
 
     BB = Board(board)
 
-    if BB.hasNeighbor((5, 1), 2, 2):
-        print(1)
+    print(BB.AIScore)
 
