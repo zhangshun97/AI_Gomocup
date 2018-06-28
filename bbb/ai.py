@@ -1,7 +1,9 @@
 from role import role
 import numpy as np
-from board import Board
+from boardHHH import Board
 from config import Config
+from vcx import vcf, vct
+
 
 R = role()
 config = Config()
@@ -21,6 +23,7 @@ class AI:
                 pass
             else:
                 return self.theBoard.size // 2, self.theBoard.size // 2
+
         p = self.theBoard.maxmin(config.searchDeep)
         return p
 

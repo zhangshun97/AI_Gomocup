@@ -19,21 +19,10 @@
 import numpy as np
 from role import role
 from config import Config
+from score import score
 
 R = role()
 config = Config()
-
-score = {
-    'ONE': 10,
-    'TWO': 100,
-    'THREE': 1000,
-    'FOUR': 100000,
-    'FIVE': 10000000,
-    'BLOCKED_ONE': 1,
-    'BLOCKED_TWO': 10,
-    'BLOCKED_THREE': 100,
-    'BLOCKED_FOUR': 10000
-}
 
 Cache = {
     'vct': {},
@@ -51,86 +40,84 @@ lastMinPoint = None
 
 # 找到所有比目标分数大的位置
 # 注意，不止要找自己的，还要找对面的，
-def findMax(b, player, score_):
+def findMax(self, player, score_):
     result = []
     fives = []
 
-    for i in range(b.height):
-        for j in range(b.width):
-            if b.board[i][j] == R.empty:
+    for i in range(self.height):
+        for j in range(self.width):
+            if self.board[i][j] == R.empty:
                 p = (i, j)
 
             # 注意，防一手对面冲四
             # 所以不管谁能连成五，先防一下
-            if b.oppScore[p[0]][p[1]] >= score['FIVE']:
-                b.score[p] = score['FIVE']
+            if self.oppScore[p[0]][p[1]] >= score['FIVE']:
+                self.score[p] = score['FIVE']
                 if player == R.AI:
-                    b.score[p] *= -1
+                    self.score[p] *= -1
                     fives.append(p)
-            elif b.AIScore[p[0]][p[1]] >= score['FIVE']:
-                b.score[p] = score['FIVE']
+            elif self.AIScore[p[0]][p[1]] >= score['FIVE']:
+                self.score[p] = score['FIVE']
                 if player == R.opp:
-                    b.score[p] *= -1
+                    self.score[p] *= -1
                     fives.append(p)
             else:
                 if not lastMaxPoint or (i == lastMaxPoint[0] or j == lastMaxPoint[1] or \
                                         (np.abs(i - lastMaxPoint[0]) == np.abs(j - lastMaxPoint[1]))):
-                    s = b.AIScore[p[0]][p[1]] if player == R.AI else b.oppScore[p[0]][p[1]]
-                    b.score[p] = s
+                    s = self.AIScore[p[0]][p[1]] if player == R.AI else self.oppScore[p[0]][p[1]]
+                    self.score[p] = s
                     if s >= score_:
                         result.append(p)
     # 能连五，则直接返回
     # 但是注意不要碰到连五就返回，而是把所有连五的点都考虑一遍，不然可能出现自己能连却防守别人的问题
-
-
     if fives:
         return fives
     # 注意对结果进行排序
-    result.sort(key=lambda x: b.score[x], reverse=True)
+    result.sort(key=lambda x: self.score[x], reverse=True)
     return result
 
 
 # MIN层
 # 找到所有比目标分数大的位置
 # 这是MIN层，所以己方分数要变成负数
-def findMin(b, player, score_):
+def findMin(self, player, score_):
     result = []
     fives = []
     fours = []
     blockedfours = []
-    for i in range(b.height):
-        for j in range(b.width):
-            if b.board[i][j] == R.empty:
+    for i in range(self.height):
+        for j in range(self.width):
+            if self.board[i][j] == R.empty:
                 p = (i, j)
 
-                s1 = b.AIScore[p] if player == R.AI else b.oppScore[p]
-                s2 = b.oppScore[p] if player == R.AI else b.AIScore[p]
+                s1 = self.AIScore[p] if player == R.AI else self.oppScore[p]
+                s2 = self.oppScore[p] if player == R.AI else self.AIScore[p]
                 if s1 >= score['FIVE']:
-                    b.score[p] = -s1
+                    self.score[p] = -s1
                     return [p]
                 if s2 >= score['FIVE']:
-                    b.score[p] = s2
+                    self.score[p] = s2
                     fives.append(p)
                     continue
                 if s1 >= score['FOUR']:
-                    b.score[p] = -s1
+                    self.score[p] = -s1
                     fours.insert(0, p)
                     continue
                 if s2 >= score['FOUR']:
-                    b.score[p] = s2
+                    self.score[p] = s2
                     fours.append(p)
                     continue
                 if s1 >= score['BLOCKED_FOUR']:
-                    b.score[p] = -s1
+                    self.score[p] = -s1
                     blockedfours.insert(0, p)
                     continue
                 if s2 >= score['BLOCKED_FOUR']:
-                    b.score[p] = s2
+                    self.score[p] = s2
                     blockedfours.append(p)
                     continue
                 if s1 >= score_ or s2 <= score_:
                     p = (i, j)
-                    b.score[p] = s1
+                    self.score[p] = s1
                     result.append(p)
 
     if fives:
@@ -143,19 +130,19 @@ def findMin(b, player, score_):
     # 注意对结果进行排序
     # 因为 fours 可能不存在，这时候不要忽略了 blockedfours
     result = blockedfours + result
-    result.sort(key=lambda x: np.abs(b.score[x]), reverse=True)
+    result.sort(key=lambda x: np.abs(self.score[x]), reverse=True)
 
     return result
 
 
-def get_max(b, player, deep, totalDeep):
+def get_max(self, player, deep, totalDeep):
     debugNodeCount += 1
     global lastMaxPoint
     if deep <= 1:
         return False
 
-    points = findMax(b, player, MAX_SCORE)
-    if points and b.score[points[0]] >= score['FOUR']:
+    points = findMax(self, player, MAX_SCORE)
+    if points and self.score[points[0]] >= score['FOUR']:
         # 为了减少一层搜索，活四就行了
         return [points[0]]
     if len(points) == 0:
@@ -163,13 +150,13 @@ def get_max(b, player, deep, totalDeep):
 
     for i in range(len(points)):
         p = points[i]
-        b.put(p, player)
+        self.put(p, player)
         # 如果是防守对面的冲四，那么不用记下来
-        if not b.score[p] <= -score['FIVE']:
+        if not self.score[p] <= -score['FIVE']:
             lastMaxPoint = p
 
-        m = get_min(b, R.get_opponent(player), deep - 1)
-        b.remove(p)
+        m = get_min(self, R.get_opponent(player), deep - 1)
+        self.remove(p)
         if m:
             #
             m.insert(0, p)
@@ -181,10 +168,10 @@ def get_max(b, player, deep, totalDeep):
 
 
 # 只要有一种方式能防守住，就可以了
-def get_min(b, player, deep):
+def get_min(self, player, deep):
     # debugNodeCount += 1
     global lastMinPoint
-    w = b.win()
+    w = self.win()
 
     if w == player:
         return False
@@ -192,8 +179,8 @@ def get_min(b, player, deep):
         return True
     if deep <= 1:
         return False
-    points = findMin(b, player, MIN_SCORE)
-    if points and -1 * b.score[points[0]] >= score['FOUR']:
+    points = findMin(self, player, MIN_SCORE)
+    if points and -1 * self.score[points[0]] >= score['FOUR']:
         return False
     if len(points) == 0:
         return False
@@ -201,10 +188,10 @@ def get_min(b, player, deep):
     cands = []
     for i in range(len(points)):
         p = points[i]
-        b.put(p, role)
+        self.put(p, role)
         lastMinPoint = p
-        m = get_max(b, R.get_opponent(player), deep - 1)
-        b.remove(p)
+        m = get_max(self, R.get_opponent(player), deep - 1)
+        self.remove(p)
         if m:
             m.insert(0, p)
             cands.append(m)
@@ -212,24 +199,25 @@ def get_min(b, player, deep):
         else:
             # 只要有一种能防守住
             return False
-    result = np.random.choice(cands)
+    _i = np.random.randint(len(cands))
+    result = cands[_i]
     return result
 
 
-def deeping(b, player, deep, totalDeep):
+def deeping(self, player, deep, totalDeep):
     global debugNodeCount, lastMinPoint, lastMaxPoint
     debugNodeCount = 0
     for i in range(1, deep + 1):
         lastMinPoint = None
         lastMaxPoint = None
-        result = get_max(b, player, i, deep)
+        result = get_max(self, player, i, deep)
         if result:
             # 找到一个就行
             break
     return result
 
 
-def vcx(b, player, onlyFour, deep=None):
+def vcx(self, player, onlyFour, deep=None):
     deep = config.vcxDeep if deep is None else deep
     global MAX_SCORE, MIN_SCORE
     if deep <= 0:
@@ -239,9 +227,9 @@ def vcx(b, player, onlyFour, deep=None):
         MAX_SCORE = score['BLOCKED_FOUR']
         MIN_SCORE = score['FIVE']
 
-        result = deeping(b, player, deep, deep)
+        result = deeping(self, player, deep, deep)
         if result:
-            b.score[result] = score['FOUR']
+            self.score[result] = score['FOUR']
             return result
 
         return False
@@ -249,52 +237,52 @@ def vcx(b, player, onlyFour, deep=None):
         # 计算通过 活三 赢的
         MAX_SCORE = score['THREE']
         MIN_SCORE = score['BLOCKED_FOUR']
-        result = deeping(b, player, deep, deep)
+        result = deeping(self, player, deep, deep)
         if result:
             # 连续冲三赢，就等于是双三
-            b.score[result] = score['THREE'] * 2
+            self.score[result] = score['THREE'] * 2
 
         return result
 
     return False
 
 
-def cache(b, result, vcf=False):
+def cache(self, result, vcf=False):
     if not config.cache:
         return
     if vcf:
-        Cache['vcf'][b.zobrist.boardHashing] = result
+        Cache['vcf'][self.zobrist.boardHashing] = result
     else:
-        Cache['vct'][b.zobrist.boardHashing] = result
+        Cache['vct'][self.zobrist.boardHashing] = result
 
 
-def getCache(b, vcf=False):
+def getCache(self, vcf=False):
     if not config.cache:
         return
     if vcf:
-        result = Cache['vcf'].get(b.zobrist.boardHashing, None)
+        result = Cache['vcf'].get(self.zobrist.boardHashing, None)
     else:
-        result = Cache['vct'].get(b.zobrist.boardHashing, None)
+        result = Cache['vct'].get(self.zobrist.boardHashing, None)
     return result
 
 
 # 连续冲四
-def vcf(b, player, deep):
-    c = getCache(b, True)
+def vcf(self, player, deep):
+    c = getCache(self, True)
     if c:
         return c
     else:
-        result = vcx(b, player, deep, True)
-        cache(b, result, True)
+        result = vcx(self, player, deep, True)
+        cache(self, result, True)
         return result
 
 
 # 连续活三
-def vct(b, player, deep):
-    c = getCache(b)
+def vct(self, player, deep):
+    c = getCache(self)
     if c:
         return c
     else:
-        result = vcx(b, player, deep, False)
+        result = vcx(self, player, deep, False)
         cache(result)
         return result

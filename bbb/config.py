@@ -3,9 +3,9 @@ class Config:
     def __init__(self):
         # config
         self.opening = True   # 使用开局库
-        self.searchDeep = 4   # 搜索深度
+        self.searchDeep = 6   # 搜索深度
         self.countLimit = 10  # gen函数返回的节点数量上限，超过之后将会按照分数进行截断
-        self.timeLimit = 100  # 时间限制，秒
+        self.timeLimit = 10   # 时间限制，秒
         self.vcxDeep = 5      # 算杀深度
         self.random = False   # 在分数差不多的时候是不是随机选择一个走
         self.log = False
@@ -18,7 +18,7 @@ class Config:
         self.window = False   # 启用期望窗口，由于用的模糊比较，所以和期望窗口是有冲突的
 
         # 调试
-        self.debug = False    # 打印详细的debug信息
-        self.debug2 = False    # 打印每一个候选点的得分
-        self.debug3 = False   # 打印 MINI-MAX 搜索的具体步骤
+        self.debug = False     # 打印详细的debug信息
+        self.debug2 = True     # 打印每一个候选点的得分
+        self.debug3 = False    # 打印 MINI-MAX 搜索的具体步骤
         self.debugGen = False  # 调试启发式搜索函数s

@@ -1,7 +1,8 @@
+# zs: 我在这里使用了字典进行打分，完全取代了 evaluate-point 的方式
+
 import numpy as np
 from role import role
 from zobrist import Zobrist
-from evaluate import evaluate_position as scorePoint
 from config import Config
 from score import score
 import time
@@ -62,11 +63,20 @@ class Board:
         # 用来作为 self.hasNeighbor 的缓存
         self.neighborCache = {}
 
-        # scoreCache[role][dir][row][column]
-        self.scoreCache = np.zeros([3, 4, self.height, self.width])
+        # point score for player X in direction Y (0, 1, 2, 3) for '--', '|', '\', '/'
+        #     self.pointCache.get(self.patternCache[X][position[0]][position[1]][Y], 0)[X-1]
+        # PAY ATTENTION !!! its ==> [X - 1] <== !!!
+        # self.patternCache has size (3, 20, 20, 4)
+        self.patternCache = [
+            [],
+            [[[0, 0, 0, 0] for _ in range(self.width)] for _ in range(self.height)],
+            [[[0, 0, 0, 0] for _ in range(self.width)] for _ in range(self.height)],
+        ]
+
         self.initScore()
         # TODO: check the usage of this table
         # self.statisticTable = np.zeros([self.height, self.width])
+        # print(self.patternCache[1])
 
     def initScore(self):
         # TODO: check if this is equivalent to the p.item thing
@@ -75,80 +85,169 @@ class Board:
         self.role = {}
         self.scoreHum = {}
         self.scoreCom = {}
-        emptys = []
 
-        # 注意初始化分数的更新顺序！
+        # hhh, 这里用了外接字典，可以直接模式匹配 int => 分数，取代了 evaluate-point 函数
+        with open('pointCache.txt', 'r') as f:
+            a = f.read()
+            self.pointCache = eval(a)
+
+        # 初始化 pattern 分数，主要用于应对靠近边上的点，即天然有墙堵着
+        for i in range(self.height):
+            for j in range(self.width):
+                if 5 <= i < self.height - 5 and 5 <= j < self.width - 5:
+                    continue
+                # --
+                for dd in range(1, 6):
+                    y = j - dd
+                    if y < 0:
+                        self.patternCache[R.AI][i][j][0] += R.oppp * 10 ** (5 - dd)
+                        self.patternCache[R.opp][i][j][0] += R.AIp * 10 ** (5 - dd)
+                        break
+                for dd in range(1, 6):
+                    y = j + dd
+                    if y >= self.width:
+                        self.patternCache[R.AI][i][j][0] += R.oppp * 10 ** (5 - dd)
+                        self.patternCache[R.opp][i][j][0] += R.AIp * 10 ** (5 - dd)
+                        break
+                # |
+                for dd in range(1, 6):
+                    x = i - dd
+                    if x < 0:
+                        self.patternCache[R.AI][i][j][1] += R.oppp * 10 ** (5 - dd)
+                        self.patternCache[R.opp][i][j][1] += R.AIp * 10 ** (5 - dd)
+                        break
+                for dd in range(1, 6):
+                    x = i + dd
+                    if x >= self.height:
+                        self.patternCache[R.AI][i][j][1] += R.oppp * 10 ** (5 - dd)
+                        self.patternCache[R.opp][i][j][1] += R.AIp * 10 ** (5 - dd)
+                        break
+                # \
+                for dd in range(1, 6):
+                    x, y = i - dd, j - dd
+                    if x < 0 or y < 0:
+                        self.patternCache[R.AI][i][j][2] += R.oppp * 10 ** (5 - dd)
+                        self.patternCache[R.opp][i][j][2] += R.AIp * 10 ** (5 - dd)
+                        break
+                for dd in range(1, 6):
+                    x, y = i + dd, j + dd
+                    if x >= self.height or y >= self.width:
+                        self.patternCache[R.AI][i][j][2] += R.oppp * 10 ** (5 - dd)
+                        self.patternCache[R.opp][i][j][2] += R.AIp * 10 ** (5 - dd)
+                        break
+                # /
+                for dd in range(1, 6):
+                    x, y = i - dd, j + dd
+                    if x < 0 or y >= self.width:
+                        self.patternCache[R.AI][i][j][3] += R.oppp * 10 ** (5 - dd)
+                        self.patternCache[R.opp][i][j][3] += R.AIp * 10 ** (5 - dd)
+                        break
+                for dd in range(1, 6):
+                    x, y = i + dd, j - dd
+                    if x >= self.height or y < 0:
+                        self.patternCache[R.AI][i][j][3] += R.oppp * 10 ** (5 - dd)
+                        self.patternCache[R.opp][i][j][3] += R.AIp * 10 ** (5 - dd)
+                        break
+
+        # 注意初始化分数的更新顺序！（hhh, 好像无所谓了）
         for i in range(self.height):
             for j in range(self.width):
                 # get score for both players
-                if self.board[i, j] == R.empty:
-                    if self.hasNeighbor((i, j), 1, 1) or self.hasNeighbor((i, j), 2, 2):
-                        emptys.append((i, j))
-                else:
+                if self.board[i, j] != R.empty:
                     self.updateScore((i, j))
                     self.steps.append((i, j))
-        for p in emptys:
-            self.AIScore[p] = scorePoint(self, p, R.AI)
-            self.oppScore[p] = scorePoint(self, p, R.opp)
 
     # 只更新一个点附近的分数
     # 参见 evaluate 中的代码，为了优化性能，在更新分数的时候可以指定只更新某一个方向的分数
-    def updateScore(self, position):
-        def update(position, direction):
-            role_ = self.board[position]
-            if role_ != R.get_opponent(R.AI):
-                AIS = scorePoint(self, position, R.AI, direction)
-                self.AIScore[position] = AIS
-                # print(AIS, '----')
-                # self.statisticTable[position] += AIS
-            else:
-                self.AIScore[position] = 0
-
-            if role_ != R.get_opponent(R.opp):
-                oppS = scorePoint(self, position, R.opp, direction)
-                self.oppScore[position] = oppS
-                # self.statisticTable[position] += oppS
-            else:
-                self.oppScore[position] = 0
-
+    def updateScore(self, position, remove=False):
+        # 更新 pattern, 再更新分数
+        if_remove = -1 if remove else 1
         radius = 6
+        player = self.board[position[0]][position[1]]
+        player = R.oppp if player == 2 else player * R.AIp
+        updatedPositions = []
         # update no matter empty or not
         # --
-        for i in range(-radius, radius):
-            x, y = position[0], position[1] + i
+        for dd in range(1, radius):
+            x, y = position[0], position[1] - dd
             if y < 0:
-                continue
-            elif y >= self.size:
                 break
-            else:
-                update((x, y), 0)
+            self.patternCache[R.AI][x][y][0] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][0] += player * 10 ** (5 - dd) * if_remove
+            updatedPositions.append((x, y))
+        for dd in range(1, radius):
+            x, y = position[0], position[1] + dd
+            if y >= self.width:
+                break
+            self.patternCache[R.AI][x][y][0] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][0] += player * 10 ** (5 - dd) * if_remove
+            updatedPositions.append((x, y))
         # |
-        for i in range(-radius, radius):
-            x, y = position[0] + i, position[1]
+        for dd in range(1, radius):
+            x, y = position[0] - dd, position[1]
             if x < 0:
-                continue
-            elif x >= self.size:
                 break
-            else:
-                update((x, y), 1)
+            self.patternCache[R.AI][x][y][1] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][1] += player * 10 ** (5 - dd) * if_remove
+            updatedPositions.append((x, y))
+        for dd in range(1, radius):
+            x, y = position[0] + dd, position[1]
+            if x >= self.height:
+                break
+            self.patternCache[R.AI][x][y][1] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][1] += player * 10 ** (5 - dd) * if_remove
+            updatedPositions.append((x, y))
         # \
-        for i in range(-radius, radius):
-            x, y = position[0] + i, position[1] + i
+        for dd in range(1, radius):
+            x, y = position[0] - dd, position[1] - dd
             if x < 0 or y < 0:
-                continue
-            elif x >= self.size or y >= self.size:
                 break
-            else:
-                update((x, y), 2)
+            self.patternCache[R.AI][x][y][2] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][2] += player * 10 ** (5 - dd) * if_remove
+            updatedPositions.append((x, y))
+        for dd in range(1, radius):
+            x, y = position[0] + dd, position[1] + dd
+            if x >= self.height or y >= self.width:
+                break
+            self.patternCache[R.AI][x][y][2] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][2] += player * 10 ** (5 - dd) * if_remove
+            updatedPositions.append((x, y))
         # /
-        for i in range(-radius, radius):
-            x, y = position[0] + i, position[1] - i
-            if x < 0 or y >= self.size:
-                continue
-            elif x >= self.size or y < 0:
+        for dd in range(1, radius):
+            x, y = position[0] - dd, position[1] + dd
+            if x < 0 or y >= self.width:
                 break
-            else:
-                update((x, y), 3)
+            self.patternCache[R.AI][x][y][3] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][3] += player * 10 ** (5 - dd) * if_remove
+            updatedPositions.append((x, y))
+        for dd in range(1, radius):
+            x, y = position[0] + dd, position[1] - dd
+            if x >= self.height or y < 0:
+                break
+            self.patternCache[R.AI][x][y][3] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][3] += player * 10 ** (5 - dd) * if_remove
+            updatedPositions.append((x, y))
+        # 一次性更新所有需要更新分数的点
+        for p in updatedPositions:
+            self.AIScore[p] = self.scorePoint(p, R.AI)
+            self.oppScore[p] = self.scorePoint(p, R.opp)
+
+    def scorePoint(self, position, player, direction=-1):
+        result = 0
+
+        if direction == -1 or direction == 0:
+            pattern = self.patternCache[player][position[0]][position[1]][0]
+            result += self.pointCache[pattern][player - 1]
+        if direction == -1 or direction == 1:
+            pattern = self.patternCache[player][position[0]][position[1]][1]
+            result += self.pointCache[pattern][player - 1]
+        if direction == -1 or direction == 2:
+            pattern = self.patternCache[player][position[0]][position[1]][2]
+            result += self.pointCache[pattern][player - 1]
+        if direction == -1 or direction == 3:
+            pattern = self.patternCache[player][position[0]][position[1]][3]
+            result += self.pointCache[pattern][player - 1]
+        return result
 
     # get next move
     def put(self, position, player, record):
@@ -176,9 +275,9 @@ class Board:
         if config.debug:
             print(r, 'remove [', position, ']')
         self.zobrist.go(position, r)
-        self.board[position] = R.empty
-        self.updateScore(position)
+        self.updateScore(position, True)
         self.allSteps.pop()
+        self.board[position] = R.empty
 
     # TODO: 悔棋
     def back(self):
@@ -523,34 +622,16 @@ class Board:
     #         return threes + twos + neighbors + nextNeighbors
 
     def hasNeighbor(self, position, distance, count):
-        # this function will check the exact surrounding of the position
-        # return TRUE is there are >= count neighbors
-        # for example: distance = 1
-        #  XXX
-        #  XOX
-        #  XXX
-        # all the 'X's are neighbors of 'O'
+        # hhh, 这里吊了
         # 缓存加速
         if self.neighborCache.get(position, 0) >= distance:
             return True
-        startX = position[0] - distance
-        endX = position[0] + distance
-        startY = position[1] - distance
-        endY = position[1] + distance
-        for i in range(startX, endX + 1):
-            if i < 0 or i >= self.size:
-                continue
-            for j in range(startY, endY + 1):
-                if j < 0 or j >= self.size:
-                    continue
-                if i == position[0] and j == position[1]:
-                    continue
-                if self.board[i][j] != R.empty:
-                    count -= 1
-                    if count <= 0:
-                        # TODO: 如果考虑 '悔棋' 的话这样做是不对的
-                        self.neighborCache[position] = distance
-                        return True
+        threshold = count * 10 ** (5 - distance)
+        if sum(self.patternCache[R.AI][position[0]][position[1]]) > threshold or \
+                sum(self.patternCache[R.opp][position[0]][position[1]]) > threshold:
+                # TODO: 如果考虑 '悔棋' 的话这样做是不对的
+                self.neighborCache[position] = distance
+                return True
         return False
 
     def maxmin(self, deep):
@@ -805,3 +886,4 @@ if __name__ == '__main__':
     BB = Board(board)
 
     print(BB.AIScore)
+
