@@ -5,6 +5,7 @@ from role import role
 from zobrist import Zobrist
 from config import Config
 from score import score
+from pointCache import pointCache
 import time
 
 count = 0
@@ -87,9 +88,10 @@ class Board:
         self.scoreCom = {}
 
         # hhh, 这里用了外接字典，可以直接模式匹配 int => 分数，取代了 evaluate-point 函数
-        with open('pointCache.txt', 'r') as f:
-            a = f.read()
-            self.pointCache = eval(a)
+        # with open('pointCache.txt', 'r') as f:
+        #     a = f.read()
+        #     self.pointCache = eval(a)
+        self.pointCache = pointCache
 
         # 初始化 pattern 分数，主要用于应对靠近边上的点，即天然有墙堵着
         for i in range(self.height):
@@ -626,12 +628,12 @@ class Board:
         # 缓存加速
         if self.neighborCache.get(position, 0) >= distance:
             return True
-        threshold = count * 10 ** (5 - distance)
-        if sum(self.patternCache[R.AI][position[0]][position[1]]) > threshold or \
-                sum(self.patternCache[R.opp][position[0]][position[1]]) > threshold:
-                # TODO: 如果考虑 '悔棋' 的话这样做是不对的
-                self.neighborCache[position] = distance
-                return True
+        threshold = count * 10 ** (5 - distance) * R.AIp
+        # TODO: check board nearby
+        if sum(self.patternCache[R.AI][position[0]][position[1]]) > threshold:
+            # TODO: 如果考虑 '悔棋' 的话这样做是不对的
+            self.neighborCache[position] = distance
+            return True
         return False
 
     def maxmin(self, deep):
@@ -885,5 +887,6 @@ if __name__ == '__main__':
 
     BB = Board(board)
 
-    print(BB.AIScore)
+    if BB.hasNeighbor((5, 1), 2, 2):
+        print(1)
 

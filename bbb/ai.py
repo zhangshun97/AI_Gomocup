@@ -27,6 +27,19 @@ class AI:
         p = self.theBoard.maxmin(config.searchDeep)
         return p
 
+    def get_move_vcx(self):
+        if self.start:
+            self.start = False
+            if np.sum(self.theBoard.board):
+                pass
+            else:
+                return self.theBoard.size // 2, self.theBoard.size // 2
+        for deep in range(1, config.vcxDeep):
+            p = vcf(self.theBoard, R.AI, deep)
+            if p:
+                return p
+        return False
+
     def set(self, move, player):
         self.theBoard.put(move, player, True)
 

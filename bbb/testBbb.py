@@ -1,4 +1,5 @@
 from ai import AI
+from score import score
 import time
 
 MAX_BOARD = 20
@@ -7,17 +8,17 @@ board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 # board[1][6] = 1
 # board[1][7] = 2
 # board[2][6] = 1
-board1 = [
-    [0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 2, 1, 0, 0, 2, 2, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+board = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 2, 1, 2, 2, 2, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 2, 2, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1, 2, 2, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -58,17 +59,16 @@ def brain_turn():
     else:
         myAI = AI(board)
         myAI.turnChecked = True
-    myAI.theBoard.startTime = time.clock()
-    t0 = time.clock()
-    move = myAI.get_move()
-    print(time.clock() - t0)
-    myAI.set(move, 1)
 
-    # x, y = input("AI move 'x y':").split()
-    # x, y = int(x), int(y)
-    # myAI.set((x, y), 1)
-    # print("AI score: {}".format(myAI.theBoard.evaluate(1)))
-    # print("Hum score: {}".format(myAI.theBoard.evaluate(2)))
+    myAI.theBoard.startTime = time.clock()
+    move = myAI.get_move()
+    if myAI.theBoard.AIScore[move] >= score["FOUR"] or myAI.theBoard.oppScore[move] >= score["FOUR"]:
+        pass
+    else:
+        move_vcx = myAI.get_move_vcx()
+        if move_vcx:
+            move = move_vcx
+    myAI.set(move, 1)
 
     x, y = move
     pp.do_mymove(x, y)

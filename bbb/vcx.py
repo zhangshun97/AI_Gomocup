@@ -21,6 +21,7 @@ from role import role
 from config import Config
 from score import score
 
+
 R = role()
 config = Config()
 
@@ -29,7 +30,7 @@ Cache = {
     'vcf': {},
 }
 
-debugNodeCount = 0
+# debugNodeCount = 0
 
 MAX_SCORE = score['THREE']
 MIN_SCORE = score['FOUR']
@@ -136,7 +137,7 @@ def findMin(self, player, score_):
 
 
 def get_max(self, player, deep, totalDeep):
-    debugNodeCount += 1
+    # debugNodeCount += 1
     global lastMaxPoint
     if deep <= 1:
         return False
@@ -150,7 +151,7 @@ def get_max(self, player, deep, totalDeep):
 
     for i in range(len(points)):
         p = points[i]
-        self.put(p, player)
+        self.put(p, player,True)
         # 如果是防守对面的冲四，那么不用记下来
         if not self.score[p] <= -score['FIVE']:
             lastMaxPoint = p
@@ -171,7 +172,7 @@ def get_max(self, player, deep, totalDeep):
 def get_min(self, player, deep):
     # debugNodeCount += 1
     global lastMinPoint
-    w = self.win()
+    w = self.win(player)
 
     if w == player:
         return False
@@ -205,8 +206,8 @@ def get_min(self, player, deep):
 
 
 def deeping(self, player, deep, totalDeep):
-    global debugNodeCount, lastMinPoint, lastMaxPoint
-    debugNodeCount = 0
+    global  lastMinPoint, lastMaxPoint #,debugNodeCount
+    # debugNodeCount = 0
     for i in range(1, deep + 1):
         lastMinPoint = None
         lastMaxPoint = None
@@ -228,9 +229,11 @@ def vcx(self, player, onlyFour, deep=None):
         MIN_SCORE = score['FIVE']
 
         result = deeping(self, player, deep, deep)
+        # print(result)
         if result:
-            self.score[result] = score['FOUR']
-            return result
+            assert len(result) == 1
+            self.score[result[0]] = score['FOUR']
+            return result[0]
 
         return False
     else:
@@ -272,7 +275,7 @@ def vcf(self, player, deep):
     if c:
         return c
     else:
-        result = vcx(self, player, deep, True)
+        result = vcx(self, player, True,deep)
         cache(self, result, True)
         return result
 
