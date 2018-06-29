@@ -638,17 +638,33 @@ class Board:
     #         return threes + twos + neighbors + nextNeighbors
 
     def hasNeighbor(self, position, distance, count):
-        # hhh, 这里吊了
-        # 缓存加速
-        if self.neighborCache.get(position, 0) >= distance:
-            return True
-        threshold = count * 10 ** (5 - distance) * R.AIp
-        # TODO: check board nearby
-        if sum(self.patternCache[R.AI][position[0]][position[1]]) > threshold:
-            # TODO: 如果考虑 '悔棋' 的话这样做是不对的
-            self.neighborCache[position] = distance
-            return True
-        return False
+        # 3309    0.013    0.000    0.026    0.000 board.py:545(hasNeighbor) 11 10 3 7
+        #    520517    1.958    0.000    3.835    0.000 board.py:544(hasNeighbor)
+        # this function will check the exact surrounding of the position
+        # return TRUE is there are >= count neighbors
+        # for example: distance = 1
+        #  XXX
+        #  XOX
+        #  XXX
+        # all the 'X's are neighbors of 'O'
+        if self.board[position] == 0:
+            startX = max(position[0] - distance, 0)
+            endX = min(position[0] + distance + 1, self.size)
+            startY = max(position[1] - distance, 0)
+            endY = min(position[1] + distance + 1, self.size)
+            if np.sum(self.board[startX:endX, startY:endY] != 0) >= count:
+                return True
+            else:
+                return False
+        else:
+            startX = max(position[0] - distance, 0)
+            endX = min(position[0] + distance + 1, self.size)
+            startY = max(position[1] - distance, 0)
+            endY = min(position[1] + distance + 1, self.size)
+            if np.sum(self.board[startX:endX, startY:endY] != 0) >= count + 1:
+                return True
+            else:
+                return False
 
     def maxmin(self, deep):
         self.MAX = score['FIVE'] * 10
@@ -916,14 +932,22 @@ if __name__ == '__main__':
     #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     # ]
     board = [
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 2, 2, 0, 0, 0],
-        [0, 0, 0, 1, 1, 1, 2, 0],
-        [0, 0, 1, 2, 2, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
 
     BB = Board(board)
