@@ -15,6 +15,7 @@ class AI:
         self.theBoard = Board(board)
         self.turnChecked = False  # 用来对应非空开局，确定先后手
         self.start = True
+        self.searchDeep = config.searchDeep_white
 
     def get_move(self):
         if self.start:
@@ -24,7 +25,7 @@ class AI:
             else:
                 return self.theBoard.size // 2, self.theBoard.size // 2
 
-        p = self.theBoard.maxmin(config.searchDeep)
+        p = self.theBoard.maxmin(self.searchDeep)
         return p
 
     def get_move_vcx(self):
@@ -51,3 +52,11 @@ class AI:
                     # which means the opponent takes move (x, y)
                     return x, y
         return 0
+
+    def white_or_black(self):
+        c = 0
+        for x in range(self.theBoard.height):  # |
+            for y in range(self.theBoard.width):  # \
+                if self.theBoard.board[x][y] != R.empty:
+                    c += 1
+        return (c + 1) % 2  # True for black

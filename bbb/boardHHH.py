@@ -6,7 +6,6 @@ from zobrist import Zobrist
 from config import Config
 from score import score
 from pointCache import pointCache
-from vcx import vcf
 import time
 
 count = 0
@@ -79,6 +78,9 @@ class Board:
         # TODO: check the usage of this table
         # self.statisticTable = np.zeros([self.height, self.width])
         # print(self.patternCache[1])
+
+        # LDH niu pi
+        self.attackRate = 0.9
 
     def initScore(self):
         # TODO: check if this is equivalent to the p.item thing
@@ -335,7 +337,7 @@ class Board:
         self.oppMaxScore = fixScore(self.oppMaxScore)
         # TODO: check if 1/-1 is needed
         # result = (1 if player == R.AI else -1) * (self.AIMaxScore - self.oppMaxScore)
-        result = self.AIMaxScore - self.oppMaxScore
+        result = self.AIMaxScore - self.oppMaxScore * self.attackRate
 
         return result
 
@@ -696,6 +698,8 @@ class Board:
                     print('Points left: {}'.format(points[i:]))
                 break
             # 尝试下一个子
+            if config.debug3:
+                print("ROOT ===> AI takes : {} <=== ROOT".format(p))
             self.put(p, R.AI, True)
             # print("piint {}: {}".format(p, self.AIScore[p]))
             # 找最大值
@@ -718,15 +722,17 @@ class Board:
 
     def get_min(self, player, deep, alpha, beta):
         # 重点来了，评价函数，这个函数返回的是对当前局势的估分
-        if config.debug:
-            print('MIN====== {} ======'.format(player))
-            # print(self.board)
 
         if deep <= 0:
             r = self.evaluate(player)
-            if config.debug:
-                print('MIN====== {} ======'.format(r))
+            if config.debug3:
+                print('MIN Score ====== {} ======'.format(r))
+                print()
             return r
+
+        if config.debug3:
+            print('MIN====== {} ======'.format(player))
+            # print(self.board)
 
         v = self.MAX
         points = self.gen(player, starSpread=True)
@@ -736,6 +742,8 @@ class Board:
 
         for i in range(len(points)):
             p = points[i]
+            if config.debug3:
+                print("OPP takes : {}".format(p))
             if self.win(player, p):
                 return self.MIN
             self.put(p, player, True)
@@ -750,15 +758,17 @@ class Board:
         return v
 
     def get_max(self, player, deep, alpha, beta):
-        if config.debug:
-            print('MAX====== {} ======'.format(player))
-            print(self.board)
 
         if deep <= 0:
             r = self.evaluate(player)
-            if config.debug:
-                print('MAX====== {} ======'.format(r))
+            if config.debug3:
+                print('MAX Score ====== {} ======'.format(r))
+                print()
             return r
+
+        if config.debug3:
+            print('MAX====== {} ======'.format(player))
+            # print(self.board)
 
         v = self.MIN
         points = self.gen(player, starSpread=True)
@@ -767,6 +777,8 @@ class Board:
             print('1 ===> ', points)
         for i in range(len(points)):
             p = points[i]
+            if config.debug3:
+                print("AI takes : {}".format(p))
             if self.win(player, p):
                 return self.MAX
             self.put(p, player, True)
@@ -931,6 +943,25 @@ if __name__ == '__main__':
     #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     # ]
+    # board = [
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 1, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    # ]
+    ##### evaluate problem
     board = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -940,17 +971,17 @@ if __name__ == '__main__':
         [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
 
     BB = Board(board)
-    print(BB.AIScore)
+    print(BB.evaluate())
     # vcf(BB, 1, 10)
 

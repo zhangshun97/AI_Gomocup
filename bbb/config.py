@@ -3,7 +3,8 @@ class Config:
     def __init__(self):
         # config
         self.opening = True   # 使用开局库
-        self.searchDeep = 4   # 搜索深度
+        self.searchDeep_black = 4   # 搜索深度
+        self.searchDeep_white = 5  # 搜索深度
         self.countLimit = 10  # gen函数返回的节点数量上限，超过之后将会按照分数进行截断
         self.timeLimit = 10   # 时间限制，秒
         self.vcxDeep = 15      # 算杀深度
