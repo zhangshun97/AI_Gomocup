@@ -35,7 +35,7 @@ board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 #       [0, 0, 0, 0, 0, 0, 0, 0],
 #       [0, 0, 0, 0, 0, 0, 0, 0]
 #     ]
-board1 = [
+board = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -91,8 +91,14 @@ def brain_turn():
             myAI.searchDeep = config.searchDeep_black
         else:
             myAI.searchDeep = config.searchDeep_white
+        myAI.searchDeep_ = myAI.searchDeep
         myAI.turnChecked = True
-
+    
+    if myAI.turnChecked and len(myAI.theBoard.allSteps) <= 4:
+        myAI.searchDeep = myAI.searchDeep_ - 2
+    else:
+        myAI.searchDeep = myAI.searchDeep_
+    print(myAI.searchDeep, myAI.theBoard.allSteps)
     myAI.theBoard.startTime = time.clock()
     move = myAI.get_move()
 

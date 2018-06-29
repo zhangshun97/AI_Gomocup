@@ -16,6 +16,7 @@ class AI:
         self.turnChecked = False  # 用来对应非空开局，确定先后手
         self.start = True
         self.searchDeep = config.searchDeep_white
+        self.searchDeep_ = config.searchDeep_white
 
     def get_move(self):
         if self.start:

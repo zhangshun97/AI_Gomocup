@@ -160,7 +160,7 @@ class Board:
                 # get score for both players
                 if self.board[i, j] != R.empty:
                     self.updateScore((i, j))
-                    self.steps.append((i, j))
+                    self.allSteps.append((i, j))
 
     # 只更新一个点附近的分数
     # 参见 evaluate 中的代码，为了优化性能，在更新分数的时候可以指定只更新某一个方向的分数
@@ -274,7 +274,7 @@ class Board:
         self.board[position] = player
         self.zobrist.go(position, player)
         if record:
-            self.steps.append(position)
+            # self.steps.append(position)
             self.updateScore(position)
             self.allSteps.append(position)
             # print(position, '=====', self.oppScore[position])
