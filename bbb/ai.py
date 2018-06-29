@@ -25,7 +25,7 @@ class AI:
             else:
                 return self.theBoard.size // 2, self.theBoard.size // 2
 
-        p = self.theBoard.maxmin(self.searchDeep)
+        p = self.theBoard.negamax(self.searchDeep)
         return p
 
     def get_move_vcx(self):

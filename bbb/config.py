@@ -24,3 +24,4 @@ class Config:
         self.debug3 = False    # 打印 MINI-MAX 搜索的具体步骤
         self.debugGen = False  # 调试启发式搜索函数
         self.debugVCX = False   # 算杀debug
+        self.debugAB = False    # 重构 alpha-beta MINIMAX 搜索的信息

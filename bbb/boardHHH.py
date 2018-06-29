@@ -668,6 +668,111 @@ class Board:
             else:
                 return False
 
+    def get_value(self, player, position, deep, alpha, beta):
+        # 这个函数得到的值应该是 player 下了这个点之后的 reward
+        # 所以这里还没下
+        # 先看看能不能 win
+        if self.win(player, position):
+            if config.debugAB:
+                print("win found!")
+                print(self.board)
+            return self.MAX if player == R.AI else self.MIN
+
+        # 然后 player 下这个子
+        self.put(position, player, True)
+        if config.debugAB:
+            print("{} takes : {}".format(player, position))
+
+        # if is leaf node
+        if deep <= 0:
+            r = self.evaluate()
+            if config.debugAB:
+                print("Score -------> {}".format(r))
+            # 记得撤掉之前 player 下的子
+            self.remove(position)
+            return r
+
+        result = 0
+        # MIN
+        if player == R.AI:
+            result = self.min_value(R.opp, deep - 1, alpha, beta)
+        # MAX
+        if player == R.opp:
+            result = self.max_value(R.AI, deep - 1, alpha, beta)
+
+        # 记得撤掉之前 player 下的子
+        self.remove(position)
+        # 然后返回
+        return result
+
+    def max_value(self, player, deep, alpha, beta):
+        v = self.MIN
+        # get successors
+        successors = self.gen(player, starSpread=True)
+        if config.debugAB:
+            print("MAX node successors: {}".format(successors))
+        for point in successors:
+            v = max(v, self.get_value(player, point, deep - 1, alpha, beta))
+            # pruning
+            if v >= beta:
+                return v
+            alpha = max(v, alpha)
+        return v
+
+    def min_value(self, player, deep, alpha, beta):
+        v = self.MAX
+        # get successors
+        successors = self.gen(player, starSpread=True)
+        if config.debugAB:
+            print("MIN node successors: {}".format(successors))
+        for point in successors:
+            v = min(v, self.get_value(player, point, deep - 1, alpha, beta))
+            # pruning
+            if v <= alpha:
+                return v
+            alpha = min(v, beta)
+        return v
+
+    def negamax(self, deep):
+        self.MIN = -1 * score['FIVE'] * 10
+        self.MAX = score['FIVE'] * 10
+        bestPoints = []
+        best = self.MIN
+
+        # 生成可选点
+        candidates = self.gen(R.AI, starSpread=True)
+        if config.debug2:
+            print(" =================> Candidates: {}".format(candidates))
+
+        if len(candidates) == 1:
+            return candidates[0]
+        for i in range(len(candidates)):
+            point = candidates[i]
+            if config.debug:
+                print('++++++++++++++++++ {} ++++++++++++++++++'.format(point))
+                print('time: {}'.format(time.clock() - self.startTime))
+            # 超时判定并且截断搜索
+            if time.clock() - self.startTime > config.timeLimit:
+                if config.debug:
+                    print('TIME OUT!')
+                    print('Points left: {}'.format(candidates[i:]))
+                break
+            v = self.get_value(R.AI, point, deep, self.MIN, self.MAX)
+            if config.debug2:
+                print("{} , score {}".format(point, v))
+            # 如果比之前的一个好，则把当前位子加入待选位子
+            if v == best:
+                bestPoints.append(point)
+            if v > best:
+                best = v
+                bestPoints = [point]
+        if config.debug2:
+            print(bestPoints)
+        result_index = np.random.randint(len(bestPoints))
+        result = bestPoints[result_index]
+        return result
+
+
     def maxmin(self, deep):
         self.MAX = score['FIVE'] * 10
         self.MIN = - score['FIVE'] * 10
