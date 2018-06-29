@@ -4,9 +4,7 @@ class role:
         self.empty = 0
         self.AI = 1
         self.opp = 2
-        # self.AIp = 3
-        # self.oppp = 4
-        self.mm = 10
+        self.mm = 3
 
     def get_opponent(self, r):
         if not r:

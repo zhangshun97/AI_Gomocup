@@ -302,8 +302,8 @@ board1 = [
 ]
 a = [0, 1, 2]
 pointCache = {}
-hhh = False
-mm = 10
+hhh = True
+mm = 3
 if hhh:
     for i1 in a:
         for i2 in a:
@@ -341,7 +341,7 @@ if hhh:
                                             #     print(board1)
                                             #     print(point_1, point_2)
                                             # if tuple(board1[0]) == (0, 0, 2, 0, 0, 0, 1, 1, 1, 2, 0):
-                                            if pattern == 13245:
+                                            if point_1 == 0:
                                                 print(board1[0], point_1)
                                             pointCache[pattern] = (point_1, point_2)
                                             #####
