@@ -80,7 +80,7 @@ class Board:
         # print(self.patternCache[1])
 
         # LDH niu pi
-        self.attackRate = 0.9
+        self.attackRate = 1.0
 
     def initScore(self):
         # TODO: check if this is equivalent to the p.item thing
@@ -706,9 +706,9 @@ class Board:
             v = self.get_min(R.opp, deep - 1, self.MIN, self.MAX)
             # 记得把尝试下的子移除
             self.remove(p)
-            # 如果跟之前的一个好，则把当前位子加入待选位子
             if config.debug2:
                 print("{} , score {}".format(p, v))
+            # 如果比之前的一个好，则把当前位子加入待选位子
             if v == best:
                 bestPoints.append(p)
             if v > best:

@@ -91,7 +91,6 @@ def brain_turn():
             myAI.searchDeep = config.searchDeep_black
         else:
             myAI.searchDeep = config.searchDeep_white
-        print(myAI.searchDeep)
         myAI.turnChecked = True
 
     myAI.theBoard.startTime = time.clock()
