@@ -21,4 +21,5 @@ class Config:
         self.debug = False     # 打印详细的debug信息
         self.debug2 = True     # 打印每一个候选点的得分
         self.debug3 = False    # 打印 MINI-MAX 搜索的具体步骤
-        self.debugGen = False  # 调试启发式搜索函数s
+        self.debugGen = False  # 调试启发式搜索函数
+        self.debugVCX = True   # 算杀debug

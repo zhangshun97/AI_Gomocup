@@ -6,6 +6,7 @@ from zobrist import Zobrist
 from config import Config
 from score import score
 from pointCache import pointCache
+from vcx import vcf
 import time
 
 count = 0
@@ -102,53 +103,53 @@ class Board:
                 for dd in range(1, 6):
                     y = j - dd
                     if y < 0:
-                        self.patternCache[R.AI][i][j][0] += R.oppp * 10 ** (5 - dd)
-                        self.patternCache[R.opp][i][j][0] += R.AIp * 10 ** (5 - dd)
+                        self.patternCache[R.AI][i][j][0] += R.opp * R.mm ** (5 + dd)
+                        self.patternCache[R.opp][i][j][0] += R.AI * R.mm ** (5 + dd)
                         break
                 for dd in range(1, 6):
                     y = j + dd
                     if y >= self.width:
-                        self.patternCache[R.AI][i][j][0] += R.oppp * 10 ** (5 - dd)
-                        self.patternCache[R.opp][i][j][0] += R.AIp * 10 ** (5 - dd)
+                        self.patternCache[R.AI][i][j][0] += R.opp * R.mm ** (5 - dd)
+                        self.patternCache[R.opp][i][j][0] += R.AI * R.mm ** (5 - dd)
                         break
                 # |
                 for dd in range(1, 6):
                     x = i - dd
                     if x < 0:
-                        self.patternCache[R.AI][i][j][1] += R.oppp * 10 ** (5 - dd)
-                        self.patternCache[R.opp][i][j][1] += R.AIp * 10 ** (5 - dd)
+                        self.patternCache[R.AI][i][j][1] += R.opp * R.mm ** (5 + dd)
+                        self.patternCache[R.opp][i][j][1] += R.AI * R.mm ** (5 + dd)
                         break
                 for dd in range(1, 6):
                     x = i + dd
                     if x >= self.height:
-                        self.patternCache[R.AI][i][j][1] += R.oppp * 10 ** (5 - dd)
-                        self.patternCache[R.opp][i][j][1] += R.AIp * 10 ** (5 - dd)
+                        self.patternCache[R.AI][i][j][1] += R.opp * R.mm ** (5 - dd)
+                        self.patternCache[R.opp][i][j][1] += R.AI * R.mm ** (5 - dd)
                         break
                 # \
                 for dd in range(1, 6):
                     x, y = i - dd, j - dd
                     if x < 0 or y < 0:
-                        self.patternCache[R.AI][i][j][2] += R.oppp * 10 ** (5 - dd)
-                        self.patternCache[R.opp][i][j][2] += R.AIp * 10 ** (5 - dd)
+                        self.patternCache[R.AI][i][j][2] += R.opp * R.mm ** (5 + dd)
+                        self.patternCache[R.opp][i][j][2] += R.AI * R.mm ** (5 + dd)
                         break
                 for dd in range(1, 6):
                     x, y = i + dd, j + dd
                     if x >= self.height or y >= self.width:
-                        self.patternCache[R.AI][i][j][2] += R.oppp * 10 ** (5 - dd)
-                        self.patternCache[R.opp][i][j][2] += R.AIp * 10 ** (5 - dd)
+                        self.patternCache[R.AI][i][j][2] += R.opp * R.mm ** (5 - dd)
+                        self.patternCache[R.opp][i][j][2] += R.AI * R.mm ** (5 - dd)
                         break
                 # /
                 for dd in range(1, 6):
                     x, y = i - dd, j + dd
                     if x < 0 or y >= self.width:
-                        self.patternCache[R.AI][i][j][3] += R.oppp * 10 ** (5 - dd)
-                        self.patternCache[R.opp][i][j][3] += R.AIp * 10 ** (5 - dd)
+                        self.patternCache[R.AI][i][j][3] += R.opp * R.mm ** (5 + dd)
+                        self.patternCache[R.opp][i][j][3] += R.AI * R.mm ** (5 + dd)
                         break
                 for dd in range(1, 6):
                     x, y = i + dd, j - dd
                     if x >= self.height or y < 0:
-                        self.patternCache[R.AI][i][j][3] += R.oppp * 10 ** (5 - dd)
-                        self.patternCache[R.opp][i][j][3] += R.AIp * 10 ** (5 - dd)
+                        self.patternCache[R.AI][i][j][3] += R.opp * R.mm ** (5 - dd)
+                        self.patternCache[R.opp][i][j][3] += R.AI * R.mm ** (5 - dd)
                         break
 
         # 注意初始化分数的更新顺序！（hhh, 好像无所谓了）
@@ -171,7 +172,6 @@ class Board:
         #     self.oppScore[position[0]][position[1]] = 0
         # elif player == R.opp:
         #     self.AIScore[position[0]][position[1]] = 0
-        player = R.oppp if player == 2 else player * R.AIp
         updatedPositions = []
         # update no matter empty or not
         # --
@@ -179,65 +179,74 @@ class Board:
             x, y = position[0], position[1] - dd
             if y < 0:
                 break
-            self.patternCache[R.AI][x][y][0] += player * 10 ** (5 - dd) * if_remove
-            self.patternCache[R.opp][x][y][0] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.AI][x][y][0] += player * R.mm ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][0] += player * R.mm ** (5 - dd) * if_remove
             updatedPositions.append((x, y))
         for dd in range(1, radius):
             x, y = position[0], position[1] + dd
             if y >= self.width:
                 break
-            self.patternCache[R.AI][x][y][0] += player * 10 ** (5 - dd) * if_remove
-            self.patternCache[R.opp][x][y][0] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.AI][x][y][0] += player * R.mm ** (5 + dd) * if_remove
+            self.patternCache[R.opp][x][y][0] += player * R.mm ** (5 + dd) * if_remove
             updatedPositions.append((x, y))
         # |
         for dd in range(0, radius):
             x, y = position[0] - dd, position[1]
             if x < 0:
                 break
-            self.patternCache[R.AI][x][y][1] += player * 10 ** (5 - dd) * if_remove
-            self.patternCache[R.opp][x][y][1] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.AI][x][y][1] += player * R.mm ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][1] += player * R.mm ** (5 - dd) * if_remove
             updatedPositions.append((x, y))
         for dd in range(1, radius):
             x, y = position[0] + dd, position[1]
             if x >= self.height:
                 break
-            self.patternCache[R.AI][x][y][1] += player * 10 ** (5 - dd) * if_remove
-            self.patternCache[R.opp][x][y][1] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.AI][x][y][1] += player * R.mm ** (5 + dd) * if_remove
+            self.patternCache[R.opp][x][y][1] += player * R.mm ** (5 + dd) * if_remove
             updatedPositions.append((x, y))
         # \
         for dd in range(0, radius):
             x, y = position[0] - dd, position[1] - dd
             if x < 0 or y < 0:
                 break
-            self.patternCache[R.AI][x][y][2] += player * 10 ** (5 - dd) * if_remove
-            self.patternCache[R.opp][x][y][2] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.AI][x][y][2] += player * R.mm ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][2] += player * R.mm ** (5 - dd) * if_remove
             updatedPositions.append((x, y))
         for dd in range(1, radius):
             x, y = position[0] + dd, position[1] + dd
             if x >= self.height or y >= self.width:
                 break
-            self.patternCache[R.AI][x][y][2] += player * 10 ** (5 - dd) * if_remove
-            self.patternCache[R.opp][x][y][2] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.AI][x][y][2] += player * R.mm ** (5 + dd) * if_remove
+            self.patternCache[R.opp][x][y][2] += player * R.mm ** (5 + dd) * if_remove
             updatedPositions.append((x, y))
         # /
         for dd in range(0, radius):
             x, y = position[0] - dd, position[1] + dd
             if x < 0 or y >= self.width:
                 break
-            self.patternCache[R.AI][x][y][3] += player * 10 ** (5 - dd) * if_remove
-            self.patternCache[R.opp][x][y][3] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.AI][x][y][3] += player * R.mm ** (5 - dd) * if_remove
+            self.patternCache[R.opp][x][y][3] += player * R.mm ** (5 - dd) * if_remove
             updatedPositions.append((x, y))
         for dd in range(1, radius):
             x, y = position[0] + dd, position[1] - dd
             if x >= self.height or y < 0:
                 break
-            self.patternCache[R.AI][x][y][3] += player * 10 ** (5 - dd) * if_remove
-            self.patternCache[R.opp][x][y][3] += player * 10 ** (5 - dd) * if_remove
+            self.patternCache[R.AI][x][y][3] += player * R.mm ** (5 + dd) * if_remove
+            self.patternCache[R.opp][x][y][3] += player * R.mm ** (5 + dd) * if_remove
             updatedPositions.append((x, y))
         # 一次性更新所有需要更新分数的点
+        # print(position)
+        # print(updatedPositions)
         for p in updatedPositions:
             self.AIScore[p] = self.scorePoint(p, R.AI)
             self.oppScore[p] = self.scorePoint(p, R.opp)
+            # if p == (4, 7):
+            #     print(
+            #         self.patternCache[R.AI][p[0]][p[1]][0],
+            #         self.patternCache[R.AI][p[0]][p[1]][1],
+            #         self.patternCache[R.AI][p[0]][p[1]][2],
+            #         self.patternCache[R.AI][p[0]][p[1]][3],
+            #     )
 
     def scorePoint(self, position, player, direction=-1):
         result = 0
@@ -889,25 +898,35 @@ if __name__ == '__main__':
     #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     # ]
+    # board = [
+    #     [0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 2, 1, 1, 2, 2, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    # ]
     board = [
-        [0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 2, 1, 1, 2, 2, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 2, 2, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 2, 0],
+        [0, 0, 1, 2, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0]
     ]
 
     BB = Board(board)
-
     print(BB.AIScore)
+    # vcf(BB, 1, 10)
 

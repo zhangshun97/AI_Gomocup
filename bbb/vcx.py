@@ -21,7 +21,6 @@ from role import role
 from config import Config
 from score import score
 
-
 R = role()
 config = Config()
 
@@ -47,8 +46,9 @@ def findMax(self, player, score_):
 
     for i in range(self.height):
         for j in range(self.width):
-            if self.board[i][j] == R.empty:
-                p = (i, j)
+            if self.board[i][j] != R.empty:
+                continue
+            p = (i, j)
 
             # 注意，防一手对面冲四
             # 所以不管谁能连成五，先防一下
@@ -69,12 +69,18 @@ def findMax(self, player, score_):
                     self.score[p] = s
                     if s >= score_:
                         result.append(p)
+
+    if config.debugVCX:
+        print("==== FIND MAX ====")
+        print('fives: {}'.format(fives))
     # 能连五，则直接返回
     # 但是注意不要碰到连五就返回，而是把所有连五的点都考虑一遍，不然可能出现自己能连却防守别人的问题
     if fives:
         return fives
     # 注意对结果进行排序
     result.sort(key=lambda x: self.score[x], reverse=True)
+    if config.debugVCX:
+        print('result: {}'.format(result))
     return result
 
 
@@ -117,13 +123,19 @@ def findMin(self, player, score_):
                     blockedfours.append(p)
                     continue
                 if s1 >= score_ or s2 <= score_:
-                    p = (i, j)
                     self.score[p] = s1
                     result.append(p)
-
+    if config.debugVCX:
+        print("==== FIND MIN ====")
+        print('fives: {}'.format(fives))
     if fives:
         return fives
 
+    if config.debugVCX:
+        print(
+            'fous: {}'.format(fours),
+            'blocked fours: {}'.format(blockedfours),
+        )
     # 注意冲四，因为虽然冲四的分比活四低，但是他的防守优先级是和活四一样高的，否则会忽略冲四导致获胜的走法
     if fours:
         return fours + blockedfours
@@ -132,7 +144,8 @@ def findMin(self, player, score_):
     # 因为 fours 可能不存在，这时候不要忽略了 blockedfours
     result = blockedfours + result
     result.sort(key=lambda x: np.abs(self.score[x]), reverse=True)
-
+    if config.debugVCX:
+        print('result: {}'.format(result))
     return result
 
 
@@ -151,7 +164,7 @@ def get_max(self, player, deep, totalDeep):
 
     for i in range(len(points)):
         p = points[i]
-        self.put(p, player,True)
+        self.put(p, player, True)
         # 如果是防守对面的冲四，那么不用记下来
         if not self.score[p] <= -score['FIVE']:
             lastMaxPoint = p
@@ -206,7 +219,8 @@ def get_min(self, player, deep):
 
 
 def deeping(self, player, deep, totalDeep):
-    global  lastMinPoint, lastMaxPoint #,debugNodeCount
+    # 迭代加深算法！
+    global lastMinPoint, lastMaxPoint  # ,debugNodeCount
     # debugNodeCount = 0
     for i in range(1, deep + 1):
         lastMinPoint = None
@@ -227,7 +241,6 @@ def vcx(self, player, onlyFour, deep=None):
         # 计算通过 冲四 赢的
         MAX_SCORE = score['BLOCKED_FOUR']
         MIN_SCORE = score['FIVE']
-
         result = deeping(self, player, deep, deep)
         # print(result)
         if result:
@@ -242,30 +255,29 @@ def vcx(self, player, onlyFour, deep=None):
         MIN_SCORE = score['BLOCKED_FOUR']
         result = deeping(self, player, deep, deep)
         if result:
-            # 连续冲三赢，就等于是双三
-            self.score[result] = score['THREE'] * 2
+            assert len(result) == 1
+            self.score[result[0]] = score['THREE'] * 2
+            return result[0]
 
         return result
-
-    return False
 
 
 def cache(self, result, vcf=False):
     if not config.cache:
         return
     if vcf:
-        Cache['vcf'][self.zobrist.boardHashing] = result
+        Cache['vcf'][self.zobrist.boardHashing[0]] = result
     else:
-        Cache['vct'][self.zobrist.boardHashing] = result
+        Cache['vct'][self.zobrist.boardHashing[0]] = result
 
 
 def getCache(self, vcf=False):
     if not config.cache:
         return
     if vcf:
-        result = Cache['vcf'].get(self.zobrist.boardHashing, None)
+        result = Cache['vcf'].get(self.zobrist.boardHashing[0], None)
     else:
-        result = Cache['vct'].get(self.zobrist.boardHashing, None)
+        result = Cache['vct'].get(self.zobrist.boardHashing[0], None)
     return result
 
 
@@ -275,7 +287,7 @@ def vcf(self, player, deep):
     if c:
         return c
     else:
-        result = vcx(self, player, True,deep)
+        result = vcx(self, player, True, deep)
         cache(self, result, True)
         return result
 
@@ -286,6 +298,6 @@ def vct(self, player, deep):
     if c:
         return c
     else:
-        result = vcx(self, player, deep, False)
+        result = vcx(self, player, False, deep)
         cache(result)
         return result
