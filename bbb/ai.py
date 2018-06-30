@@ -17,6 +17,7 @@ class AI:
         self.start = True
         self.searchDeep = config.searchDeep_white
         self.searchDeep_ = config.searchDeep_white
+        self.if_found_vcx = False
 
     def get_move(self):
         if self.start:

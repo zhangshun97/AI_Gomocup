@@ -20,6 +20,7 @@ import numpy as np
 from role import role
 from config import Config
 from score import score
+import time
 
 R = role()
 config = Config()
@@ -235,6 +236,8 @@ def deeping(self, player, deep, totalDeep):
     global lastMinPoint, lastMaxPoint  # ,debugNodeCount
     # debugNodeCount = 0
     for i in range(1, deep + 1):
+        if time.clock() - self.startTime > 10:
+            return False
         lastMinPoint = None
         lastMaxPoint = None
         result = get_max(self, player, i, deep)

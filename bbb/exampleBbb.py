@@ -98,12 +98,16 @@ def brain_turn():
             myAI.searchDeep = myAI.searchDeep_
     myAI.theBoard.startTime = time.clock()
 
+    if not myAI.if_found_vcx:
+        # 如果之前已经找到，之后就不需要再搜了
+        move = myAI.get_move()
+
     move_vcx = myAI.get_move_vcx()
     if move_vcx:
+        myAI.if_found_vcx = True
         # print("success")
         move = move_vcx
-    else:
-        move = myAI.get_move()
+
     myAI.set(move, 1)
     x, y = move
     pp.do_mymove(x, y)

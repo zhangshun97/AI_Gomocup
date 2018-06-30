@@ -8,9 +8,6 @@ from score import score
 from pointCache import pointCache
 import time
 
-count = 0
-total = 0
-
 R = role()
 config = Config()
 np.set_printoptions(precision=0)
@@ -46,7 +43,7 @@ class Board:
         self.size = self.width
 
         self.scoreCache = np.zeros([2, 4, self.height, self.width])
-        self.evaluateCache = {}
+        # self.evaluateCache = {}
 
         self.steps = []
         self.allSteps = []
@@ -250,21 +247,16 @@ class Board:
             #         self.patternCache[R.AI][p[0]][p[1]][3],
             #     )
 
-    def scorePoint(self, position, player, direction=-1):
+    def scorePoint(self, position, player):
         result = 0
-
-        if direction == -1 or direction == 0:
-            pattern = self.patternCache[player][position[0]][position[1]][0]
-            result += self.pointCache[pattern][player - 1]
-        if direction == -1 or direction == 1:
-            pattern = self.patternCache[player][position[0]][position[1]][1]
-            result += self.pointCache[pattern][player - 1]
-        if direction == -1 or direction == 2:
-            pattern = self.patternCache[player][position[0]][position[1]][2]
-            result += self.pointCache[pattern][player - 1]
-        if direction == -1 or direction == 3:
-            pattern = self.patternCache[player][position[0]][position[1]][3]
-            result += self.pointCache[pattern][player - 1]
+        pattern = self.patternCache[player][position[0]][position[1]][0]
+        result += self.pointCache[pattern][player - 1]
+        pattern = self.patternCache[player][position[0]][position[1]][1]
+        result += self.pointCache[pattern][player - 1]
+        pattern = self.patternCache[player][position[0]][position[1]][2]
+        result += self.pointCache[pattern][player - 1]
+        pattern = self.patternCache[player][position[0]][position[1]][3]
+        result += self.pointCache[pattern][player - 1]
         return result
 
     # get next move
@@ -318,19 +310,14 @@ class Board:
 
     # 棋面估分
     # 这里只算当前分，而不是在空位下一步之后的分
-    def evaluate(self, player=None):
+    def evaluate(self):
+        # 这里默认是在AI的角度评估局面
         # 这里都是用正整数初始化的，所以初始值是0
         self.AIMaxScore = 0
         self.oppMaxScore = 0
 
-        # 遍历出最高分，开销不大
-        for i in range(self.height):
-            for j in range(self.width):
-                if self.board[i, j] == R.AI:
-                    self.AIMaxScore = max(self.AIScore[i, j], self.AIMaxScore)
-                elif self.board[i, j] == R.opp:
-                    self.oppMaxScore = max(self.oppScore[i, j], self.oppMaxScore)
-
+        self.AIMaxScore = np.max(self.AIScore)
+        self.oppMaxScore = np.max(self.oppScore)
         # 有冲四延伸了，不需要专门处理冲四活三
         # 不过这里做了这一步，可以减少电脑胡乱冲四的毛病
         self.AIMaxScore = fixScore(self.AIMaxScore)
@@ -373,7 +360,6 @@ class Board:
         neighbors = []
 
         # 找到双方的最后进攻点
-        global count, total
         lastPoint1 = None
         lastPoint2 = None
 
@@ -412,7 +398,7 @@ class Board:
                     lastPoint2 = self.allSteps[1]
 
             # 根据双方最后的进攻点周围展开搜索
-            if config.debug:
+            if config.debugGen:
                 print("1 attack point: {}, 2 attack point: {}".format(lastPoint1, lastPoint2))
 
             startI = min(lastPoint1[0] - 5, lastPoint2[0] - 5)
@@ -432,7 +418,6 @@ class Board:
                     if len(self.steps) < 6:
                         neighbor = (1, 1)
                     if self.hasNeighbor((i, j), neighbor[0], neighbor[1]):
-
                         scoreOpp = self.oppScore[i][j]
                         self.scoreHum[p] = scoreOpp
                         scoreAI = self.AIScore[i][j]
@@ -446,7 +431,6 @@ class Board:
                         else:
                             self.attack[p] = R.opp  # defend point
 
-                        total += 1
                         # 双星延伸，以提升性能
                         # 思路：每次下的子，只可能是自己进攻，或者防守对面（也就是对面进攻点）
                         # 我们假定任何时候，绝大多数情况下进攻的路线都可以按次序连城一条折线，那么每次每一个子，一定都是在上一个己方棋子的八个方向之一。
@@ -456,7 +440,6 @@ class Board:
                             # 距离必须在5步以内
                             if (np.abs(i - lastPoint1[0]) > 5 or np.abs(j - lastPoint1[1]) > 5) and \
                                     (np.abs(i - lastPoint2[0]) > 5 or np.abs(j - lastPoint2[1]) > 5):
-                                count += 1
                                 continue
                             # 必须在米子方向上
                             if maxScore >= score['FIVE'] or \
@@ -466,38 +449,41 @@ class Board:
                                     np.abs(i - lastPoint2[0]) == np.abs(j - lastPoint2[1]))):
                                 pass
                             else:
-                                count += 1
                                 continue
 
-                        if scoreAI >= score['FIVE']:
-                            # 先看电脑能不能连成 5
-                            return [p]
-                        elif scoreOpp >= score['FIVE']:
-                            # 再看玩家能不能连成 5
-                            # 别急着返回，因为遍历还没完成，说不定电脑自己能成五
-                            fives.append(p)
-                        elif scoreAI >= score['FOUR']:
-                            AIfours.append(p)
-                        elif scoreOpp >= score['FOUR']:
-                            oppfours.append(p)
-                        elif scoreAI >= score['BLOCKED_FOUR']:
-                            AIblockedfours.append(p)
-                        elif scoreOpp >= score['BLOCKED_FOUR']:
-                            oppblockedfours.append(p)
-                        elif scoreAI >= 2 * score['THREE']:  # 能成双三也很强
-                            AItwothrees.append(p)
-                        elif scoreOpp >= 2 * score['THREE']:
-                            opptwothrees.append(p)
-                        elif scoreAI >= score['THREE']:
-                            AIthrees.append(p)
-                        elif scoreOpp >= score['THREE']:
-                            oppthrees.append(p)
-                        elif scoreAI >= score['TWO']:
-                            AItwos.append(p)
-                        elif scoreOpp >= score['TWO']:
-                            opptwos.append(p)
+                        if scoreAI >= scoreOpp:
+                            if scoreAI >= score['FIVE']:
+                                # 先看电脑能不能连成 5
+                                return [p]
+                            elif scoreAI >= score['FOUR']:
+                                AIfours.append(p)
+                            elif scoreAI >= score['BLOCKED_FOUR']:
+                                AIblockedfours.append(p)
+                            elif scoreAI >= 2 * score['THREE']:  # 能成双三也很强
+                                AItwothrees.append(p)
+                            elif scoreAI >= score['THREE']:
+                                AIthrees.append(p)
+                            elif scoreAI >= score['TWO']:
+                                AItwos.append(p)
+                            else:
+                                neighbors.append(p)
                         else:
-                            neighbors.append(p)
+                            if scoreOpp >= score['FIVE']:
+                                # 再看玩家能不能连成 5
+                                # 别急着返回，因为遍历还没完成，说不定电脑自己能成五
+                                fives.append(p)
+                            elif scoreOpp >= score['FOUR']:
+                                oppfours.append(p)
+                            elif scoreOpp >= score['BLOCKED_FOUR']:
+                                oppblockedfours.append(p)
+                            elif scoreOpp >= 2 * score['THREE']:
+                                opptwothrees.append(p)
+                            elif scoreOpp >= score['THREE']:
+                                oppthrees.append(p)
+                            elif scoreOpp >= score['TWO']:
+                                opptwos.append(p)
+                            else:
+                                neighbors.append(p)
         if config.debugGen:
             print(
                 'fives', fives, '\n',
@@ -546,6 +532,10 @@ class Board:
                      + AIblockedfours \
                      + oppthrees \
                      + AIthrees
+
+        # TODO: 限制长度，讲道理来说这里最好是能全搜
+        if len(result) > config.countLimit:
+            result = result[:config.countLimit]
 
         # 双三很特殊，因为能形成双三的不一定比一个活三强
         if AItwothrees or opptwothrees:
@@ -743,14 +733,15 @@ class Board:
         bestPoints = []
         best = self.MIN
 
-        # 生成可选点
-        candidates = self.gen(R.AI, starSpread=True)
+        # 生成可选点，最开始的时候不要开启 star 搜索
+        candidates = self.gen(R.AI, starSpread=False)
         if config.debug2:
             print(" =================> Candidates: {}".format(candidates))
 
         if len(candidates) == 1:
             return candidates[0]
-        for i in range(len(candidates)):
+        cand_len = len(candidates)
+        for i in range(cand_len):
             point = candidates[i]
             if config.debug:
                 print('++++++++++++++++++ {} ++++++++++++++++++'.format(point))
@@ -777,7 +768,6 @@ class Board:
         result_index = np.random.randint(len(bestPoints))
         result = bestPoints[result_index]
         return result
-
 
     def maxmin(self, deep):
         self.MAX = score['FIVE'] * 10
@@ -835,7 +825,7 @@ class Board:
         # 重点来了，评价函数，这个函数返回的是对当前局势的估分
 
         if deep <= 0:
-            r = self.evaluate(player)
+            r = self.evaluate()
             if config.debug3:
                 print('MIN Score ====== {} ======'.format(r))
                 print()
@@ -871,7 +861,7 @@ class Board:
     def get_max(self, player, deep, alpha, beta):
 
         if deep <= 0:
-            r = self.evaluate(player)
+            r = self.evaluate()
             if config.debug3:
                 print('MAX Score ====== {} ======'.format(r))
                 print()
@@ -905,204 +895,141 @@ class Board:
 
     def win(self, player, position=None):
         if position is None:
-            for i in range(self.height):
-                for j in range(self.width):
-                    t = self.board[i][j]
-                    if t == R.empty:
-                        r = self.isFive((i, j), player)
-                        if r:
-                            return player
+            if player == R.AI:
+                five_ = np.max(self.AIScore)
+            elif player == R.opp:
+                five_ = np.max(self.oppScore)
+            if five_ >= score['FIVE']:
+                return player
         else:
-            r = self.isFive(position, player)
-            if r:
+            if player == R.AI:
+                r = self.AIScore[position[0]][position[1]]
+            elif player == R.opp:
+                r = self.oppScore[position[0]][position[1]]
+
+            if r >= score['FIVE']:
                 return player
 
         return False
 
     # 判断 player 下了这个点之后有没有成 5
-    def isFive(self, p, player):
-        size = self.size
-        count = 1
-
-        def reset():
-            nonlocal count
-            count = 1
-
-        # --
-        for i in range(p[1] + 1, size + 1):
-            if i >= size:
-                break
-            t = self.board[p[0]][i]
-            if t != player:
-                break
-            count += 1
-
-        for i in range(p[1] - 1, -1, -1):
-            if i < 0:
-                break
-            t = self.board[p[0]][i]
-            if t != player:
-                break
-            count += 1
-
-        if count >= 5:
-            return True
-
-        # |
-        reset()
-        for i in range(p[0] + 1, size + 1):
-            if i >= size:
-                break
-            t = self.board[i][p[1]]
-            if t != player:
-                break
-            count += 1
-
-        for i in range(p[0] - 1, -1, -1):
-            if i < 0:
-                break
-            t = self.board[i][p[1]]
-            if t != player:
-                break
-            count += 1
-
-        if count >= 5:
-            return True
-
-        # \
-        reset()
-        for i in range(1, size + 1):
-            x, y = p[0] + i, p[1] + i
-            if x >= size or y >= size:
-                break
-            t = self.board[x][y]
-            if t != player:
-                break
-            count += 1
-
-        for i in range(1, size + 1):
-            x, y = p[0] - i, p[1] - i
-            if x < 0 or y < 0:
-                break
-            t = self.board[x][y]
-            if t != player:
-                break
-            count += 1
-
-        if count >= 5:
-            return True
-
-        # /
-        reset()
-
-        for i in range(1, size + 1):
-            x, y = p[0] + i, p[1] - i
-            if x >= size or y < 0:
-                break
-            t = self.board[x][y]
-            if t != player:
-                break
-            count += 1
-
-        for i in range(1, size + 1):
-            x, y = p[0] - i, p[1] + i
-            if x < 0 or y >= size:
-                break
-            t = self.board[x][y]
-            if t != player:
-                break
-            count += 1
-
-        if count >= 5:
-            return True
-
-        return False
+    # def isFive(self, p, player):
+    #     size = self.size
+    #     count = 1
+    #
+    #     def reset():
+    #         nonlocal count
+    #         count = 1
+    #
+    #     # --
+    #     for i in range(p[1] + 1, size + 1):
+    #         if i >= size:
+    #             break
+    #         t = self.board[p[0]][i]
+    #         if t != player:
+    #             break
+    #         count += 1
+    #
+    #     for i in range(p[1] - 1, -1, -1):
+    #         if i < 0:
+    #             break
+    #         t = self.board[p[0]][i]
+    #         if t != player:
+    #             break
+    #         count += 1
+    #
+    #     if count >= 5:
+    #         return True
+    #
+    #     # |
+    #     reset()
+    #     for i in range(p[0] + 1, size + 1):
+    #         if i >= size:
+    #             break
+    #         t = self.board[i][p[1]]
+    #         if t != player:
+    #             break
+    #         count += 1
+    #
+    #     for i in range(p[0] - 1, -1, -1):
+    #         if i < 0:
+    #             break
+    #         t = self.board[i][p[1]]
+    #         if t != player:
+    #             break
+    #         count += 1
+    #
+    #     if count >= 5:
+    #         return True
+    #
+    #     # \
+    #     reset()
+    #     for i in range(1, size + 1):
+    #         x, y = p[0] + i, p[1] + i
+    #         if x >= size or y >= size:
+    #             break
+    #         t = self.board[x][y]
+    #         if t != player:
+    #             break
+    #         count += 1
+    #
+    #     for i in range(1, size + 1):
+    #         x, y = p[0] - i, p[1] - i
+    #         if x < 0 or y < 0:
+    #             break
+    #         t = self.board[x][y]
+    #         if t != player:
+    #             break
+    #         count += 1
+    #
+    #     if count >= 5:
+    #         return True
+    #
+    #     # /
+    #     reset()
+    #
+    #     for i in range(1, size + 1):
+    #         x, y = p[0] + i, p[1] - i
+    #         if x >= size or y < 0:
+    #             break
+    #         t = self.board[x][y]
+    #         if t != player:
+    #             break
+    #         count += 1
+    #
+    #     for i in range(1, size + 1):
+    #         x, y = p[0] - i, p[1] + i
+    #         if x < 0 or y >= size:
+    #             break
+    #         t = self.board[x][y]
+    #         if t != player:
+    #             break
+    #         count += 1
+    #
+    #     if count >= 5:
+    #         return True
+    #
+    #     return False
 
 
 if __name__ == '__main__':
-    # board = [
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    # ]
-    # board = [
-    #     [0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 2, 1, 1, 2, 2, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    # ]
-    # board = [
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 1, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    # ]
-    ##### evaluate problem
-    # board = [
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 1, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 2, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 1, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    # ]
+
     board = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
-        [0, 0, 0, 2, 0, 1, 0, 0, 2, 0, 0],
-        [0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 0],
-        [0, 0, 0, 0, 2, 1, 1, 0, 0, 0, 0],
-        [0, 0, 0, 2, 1, 1, 1, 2, 0, 0, 0],
-        [0, 0, 2, 1, 1, 2, 1, 1, 0, 0, 0],
-        [0, 0, 2, 2, 0, 0, 2, 0, 2, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 1, 2, 1, 2, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 1, 1, 2, 0, 1, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
 
     BB = Board(board)
