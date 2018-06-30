@@ -310,14 +310,19 @@ class Board:
 
     # 棋面估分
     # 这里只算当前分，而不是在空位下一步之后的分
-    def evaluate(self):
-        # 这里默认是在AI的角度评估局面
+    def evaluate(self, player=None):
         # 这里都是用正整数初始化的，所以初始值是0
         self.AIMaxScore = 0
         self.oppMaxScore = 0
 
-        self.AIMaxScore = np.max(self.AIScore)
-        self.oppMaxScore = np.max(self.oppScore)
+        # 遍历出最高分，开销不大
+        for i in range(self.height):
+            for j in range(self.width):
+                if self.board[i, j] == R.AI:
+                    self.AIMaxScore = max(self.AIScore[i, j], self.AIMaxScore)
+                elif self.board[i, j] == R.opp:
+                    self.oppMaxScore = max(self.oppScore[i, j], self.oppMaxScore)
+
         # 有冲四延伸了，不需要专门处理冲四活三
         # 不过这里做了这一步，可以减少电脑胡乱冲四的毛病
         self.AIMaxScore = fixScore(self.AIMaxScore)
@@ -370,45 +375,46 @@ class Board:
         startJ = 0
         endI = self.size - 1
         endJ = self.size - 1
-        if len(self.allSteps) >= 2 and starSpread and config.star:
-
-            i = len(self.allSteps) - 1
-            while not lastPoint1 and i >= 0:
-                p = self.allSteps[i]
-                if self.role.get(p, None) != player and self.attack.get(p, None) != player:
-                    lastPoint1 = p
-                i -= 2
-
-            if not lastPoint1:
-                if self.role.get(self.allSteps[0], None) != player:
-                    lastPoint1 = self.allSteps[0]
-                else:
-                    lastPoint1 = self.allSteps[1]
-            i = len(self.allSteps) - 2
-            while not lastPoint2 and i >= 0:
-                p = self.allSteps[i]
-                if self.attack.get(p, None):
-                    lastPoint2 = p
-                i -= 2
-
-            if not lastPoint2:
-                if self.role.get(self.allSteps[0], None) == player:
-                    lastPoint2 = self.allSteps[0]
-                else:
-                    lastPoint2 = self.allSteps[1]
-
-            # 根据双方最后的进攻点周围展开搜索
-            if config.debugGen:
-                print("1 attack point: {}, 2 attack point: {}".format(lastPoint1, lastPoint2))
-
-            startI = min(lastPoint1[0] - 5, lastPoint2[0] - 5)
-            startJ = min(lastPoint1[1] - 5, lastPoint2[1] - 5)
-            startI = max(0, startI)
-            startJ = max(0, startJ)
-            endI = max(lastPoint1[0] + 5, lastPoint2[0] + 5)
-            endJ = max(lastPoint1[1] + 5, lastPoint2[1] + 5)
-            endI = min(self.size - 1, endI)
-            endJ = min(self.size - 1, endJ)
+        # TODO: 双星搜索有毛病
+        # if len(self.allSteps) >= 2 and starSpread and config.star:
+        #
+        #     i = len(self.allSteps) - 1
+        #     while not lastPoint1 and i >= 0:
+        #         p = self.allSteps[i]
+        #         if self.role.get(p, None) != player and self.attack.get(p, None) != player:
+        #             lastPoint1 = p
+        #         i -= 2
+        #
+        #     if not lastPoint1:
+        #         if self.role.get(self.allSteps[0], None) != player:
+        #             lastPoint1 = self.allSteps[0]
+        #         else:
+        #             lastPoint1 = self.allSteps[1]
+        #     i = len(self.allSteps) - 2
+        #     while not lastPoint2 and i >= 0:
+        #         p = self.allSteps[i]
+        #         if self.attack.get(p, None):
+        #             lastPoint2 = p
+        #         i -= 2
+        #
+        #     if not lastPoint2:
+        #         if self.role.get(self.allSteps[0], None) == player:
+        #             lastPoint2 = self.allSteps[0]
+        #         else:
+        #             lastPoint2 = self.allSteps[1]
+        #
+        #     # 根据双方最后的进攻点周围展开搜索
+        #     if config.debugGen:
+        #         print("1 attack point: {}, 2 attack point: {}".format(lastPoint1, lastPoint2))
+        #
+        #     startI = min(lastPoint1[0] - 5, lastPoint2[0] - 5)
+        #     startJ = min(lastPoint1[1] - 5, lastPoint2[1] - 5)
+        #     startI = max(0, startI)
+        #     startJ = max(0, startJ)
+        #     endI = max(lastPoint1[0] + 5, lastPoint2[0] + 5)
+        #     endJ = max(lastPoint1[1] + 5, lastPoint2[1] + 5)
+        #     endI = min(self.size - 1, endI)
+        #     endJ = min(self.size - 1, endJ)
 
         for i in range(startI, endI + 1):
             for j in range(startJ, endJ + 1):
@@ -436,20 +442,21 @@ class Board:
                         # 我们假定任何时候，绝大多数情况下进攻的路线都可以按次序连城一条折线，那么每次每一个子，一定都是在上一个己方棋子的八个方向之一。
                         # 因为既可能自己进攻，也可能防守对面，所以是最后两个子的米子方向上
                         # 那么极少数情况，进攻路线无法连成一条折线呢?很简单，我们对前双方两步不作star限制就好，这样可以 兼容一条折线中间伸出一段的情况
-                        if lastPoint1 and lastPoint2 and config.star:
-                            # 距离必须在5步以内
-                            if (np.abs(i - lastPoint1[0]) > 5 or np.abs(j - lastPoint1[1]) > 5) and \
-                                    (np.abs(i - lastPoint2[0]) > 5 or np.abs(j - lastPoint2[1]) > 5):
-                                continue
-                            # 必须在米子方向上
-                            if maxScore >= score['FIVE'] or \
-                                    (i == lastPoint1[0] or j == lastPoint1[1] or (
-                                            np.abs(i - lastPoint1[0]) == np.abs(j - lastPoint1[1]))) \
-                                    or (i == lastPoint2[0] or j == lastPoint2[1] or (
-                                    np.abs(i - lastPoint2[0]) == np.abs(j - lastPoint2[1]))):
-                                pass
-                            else:
-                                continue
+                        # TODO: 双星搜索还不稳定
+                        # if lastPoint1 and lastPoint2 and config.star:
+                        #     # 距离必须在5步以内
+                        #     if (np.abs(i - lastPoint1[0]) > 5 or np.abs(j - lastPoint1[1]) > 5) and \
+                        #             (np.abs(i - lastPoint2[0]) > 5 or np.abs(j - lastPoint2[1]) > 5):
+                        #         continue
+                        #     # 必须在米子方向上
+                        #     if maxScore >= score['FIVE'] or \
+                        #             (i == lastPoint1[0] or j == lastPoint1[1] or (
+                        #                     np.abs(i - lastPoint1[0]) == np.abs(j - lastPoint1[1]))) \
+                        #             or (i == lastPoint2[0] or j == lastPoint2[1] or (
+                        #             np.abs(i - lastPoint2[0]) == np.abs(j - lastPoint2[1]))):
+                        #         pass
+                        #     else:
+                        #         continue
 
                         if scoreAI >= scoreOpp:
                             if scoreAI >= score['FIVE']:
@@ -665,7 +672,7 @@ class Board:
         # 先看看能不能 win
         if self.win(player, position):
             if config.debugAB:
-                print("win found!")
+                print("{} win found!".format(player))
                 # print(self.board)
             return self.MAX if player == R.AI else self.MIN
 
@@ -696,13 +703,15 @@ class Board:
 
         # 记得撤掉之前 player 下的子
         self.remove(position)
+        if config.debugAB:
+            print("{} Score -------> {} at {}".format(player, result, position))
         # 然后返回
         return result
 
     def max_value(self, player, deep, alpha, beta):
         v = self.MIN
         # get successors
-        successors = self.gen(player, starSpread=True)
+        successors = self.gen(player, starSpread=False)
         if config.debugAB:
             print("MAX({}) node successors: {} =====> Deep: {}".format(player, successors, deep))
         for point in successors:
@@ -716,7 +725,7 @@ class Board:
     def min_value(self, player, deep, alpha, beta):
         v = self.MAX
         # get successors
-        successors = self.gen(player, starSpread=True)
+        successors = self.gen(player, starSpread=False)
         if config.debugAB:
             print("MIN({}) node successors: {} =====> Deep: {}".format(player, successors, deep))
         for point in successors:
@@ -1013,26 +1022,26 @@ class Board:
 
 
 if __name__ == '__main__':
-
     board = [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 1, 2, 1, 2, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 1, 1, 2, 0, 1, 1, 0, 0, 0, 0],
-      [0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-      [0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
 
     BB = Board(board)
-    print(BB.gen(2))
+    print(BB.gen(1, starSpread=False))
     # vcf(BB, 1, 10)
 
