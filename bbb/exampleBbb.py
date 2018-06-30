@@ -1,6 +1,9 @@
 import pisqpipe as pp
 from pisqpipe import DEBUG_EVAL, DEBUG
 from ai import AI
+from config import Config
+import time
+from score import score
 
 pp.infotext = 'name="pbrain-pyrandom", author="Jan Stransky", version="1.0", ' \
               'country="Czech Republic", www="https://github.com/stranskyjan/pbrain-pyrandom"'
@@ -9,6 +12,8 @@ MAX_BOARD = 20
 board = [[0 for i in range(MAX_BOARD)] for j in range(MAX_BOARD)]
 
 myAI = None
+config = Config()
+
 
 
 def brain_init():
@@ -71,13 +76,6 @@ def brain_takeback(x, y):
 
 
 def brain_turn():
-    """
-    MCTS
-    Useful materials:
-        class:
-            Board
-            MCTS
-    """
     if pp.terminateAI:
         return
 
@@ -87,8 +85,25 @@ def brain_turn():
         myAI.set(opp_move, 2)
     else:
         myAI = AI(board)
+        if myAI.white_or_black():
+            myAI.searchDeep = config.searchDeep_black
+        else:
+            myAI.searchDeep = config.searchDeep_white
+            myAI.searchDeep_ = myAI.searchDeep
         myAI.turnChecked = True
-    move = myAI.get_move()
+
+        if myAI.turnChecked and len(myAI.theBoard.allSteps) <= 4:
+            myAI.searchDeep = myAI.searchDeep_ - 2
+        else:
+            myAI.searchDeep = myAI.searchDeep_
+    myAI.theBoard.startTime = time.clock()
+
+    move_vcx = myAI.get_move_vcx()
+    if move_vcx:
+        # print("success")
+        move = move_vcx
+    else:
+        move = myAI.get_move()
     myAI.set(move, 1)
     x, y = move
     pp.do_mymove(x, y)

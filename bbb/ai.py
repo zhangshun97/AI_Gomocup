@@ -38,7 +38,10 @@ class AI:
                 return self.theBoard.size // 2, self.theBoard.size // 2
         # for deep in range(1, config.vcxDeep):
         p = vcf(self.theBoard, R.AI, config.vcxDeep)
-        return p
+        if p:
+            return p
+        else:
+            return vct(self.theBoard, R.AI, config.vcxDeep)
 
     def set(self, move, player):
         self.theBoard.put(move, player, True)

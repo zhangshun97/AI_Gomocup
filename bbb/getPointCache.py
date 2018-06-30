@@ -244,14 +244,15 @@ def evaluate_position(board1, position, player, direction=-1):
             return 0
         result = countToScore(continueLength,
                                          selfAgainCountL, selfAgainCountR, blockL, blockR, emptyL, emptyR)
-        if maxLong == 5:
-            return result // 2 # 2011102 < 0011102
+        if maxLong == 5 and continueLength < 4:
+            return result // 2  # 2011102 < 0011102
 
     return result
 
 
 def countToScore(continueLength, selfAgainCountL, selfAgainCountR, blockL, blockR, emptyL, emptyR):
 
+    hhh = 5
     # 成五直接返回
     if continueLength >= 5:
         return score['FIVE']
@@ -259,13 +260,19 @@ def countToScore(continueLength, selfAgainCountL, selfAgainCountR, blockL, block
     if not blockL and not blockR:
         # 两边都没有以 '12' 堵住
         if selfAgainCountL and selfAgainCountR:
-            return blocked[selfAgainCountL + continueLength] + blocked[selfAgainCountR + continueLength]
+            return straight[max(selfAgainCountL, selfAgainCountR)] + blocked[min(selfAgainCountL, selfAgainCountR)]
         elif selfAgainCountL:
-            return blocked[selfAgainCountL + continueLength] + straight[continueLength]
+            if selfAgainCountL + continueLength <= 3:
+                return straight[selfAgainCountL + continueLength]
+            else:
+                return blocked[4]
         elif selfAgainCountR:
-            return blocked[selfAgainCountR + continueLength] + straight[continueLength]
+            if selfAgainCountR + continueLength <= 3:
+                return straight[selfAgainCountR + continueLength]
+            else:
+                return blocked[4]
         else:
-            return straight[continueLength]
+            return straight[continueLength] + hhh
     elif blockL and not blockR:
         # 左边是 '21' 且右边至少是 '02' 的情形
         if not emptyL:
@@ -290,7 +297,7 @@ def countToScore(continueLength, selfAgainCountL, selfAgainCountR, blockL, block
 
 
 board1 = [
-    [0, 0, 2, 0, 0, 0, 1, 1, 1, 2, 0],
+    [0, 0, 2, 0, 0, 0, 1, 0, 1, 1, 1],
     #               /\
     #               ||
 ]
@@ -302,7 +309,7 @@ board1 = [
 ]
 a = [0, 1, 2]
 pointCache = {}
-hhh = True
+hhh = False
 mm = 3
 if hhh:
     for i1 in a:
@@ -341,8 +348,8 @@ if hhh:
                                             #     print(board1)
                                             #     print(point_1, point_2)
                                             # if tuple(board1[0]) == (0, 0, 2, 0, 0, 0, 1, 1, 1, 2, 0):
-                                            if point_1 == 0:
-                                                print(board1[0], point_1)
+                                            # if point_1 == 0:
+                                            #     print(board1[0], point_1)
                                             pointCache[pattern] = (point_1, point_2)
                                             #####
                                             pattern = i1 * mm ** 10 + i2 * mm ** 9 + i3 * mm ** 8 + \
@@ -381,6 +388,6 @@ pattern = i1 * mm ** 10 + i2 * mm ** 9 + i3 * mm ** 8 + \
 # pattern = i1_ * 10 ** 9 + i2_ * 10 ** 8 + i3_ * 10 ** 7 + \
 #           i4_ * 10 ** 6 + i5_ * 10 ** 5 + i6_ * 10 ** 4 + \
 #           i7_ * 10 ** 3 + i8_ * 10 ** 2 + i9_ * 10 + i10_
-print(pattern)
-print(dic[200104000])
+# print(pattern)
+# print(dic[200104000])
 

@@ -293,7 +293,7 @@ class Board:
         if config.debug:
             print(r, 'remove [', position, ']')
         self.zobrist.go(position, r)
-        self.updateScore(position, True)
+        self.updateScore(position, remove=True)
         self.allSteps.pop()
         self.board[position] = R.empty
 
@@ -432,6 +432,7 @@ class Board:
                     if len(self.steps) < 6:
                         neighbor = (1, 1)
                     if self.hasNeighbor((i, j), neighbor[0], neighbor[1]):
+
                         scoreOpp = self.oppScore[i][j]
                         self.scoreHum[p] = scoreOpp
                         scoreAI = self.AIScore[i][j]
@@ -675,7 +676,7 @@ class Board:
         if self.win(player, position):
             if config.debugAB:
                 print("win found!")
-                print(self.board)
+                # print(self.board)
             return self.MAX if player == R.AI else self.MIN
 
         # 然后 player 下这个子
@@ -687,8 +688,11 @@ class Board:
         if deep <= 0:
             r = self.evaluate()
             if config.debugAB:
-                print("Score -------> {}".format(r))
+                print("{} Score -------> {}".format(player, r))
             # 记得撤掉之前 player 下的子
+            if self.win(R.get_opponent(player)):
+                self.remove(position)
+                return self.MIN
             self.remove(position)
             return r
 
@@ -710,9 +714,9 @@ class Board:
         # get successors
         successors = self.gen(player, starSpread=True)
         if config.debugAB:
-            print("MAX node successors: {}".format(successors))
+            print("MAX({}) node successors: {} =====> Deep: {}".format(player, successors, deep))
         for point in successors:
-            v = max(v, self.get_value(player, point, deep - 1, alpha, beta))
+            v = max(v, self.get_value(player, point, deep, alpha, beta))
             # pruning
             if v >= beta:
                 return v
@@ -724,13 +728,13 @@ class Board:
         # get successors
         successors = self.gen(player, starSpread=True)
         if config.debugAB:
-            print("MIN node successors: {}".format(successors))
+            print("MIN({}) node successors: {} =====> Deep: {}".format(player, successors, deep))
         for point in successors:
-            v = min(v, self.get_value(player, point, deep - 1, alpha, beta))
+            v = min(v, self.get_value(player, point, deep, alpha, beta))
             # pruning
             if v <= alpha:
                 return v
-            alpha = min(v, beta)
+            beta = min(v, beta)
         return v
 
     def negamax(self, deep):
@@ -757,6 +761,8 @@ class Board:
                     print('TIME OUT!')
                     print('Points left: {}'.format(candidates[i:]))
                 break
+            if config.debugAB:
+                print("ROOT ====> {} <==== TOOR".format(point))
             v = self.get_value(R.AI, point, deep, self.MIN, self.MAX)
             if config.debug2:
                 print("{} , score {}".format(point, v))
@@ -1067,26 +1073,39 @@ if __name__ == '__main__':
     #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     # ]
     ##### evaluate problem
+    # board = [
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 1, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 2, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 1, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    # ]
     board = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 2, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 2, 0, 1, 0, 0, 2, 0, 0],
+        [0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 0],
+        [0, 0, 0, 0, 2, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 2, 1, 1, 1, 2, 0, 0, 0],
+        [0, 0, 2, 1, 1, 2, 1, 1, 0, 0, 0],
+        [0, 0, 2, 2, 0, 0, 2, 0, 2, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
 
     BB = Board(board)
-    print(BB.evaluate())
+    print(BB.gen(2))
     # vcf(BB, 1, 10)
 
