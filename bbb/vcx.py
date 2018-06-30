@@ -48,6 +48,24 @@ def findMax(self, player, score_):
     result = []
     fives = []
 
+    AIFives_ = np.where(self.AIScore >= score['FIVE'])
+    if len(AIFives_[0]):
+        ll = len(AIFives_[0])
+        AIFives = [
+            (AIFives_[0][i], AIFives_[1][i])
+            for i in range(ll)
+        ]
+        return AIFives
+
+    oppFives_ = np.where(self.oppScore >= score['FIVE'])
+    if len(oppFives_[0]):
+        ll = len(oppFives_[0])
+        oppFives = [
+            (oppFives_[0][i], oppFives_[1][i])
+            for i in range(ll)
+        ]
+        return oppFives
+
     for i in range(self.height):
         for j in range(self.width):
             if self.board[i][j] != R.empty:
@@ -56,36 +74,36 @@ def findMax(self, player, score_):
 
             # 注意，防一手对面冲四
             # 所以不管谁能连成五，先防一下
-            if self.oppScore[p[0]][p[1]] >= score['FIVE']:
-                # assert 0
-                self.score[p] = self.oppScore[p[0]][p[1]]
-                if player == R.AI:
-                    self.score[p] *= -1
-                fives.append(p)
-            elif self.AIScore[p[0]][p[1]] >= score['FIVE']:
-                # assert 0
-                self.score[p] = self.AIScore[p[0]][p[1]]
-                if player == R.opp:
-                    self.score[p] *= -1
-                fives.append(p)
-            else:
-                if (not lastMaxPoint) or (i == lastMaxPoint[0] or j == lastMaxPoint[1] or \
-                                        (np.abs(i - lastMaxPoint[0]) == np.abs(j - lastMaxPoint[1]))):
-                    # 如果没有lastmaxpoint，或者
-                    # print("if (not lastMaxPoint) or (i == lastMaxPoint[0] or j == lastMaxPoint[1] or \
-                    #                     (np.abs(i - lastMaxPoint[0]) == np.abs(j - lastMaxPoint[1]))):")
-                    s = self.AIScore[p[0]][p[1]] if player == R.AI else self.oppScore[p[0]][p[1]]
-                    self.score[p] = s
-                    if s >= score_:
-                        #这句话是什么意思？
-                        # print(p,"p")
-                        # print(s)
-                        result.append(p)
+            # if self.oppScore[p] >= score['FIVE']:
+            #     # assert 0
+            #     self.score[p] = self.oppScore[p[0]][p[1]]
+            #     if player == R.AI:
+            #         self.score[p] *= -1
+            #     fives.append(p)
+            # elif self.AIScore[p[0]][p[1]] >= score['FIVE']:
+            #     # assert 0
+            #     self.score[p] = self.AIScore[p[0]][p[1]]
+            #     if player == R.opp:
+            #         self.score[p] *= -1
+            #     fives.append(p)
+            # else:
+            if (not lastMaxPoint) or (i == lastMaxPoint[0] or j == lastMaxPoint[1] or \
+                                    (np.abs(i - lastMaxPoint[0]) == np.abs(j - lastMaxPoint[1]))):
+                # 如果没有lastmaxpoint，或者
+                # print("if (not lastMaxPoint) or (i == lastMaxPoint[0] or j == lastMaxPoint[1] or \
+                #                     (np.abs(i - lastMaxPoint[0]) == np.abs(j - lastMaxPoint[1]))):")
+                s = self.AIScore[p[0]][p[1]] if player == R.AI else self.oppScore[p[0]][p[1]]
+                self.score[p] = s
+                if s >= score_:
+                    #这句话是什么意思？
+                    # print(p,"p")
+                    # print(s)
+                    result.append(p)
     # 能连五，则直接返回
     # 但是注意不要碰到连五就返回，而是把所有连五的点都考虑一遍，不然可能出现自己能连却防守别人的问题
-    if fives:
-        # print(fives,"five")
-        return fives
+    # if fives:
+    #     # print(fives,"five")
+    #     return fives
     # 注意对结果进行排序
     result.sort(key=lambda x: self.score[x], reverse=True)
     # if len(result):
@@ -97,8 +115,21 @@ def findMax(self, player, score_):
 # 找到所有比目标分数大的位置
 # 这是MIN层，所以己方分数要变成负数
 def findMin(self, player, score_):
+
+    oppFives = np.where(self.oppScore >= score['FIVE'])
+    if len(oppFives[0]):
+        return [(oppFives[0][0], oppFives[1][0])]
+
+    AIFives_ = np.where(self.AIScore >= score['FIVE'])
+    if len(AIFives_[0]):
+        ll = len(AIFives_[0])
+        AIFives = [
+            (AIFives_[0][i], AIFives_[1][i])
+            for i in range(ll)
+        ]
+        return AIFives
+
     result = []
-    fives = []
     fours = []
     blockedfours = []
     for i in range(self.height):
@@ -109,13 +140,13 @@ def findMin(self, player, score_):
 
                 s1 = self.oppScore[p] #if player == R.AI else self.oppScore[p]
                 s2 = self.AIScore[p] #if player == R.AI else self.AIScore[p]
-                if s1 >= score['FIVE']:#如果对面有5，直接返回！
-                    self.score[p] = -s1
-                    return [p]
-                if s2 >= score['FIVE']:#如果我有5，直接返回！
-                    self.score[p] = s2
-                    fives.append(p)
-                    continue
+                # if s1 >= score['FIVE']:#如果对面有5，直接返回！
+                #     self.score[p] = -s1
+                #     return [p]
+                # if s2 >= score['FIVE']:#如果我有5，直接返回！
+                #     self.score[p] = s2
+                #     fives.append(p)
+                #     continue
                 if s1 >= score['FOUR']:#如果对面有开4
                     self.score[p] = -s1
                     fours.insert(0, p)
@@ -138,15 +169,18 @@ def findMin(self, player, score_):
                     result.append(p)
 
     # if fives:
+    #     print(self.board)
+    #     print(fives)
+    #     assert 0, 'sadsadasdsadsadasdasdsa'
     #     return fives
 
     # 注意冲四，因为虽然冲四的分比活四低，但是他的防守优先级是和活四一样高的，否则会忽略冲四导致获胜的走法
-    if len(fours)!=0:
-        return fours + blockedfours+fives
+    if fours:
+        return fours + blockedfours
 
     # 注意对结果进行排序
     # 因为 fours 可能不存在，这时候不要忽略了 blockedfours
-    result = blockedfours + result+fives #这里让我返回可能的点
+    result = blockedfours + result  #这里让我返回可能的点
     result.sort(key=lambda x: np.abs(self.score[x]), reverse=True)
     return result
 
@@ -158,7 +192,7 @@ def get_max(self, player, deep, totalDeep=0):
         return False
     points = findMax(self, player, MAX_SCORE)
     #先找有没有4的情况
-    if points and self.score[points[0]] >= score['FOUR']:
+    if points and self.AIScore[points[0]] >= score['FOUR']:
         # print("This is four")
         # print(score["FOUR"])
         # 为了减少一层搜索，活四就行了
@@ -170,7 +204,7 @@ def get_max(self, player, deep, totalDeep=0):
         p = points[i]
         self.put(p, player, True)
         # 如果是防守对面的冲四，那么不用记下来
-        if not self.score[p] <= -score['FIVE']:
+        if not self.oppScore[p] >= score['FIVE']:
             #记录下一次的最好值
             lastMaxPoint = p
 
@@ -202,7 +236,7 @@ def get_min(self, player, deep):
     if deep <= 1:
         return False
     points = findMin(self, player, MIN_SCORE)
-    if points and -1 * self.score[points[0]] >= score['FOUR']:
+    if points and self.oppScore[points[0]] >= score['FOUR']:
         # 如果对面走了最好的点！赢了！
         return False
     if len(points) == 0:
