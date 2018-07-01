@@ -277,27 +277,43 @@ def countToScore(continueLength, selfAgainCountL, selfAgainCountR, blockL, block
         # 左边是 '21' 且右边至少是 '02' 的情形
         if not emptyL:
             # 左边没有空 '2111--'
-            return blocked[continueLength] + blocked[selfAgainCountR]
+            return blocked[continueLength + selfAgainCountR]
         else:
-            return straight[continueLength] + blocked[selfAgainCountR]
+            if emptyL == 1:
+                return blocked[continueLength + selfAgainCountL]
+            else:
+                if emptyR > 1:
+                    return straight[continueLength] + blocked[selfAgainCountR]
+                else:
+                    return (straight[continueLength] + blocked[selfAgainCountR]) // 2
     elif blockR and not blockL:
         # 右边是 '12' 且左边至少是 '20' 的情形
         if not emptyR:
             # 右边没有空 '--1112'
-            return blocked[continueLength] + blocked[selfAgainCountL]
+            return blocked[continueLength + selfAgainCountL]
         else:
-            return straight[continueLength] + blocked[selfAgainCountL]
+            if emptyR == 1:
+                return blocked[continueLength + selfAgainCountR]
+            else:
+                if emptyL > 1:
+                    return straight[continueLength] + blocked[selfAgainCountL]
+                else:
+                    return (straight[continueLength] + blocked[selfAgainCountL]) // 2
     else:
         # 两边都被堵住了
         if emptyL and emptyR:
             return straight[continueLength]
+        elif emptyR:
+            return blocked[continueLength + selfAgainCountR]
+        elif emptyL:
+            return blocked[continueLength + selfAgainCountL]
         else:
-            return blocked[continueLength]
+            return 0
         #注意，这里没有两边都是非空的情况！
 
 
 board1 = [
-    [0, 0, 2, 0, 0, 0, 1, 0, 1, 1, 1],
+    [0, 2, 2, 1, 1, 0, 1, 1, 1, 2, 2],
     #               /\
     #               ||
 ]

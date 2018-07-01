@@ -25,10 +25,10 @@ class AI:
             if np.sum(self.theBoard.board):
                 pass
             else:
-                return self.theBoard.size // 2, self.theBoard.size // 2
+                return (self.theBoard.size // 2, self.theBoard.size // 2), 1
 
-        p = self.theBoard.negamax(self.searchDeep)
-        return p
+        p, if_only = self.theBoard.negamax(self.searchDeep)
+        return p, if_only
 
     def get_move_vcx(self):
         if self.start:

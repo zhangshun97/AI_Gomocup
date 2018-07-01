@@ -33,6 +33,19 @@ def fixScore(type_score):
     return type_score
 
 
+def fixFour(type_score):
+    if score['BLOCKED_FOUR'] <= type_score < score['BLOCKED_FOUR'] + score['THREE']:
+        return score['THREE'] - 1
+
+    if score['BLOCKED_THREE'] <= type_score < score['THREE']:
+        return score['TWO'] - 1
+
+    if type_score == score['TWO']:
+        return type_score + 10
+
+    return type_score
+
+
 class Board:
 
     def __init__(self, board):
@@ -365,8 +378,8 @@ class Board:
         neighbors = []
 
         # 找到双方的最后进攻点
-        lastPoint1 = None
-        lastPoint2 = None
+        # lastPoint1 = None
+        # lastPoint2 = None
 
         # 默认情况下 我们遍历整个棋盘。但是在开启star模式下，我们遍历的范围就会小很多
         # 只需要遍历以两个点为中心正方形。
@@ -420,8 +433,8 @@ class Board:
             for j in range(startJ, endJ + 1):
                 p = (i, j)
                 if self.board[i][j] == R.empty:
-                    neighbor = (2, 2)
-                    if len(self.steps) < 6:
+                    neighbor = (2, 2)  # 两步以内有 2 个子, restricted by calculation capability
+                    if len(self.allSteps) <= 2:
                         neighbor = (1, 1)
                     if self.hasNeighbor((i, j), neighbor[0], neighbor[1]):
                         scoreOpp = self.oppScore[i][j]
@@ -647,12 +660,12 @@ class Board:
         #  XOX
         #  XXX
         # all the 'X's are neighbors of 'O'
-        if self.board[position] == 0:
+        if self.board[position] == R.empty:
             startX = max(position[0] - distance, 0)
             endX = min(position[0] + distance + 1, self.size)
             startY = max(position[1] - distance, 0)
             endY = min(position[1] + distance + 1, self.size)
-            if np.sum(self.board[startX:endX, startY:endY] != 0) >= count:
+            if np.sum(self.board[startX:endX, startY:endY] != R.empty) >= count:
                 return True
             else:
                 return False
@@ -661,7 +674,7 @@ class Board:
             endX = min(position[0] + distance + 1, self.size)
             startY = max(position[1] - distance, 0)
             endY = min(position[1] + distance + 1, self.size)
-            if np.sum(self.board[startX:endX, startY:endY] != 0) >= count + 1:
+            if np.sum(self.board[startX:endX, startY:endY] != R.empty) >= count + 1:
                 return True
             else:
                 return False
@@ -689,7 +702,10 @@ class Board:
             # 记得撤掉之前 player 下的子
             if self.win(R.get_opponent(player)):
                 self.remove(position)
-                return self.MIN
+                if player == R.AI:
+                    return self.MIN
+                elif player == R.opp:
+                    return self.MAX
             self.remove(position)
             return r
 
@@ -748,7 +764,7 @@ class Board:
             print(" =================> Candidates: {}".format(candidates))
 
         if len(candidates) == 1:
-            return candidates[0]
+            return candidates[0], 1
         cand_len = len(candidates)
         for i in range(cand_len):
             point = candidates[i]
@@ -757,7 +773,7 @@ class Board:
                 print('time: {}'.format(time.clock() - self.startTime))
             # 超时判定并且截断搜索
             if time.clock() - self.startTime > config.timeLimit:
-                if config.debug:
+                if config.debug2:
                     print('TIME OUT!')
                     print('Points left: {}'.format(candidates[i:]))
                 break
@@ -774,9 +790,9 @@ class Board:
                 bestPoints = [point]
         if config.debug2:
             print(bestPoints)
-        result_index = np.random.randint(len(bestPoints))
-        result = bestPoints[result_index]
-        return result
+        bestPoints.sort(key=lambda x: fixFour(self.AIScore[x]), reverse=True)
+        result = bestPoints[0]
+        return result, 0
 
     def maxmin(self, deep):
         self.MAX = score['FIVE'] * 10
@@ -1024,17 +1040,17 @@ class Board:
 if __name__ == '__main__':
     board = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 0, 2, 1, 2, 2, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 1, 2, 1, 0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 2, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 2, 2, 2, 1, 2, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 2, 1, 2, 2, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -1042,6 +1058,6 @@ if __name__ == '__main__':
     ]
 
     BB = Board(board)
-    print(BB.gen(1, starSpread=False))
+    print(BB.AIScore[5, 8])
     # vcf(BB, 1, 10)
 

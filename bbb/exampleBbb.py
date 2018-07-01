@@ -89,24 +89,27 @@ def brain_turn():
             myAI.searchDeep = config.searchDeep_black
         else:
             myAI.searchDeep = config.searchDeep_white
-            myAI.searchDeep_ = myAI.searchDeep
+        myAI.searchDeep_ = myAI.searchDeep
         myAI.turnChecked = True
 
-        if myAI.turnChecked and len(myAI.theBoard.allSteps) <= 4:
-            myAI.searchDeep = myAI.searchDeep_ - 2
-        else:
-            myAI.searchDeep = myAI.searchDeep_
+    if myAI.turnChecked and len(myAI.theBoard.allSteps) <= 4:
+        myAI.searchDeep = myAI.searchDeep_ - 2
+    else:
+        myAI.searchDeep = myAI.searchDeep_
+
     myAI.theBoard.startTime = time.clock()
 
+    if_only = False
     if not myAI.if_found_vcx:
         # 如果之前已经找到，之后就不需要再搜了
-        move = myAI.get_move()
+        move, if_only = myAI.get_move()
 
-    move_vcx = myAI.get_move_vcx()
-    if move_vcx:
-        myAI.if_found_vcx = True
-        # print("success")
-        move = move_vcx
+    if not if_only:
+        move_vcx = myAI.get_move_vcx()
+        if move_vcx:
+            myAI.if_found_vcx = True
+            # print('HHHHHHH')
+            move = move_vcx
 
     myAI.set(move, 1)
     x, y = move

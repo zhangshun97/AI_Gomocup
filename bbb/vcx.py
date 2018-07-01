@@ -39,6 +39,7 @@ MIN_SCORE = score['THREE']
 
 lastMaxPoint = None
 lastMinPoint = None
+There_is_no_points = True
 
 
 # 找到所有比目标分数大的位置
@@ -46,8 +47,8 @@ lastMinPoint = None
 def findMax(self, player, score_):
     # assert player==1 #max jiedian de wan jia wei 1
     result = []
-    fives = []
 
+    # 能连五，则直接返回
     AIFives_ = np.where(self.AIScore >= score['FIVE'])
     if len(AIFives_[0]):
         ll = len(AIFives_[0])
@@ -72,42 +73,19 @@ def findMax(self, player, score_):
                 continue
             p = (i, j)
 
-            # 注意，防一手对面冲四
-            # 所以不管谁能连成五，先防一下
-            # if self.oppScore[p] >= score['FIVE']:
-            #     # assert 0
-            #     self.score[p] = self.oppScore[p[0]][p[1]]
-            #     if player == R.AI:
-            #         self.score[p] *= -1
-            #     fives.append(p)
-            # elif self.AIScore[p[0]][p[1]] >= score['FIVE']:
-            #     # assert 0
-            #     self.score[p] = self.AIScore[p[0]][p[1]]
-            #     if player == R.opp:
-            #         self.score[p] *= -1
-            #     fives.append(p)
-            # else:
-            if (not lastMaxPoint) or (i == lastMaxPoint[0] or j == lastMaxPoint[1] or \
-                                    (np.abs(i - lastMaxPoint[0]) == np.abs(j - lastMaxPoint[1]))):
-                # 如果没有lastmaxpoint，或者
-                # print("if (not lastMaxPoint) or (i == lastMaxPoint[0] or j == lastMaxPoint[1] or \
-                #                     (np.abs(i - lastMaxPoint[0]) == np.abs(j - lastMaxPoint[1]))):")
-                s = self.AIScore[p[0]][p[1]] if player == R.AI else self.oppScore[p[0]][p[1]]
-                self.score[p] = s
-                if s >= score_:
-                    #这句话是什么意思？
-                    # print(p,"p")
-                    # print(s)
-                    result.append(p)
-    # 能连五，则直接返回
-    # 但是注意不要碰到连五就返回，而是把所有连五的点都考虑一遍，不然可能出现自己能连却防守别人的问题
-    # if fives:
-    #     # print(fives,"five")
-    #     return fives
-    # 注意对结果进行排序
+            # if (not lastMaxPoint) or (i == lastMaxPoint[0] or j == lastMaxPoint[1] or \
+            #                           (np.abs(i - lastMaxPoint[0]) == np.abs(j - lastMaxPoint[1]))):
+            #     # 如果没有lastmaxpoint，或者
+            #     # print("if (not lastMaxPoint) or (i == lastMaxPoint[0] or j == lastMaxPoint[1] or \
+            #     #                     (np.abs(i - lastMaxPoint[0]) == np.abs(j - lastMaxPoint[1]))):")
+            s = self.AIScore[p[0]][p[1]] if player == R.AI else self.oppScore[p[0]][p[1]]
+            self.score[p] = s
+            if s >= score_:
+                # 这句话是什么意思？
+                result.append(p)
+
     result.sort(key=lambda x: self.score[x], reverse=True)
-    # if len(result):
-        # print( player, score_,result)
+
     return result
 
 
@@ -115,7 +93,6 @@ def findMax(self, player, score_):
 # 找到所有比目标分数大的位置
 # 这是MIN层，所以己方分数要变成负数
 def findMin(self, player, score_):
-
     oppFives = np.where(self.oppScore >= score['FIVE'])
     if len(oppFives[0]):
         return [(oppFives[0][0], oppFives[1][0])]
@@ -138,24 +115,18 @@ def findMin(self, player, score_):
                 p = (i, j)
                 # print(player)
 
-                s1 = self.oppScore[p] #if player == R.AI else self.oppScore[p]
-                s2 = self.AIScore[p] #if player == R.AI else self.AIScore[p]
-                # if s1 >= score['FIVE']:#如果对面有5，直接返回！
-                #     self.score[p] = -s1
-                #     return [p]
-                # if s2 >= score['FIVE']:#如果我有5，直接返回！
-                #     self.score[p] = s2
-                #     fives.append(p)
-                #     continue
-                if s1 >= score['FOUR']:#如果对面有开4
+                s1 = self.oppScore[p]  # if player == R.AI else self.oppScore[p]
+                s2 = self.AIScore[p]  # if player == R.AI else self.AIScore[p]
+
+                if s1 >= score['FOUR']:  # 如果对面有开4
                     self.score[p] = -s1
                     fours.insert(0, p)
                     continue
-                if s2 >= score['FOUR']:#如果我有开四
+                if s2 >= score['FOUR']:  # 如果我有开四
                     self.score[p] = s2
                     fours.append(p)
                     continue
-                if s1 >= score['BLOCKED_FOUR']:#如果对面有冲4
+                if s1 >= score['BLOCKED_FOUR']:  # 如果对面有冲4
                     self.score[p] = -s1
                     blockedfours.insert(0, p)
                     continue
@@ -168,44 +139,47 @@ def findMin(self, player, score_):
                     self.score[p] = s1
                     result.append(p)
 
-    # if fives:
-    #     print(self.board)
-    #     print(fives)
-    #     assert 0, 'sadsadasdsadsadasdasdsa'
-    #     return fives
-
     # 注意冲四，因为虽然冲四的分比活四低，但是他的防守优先级是和活四一样高的，否则会忽略冲四导致获胜的走法
     if fours:
         return fours + blockedfours
 
     # 注意对结果进行排序
     # 因为 fours 可能不存在，这时候不要忽略了 blockedfours
-    result = blockedfours + result  #这里让我返回可能的点
+    result = blockedfours + result  # 这里让我返回可能的点
     result.sort(key=lambda x: np.abs(self.score[x]), reverse=True)
     return result
 
 
 def get_max(self, player, deep, totalDeep=0):
     # debugNodeCount += 1
-    global lastMaxPoint
-    if deep <= 1:
+    global lastMaxPoint, There_is_no_points
+    if deep <= 0 or time.clock() - self.startTime > config.vcxTimeLimit:
         return False
     points = findMax(self, player, MAX_SCORE)
-    #先找有没有4的情况
+    if config.debugVCX:
+        print("==> Find Max: {}  ======> Deep {}".format(points, deep))
+    # 先找有没有4的情况
     if points and self.AIScore[points[0]] >= score['FOUR']:
         # print("This is four")
         # print(score["FOUR"])
         # 为了减少一层搜索，活四就行了
+        if config.debugVCX:
+            print("++++++ AI win found! ++++++")
         return [points[0]]
+
+    if len(points) >= 0 and deep <= 1:
+        There_is_no_points = False
     if len(points) == 0:
         return False
 
     for i in range(len(points)):
         p = points[i]
         self.put(p, player, True)
+        if config.debugVCX:
+            print("AI takes step: {}".format(p))
         # 如果是防守对面的冲四，那么不用记下来
         if not self.oppScore[p] >= score['FIVE']:
-            #记录下一次的最好值
+            # 记录下一次的最好值
             lastMaxPoint = p
 
         m = get_min(self, R.get_opponent(player), deep - 1)
@@ -226,30 +200,38 @@ def get_max(self, player, deep, totalDeep=0):
 # 只要有一种方式能防守住，就可以了
 def get_min(self, player, deep):
     # debugNodeCount += 1
-    global lastMinPoint
-    w = self.win(player)
+    global lastMinPoint, There_is_no_points
 
-    if w == player:
+    if self.win(player):
+        if config.debugVCX:
+            print("------ Opp win found! ------")
         return False
     # if self.win(R.get_opponent(player)):
     #     return True
-    if deep <= 1:
+
+    if deep <= 0 or time.clock() - self.startTime > config.vcxTimeLimit:
         return False
     points = findMin(self, player, MIN_SCORE)
+    if len(points) > 0 and deep <= 1:
+        There_is_no_points = False
+    if config.debugVCX:
+        print("==> Find Min: {} ======> Deep {}".format(points, deep))
     if points and self.oppScore[points[0]] >= score['FOUR']:
         # 如果对面走了最好的点！赢了！
         return False
     if len(points) == 0:
-        #这里为什么？
+        # 这里为什么？
         return False
 
     cands = []
     for i in range(len(points)):
         p = points[i]
         """ zheli de player shi hou mian gai de !"""
-        self.put(p, player,True)
+        self.put(p, player, True)
+        if config.debugVCX:
+            print("opp takes step: {}".format(p))
         lastMinPoint = p
-        m = get_max(self, R.get_opponent(player), deep - 1)#这个里面对每一种找到必杀！
+        m = get_max(self, R.get_opponent(player), deep - 1)  # 这个里面对每一种找到必杀！
         self.remove(p)
         if m:
             # print(m)
@@ -260,20 +242,21 @@ def get_min(self, player, deep):
             # 只要有一种能防守住，因为是对面选择，这个路径的必杀失败！
             return False
     _i = np.random.randint(len(cands))
-    #赢了！随便返回一个？
+    # 赢了！随便返回一个？
     result = cands[_i]
     return result
 
 
 def deeping(self, player, deep, totalDeep):
     # 迭代加深算法！
-    global lastMinPoint, lastMaxPoint  # ,debugNodeCount
+    global lastMinPoint, lastMaxPoint, There_is_no_points, total_deep  # ,debugNodeCount
     # debugNodeCount = 0
-    for i in range(1, deep + 1):
-        if time.clock() - self.startTime > 10:
-            return False
+    for i in range(1, deep + 1, 2):
+
         lastMinPoint = None
         lastMaxPoint = None
+        # total_deep=i
+        There_is_no_points = True
         result = get_max(self, player, i, deep)
         if result:
             # print("There we just get the solution")
@@ -281,6 +264,9 @@ def deeping(self, player, deep, totalDeep):
             # print(i)
             # 找到一个就行
             break
+        if There_is_no_points:
+            break
+
     return result
 
 
@@ -337,6 +323,8 @@ def getCache(self, vcf=False):
 
 # 连续冲四
 def vcf(self, player, deep):
+    if config.debugVCX:
+        print("========================== VCF ==========================")
     c = getCache(self, True)
     if c:
         return c
@@ -348,10 +336,12 @@ def vcf(self, player, deep):
 
 # 连续活三
 def vct(self, player, deep):
+    if config.debugVCX:
+        print("========================== VCT ==========================")
     c = getCache(self)
     if c:
         return c
     else:
-        result = vcx(self, player, False,deep)
+        result = vcx(self, player, False, deep)
         cache(self, result, False)
         return result
