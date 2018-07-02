@@ -94,7 +94,7 @@ class Board:
         # print(self.patternCache[1])
 
         # LDH niu pi
-        self.attackRate = 1.0
+        self.attackRate = config.attackRate
 
     def initScore(self):
         # TODO: check if this is equivalent to the p.item thing

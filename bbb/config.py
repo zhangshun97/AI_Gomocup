@@ -9,6 +9,8 @@ class Config:
         self.timeLimit = 5   # MINIMAX 至多算 x 秒
         self.vcxTimeLimit = 7  # VCX至少算 10 - x 秒
         self.vcxDeep = 9      # 算杀深度
+        self.attackRate = 1.1  # 玄学
+
         self.random = False   # 在分数差不多的时候是不是随机选择一个走
         self.log = False
         # 下面几个设置都是用来提升搜索速度的
