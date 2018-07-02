@@ -6,9 +6,9 @@ class Config:
         self.searchDeep_black = 4   # 搜索深度
         self.searchDeep_white = 5  # 搜索深度
         self.countLimit = 10  # gen函数返回的节点数量上限，超过之后将会按照分数进行截断
-        self.timeLimit = 7   # MINIMAX 至多算 x 秒
-        self.vcxTimeLimit = 10  # VCX至少算 10 - x 秒
-        self.vcxDeep = 15      # 算杀深度
+        self.timeLimit = 5   # MINIMAX 至多算 x 秒
+        self.vcxTimeLimit = 7  # VCX至少算 10 - x 秒
+        self.vcxDeep = 9      # 算杀深度
         self.random = False   # 在分数差不多的时候是不是随机选择一个走
         self.log = False
         # 下面几个设置都是用来提升搜索速度的

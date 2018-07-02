@@ -29,6 +29,8 @@ Cache = {
     'vct': {},
     'vcf': {},
 }
+findMaxCache = {}
+findMinCache = {}
 
 # debugNodeCount = 0
 
@@ -42,9 +44,31 @@ lastMinPoint = None
 There_is_no_points = True
 
 
+def findCache(self, result, min_=False):
+    if not config.cache:
+        return
+    if min_:
+        findMinCache[self.zobrist.boardHashing[0]] = result
+    else:
+        findMaxCache[self.zobrist.boardHashing[0]] = result
+
+
+def findGetCache(self, min_=False):
+    if not config.cache:
+        return
+    if min_:
+        result = findMinCache.get(self.zobrist.boardHashing[0], None)
+    else:
+        result = findMaxCache.get(self.zobrist.boardHashing[0], None)
+    return result
+
+
 # 找到所有比目标分数大的位置
 # 注意，不止要找自己的，还要找对面的，
 def findMax(self, player, score_):
+    r = findGetCache(self, min_=False)
+    if r:
+        return r
     # assert player==1 #max jiedian de wan jia wei 1
     result = []
 
@@ -56,6 +80,7 @@ def findMax(self, player, score_):
             (AIFives_[0][i], AIFives_[1][i])
             for i in range(ll)
         ]
+        findCache(self, AIFives, min_=False)
         return AIFives
 
     oppFives_ = np.where(self.oppScore >= score['FIVE'])
@@ -65,6 +90,7 @@ def findMax(self, player, score_):
             (oppFives_[0][i], oppFives_[1][i])
             for i in range(ll)
         ]
+        findCache(self, oppFives, min_=False)
         return oppFives
 
     for i in range(self.height):
@@ -85,7 +111,7 @@ def findMax(self, player, score_):
                 result.append(p)
 
     result.sort(key=lambda x: self.score[x], reverse=True)
-
+    findCache(self, result, min_=False)
     return result
 
 
@@ -93,8 +119,13 @@ def findMax(self, player, score_):
 # 找到所有比目标分数大的位置
 # 这是MIN层，所以己方分数要变成负数
 def findMin(self, player, score_):
+    r = findGetCache(self, min_=True)
+    if r:
+        return r
+
     oppFives = np.where(self.oppScore >= score['FIVE'])
     if len(oppFives[0]):
+        findCache(self, [(oppFives[0][0], oppFives[1][0])], min_=True)
         return [(oppFives[0][0], oppFives[1][0])]
 
     AIFives_ = np.where(self.AIScore >= score['FIVE'])
@@ -104,6 +135,7 @@ def findMin(self, player, score_):
             (AIFives_[0][i], AIFives_[1][i])
             for i in range(ll)
         ]
+        findCache(self, AIFives, min_=True)
         return AIFives
 
     result = []
@@ -141,12 +173,14 @@ def findMin(self, player, score_):
 
     # 注意冲四，因为虽然冲四的分比活四低，但是他的防守优先级是和活四一样高的，否则会忽略冲四导致获胜的走法
     if fours:
+        findCache(self, fours + blockedfours, min_=True)
         return fours + blockedfours
 
     # 注意对结果进行排序
     # 因为 fours 可能不存在，这时候不要忽略了 blockedfours
     result = blockedfours + result  # 这里让我返回可能的点
     result.sort(key=lambda x: np.abs(self.score[x]), reverse=True)
+    findCache(self, result, min_=True)
     return result
 
 
@@ -156,15 +190,15 @@ def get_max(self, player, deep, totalDeep=0):
     if deep <= 0 or time.clock() - self.startTime > config.vcxTimeLimit:
         return False
     points = findMax(self, player, MAX_SCORE)
-    if config.debugVCX:
-        print("==> Find Max: {}  ======> Deep {}".format(points, deep))
+    # if config.debugVCX:
+    #     print("==> Find Max: {}  ======> Deep {}".format(points, deep))
     # 先找有没有4的情况
     if points and self.AIScore[points[0]] >= score['FOUR']:
         # print("This is four")
         # print(score["FOUR"])
         # 为了减少一层搜索，活四就行了
-        if config.debugVCX:
-            print("++++++ AI win found! ++++++")
+        # if config.debugVCX:
+        #     print("++++++ AI win found! ++++++")
         return [points[0]]
 
     if len(points) >= 0 and deep <= 1:
@@ -174,9 +208,10 @@ def get_max(self, player, deep, totalDeep=0):
 
     for i in range(len(points)):
         p = points[i]
+
         self.put(p, player, True)
-        if config.debugVCX:
-            print("AI takes step: {}".format(p))
+        # if config.debugVCX:
+        #     print("AI takes step: {}".format(p))
         # 如果是防守对面的冲四，那么不用记下来
         if not self.oppScore[p] >= score['FIVE']:
             # 记录下一次的最好值
@@ -185,14 +220,9 @@ def get_max(self, player, deep, totalDeep=0):
         m = get_min(self, R.get_opponent(player), deep - 1)
         self.remove(p)
         if m:
-            # print(m)
             # 这里返回下一层的值
             m.insert(0, p)
-            # print(m,"this is m")
             return m
-        # else:
-        #     print("there we return [p]",p)
-        #     return [p]
 
     return False
 
@@ -203,8 +233,8 @@ def get_min(self, player, deep):
     global lastMinPoint, There_is_no_points
 
     if self.win(player):
-        if config.debugVCX:
-            print("------ Opp win found! ------")
+        # if config.debugVCX:
+        #     print("------ Opp win found! ------")
         return False
     # if self.win(R.get_opponent(player)):
     #     return True
@@ -214,8 +244,8 @@ def get_min(self, player, deep):
     points = findMin(self, player, MIN_SCORE)
     if len(points) > 0 and deep <= 1:
         There_is_no_points = False
-    if config.debugVCX:
-        print("==> Find Min: {} ======> Deep {}".format(points, deep))
+    # if config.debugVCX:
+    #     print("==> Find Min: {} ======> Deep {}".format(points, deep))
     if points and self.oppScore[points[0]] >= score['FOUR']:
         # 如果对面走了最好的点！赢了！
         return False
@@ -228,8 +258,8 @@ def get_min(self, player, deep):
         p = points[i]
         """ zheli de player shi hou mian gai de !"""
         self.put(p, player, True)
-        if config.debugVCX:
-            print("opp takes step: {}".format(p))
+        # if config.debugVCX:
+        #     print("opp takes step: {}".format(p))
         lastMinPoint = p
         m = get_max(self, R.get_opponent(player), deep - 1)  # 这个里面对每一种找到必杀！
         self.remove(p)
@@ -323,8 +353,8 @@ def getCache(self, vcf=False):
 
 # 连续冲四
 def vcf(self, player, deep):
-    if config.debugVCX:
-        print("========================== VCF ==========================")
+    # if config.debugVCX:
+    #     print("========================== VCF ==========================")
     c = getCache(self, True)
     if c:
         return c
@@ -336,8 +366,8 @@ def vcf(self, player, deep):
 
 # 连续活三
 def vct(self, player, deep):
-    if config.debugVCX:
-        print("========================== VCT ==========================")
+    # if config.debugVCX:
+    #     print("========================== VCT ==========================")
     c = getCache(self)
     if c:
         return c

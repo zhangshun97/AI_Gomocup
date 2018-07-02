@@ -56,7 +56,10 @@ class Board:
         self.size = self.width
 
         self.scoreCache = np.zeros([2, 4, self.height, self.width])
-        # self.evaluateCache = {}
+
+        self.genCache = {}
+        # onlyThree
+        self.gen3Cache = {}
 
         self.steps = []
         self.allSteps = []
@@ -83,6 +86,7 @@ class Board:
             [[[0, 0, 0, 0] for _ in range(self.width)] for _ in range(self.height)],
             [[[0, 0, 0, 0] for _ in range(self.width)] for _ in range(self.height)],
         ]
+        # self.patternCache = np.zeros([3, 20, 20, 4], dtype='int64')
 
         self.initScore()
         # TODO: check the usage of this table
@@ -247,18 +251,10 @@ class Board:
             self.patternCache[R.opp][x][y][3] += player * R.mm ** (5 + dd) * if_remove
             updatedPositions.append((x, y))
         # 一次性更新所有需要更新分数的点
-        # print(position)
-        # print(updatedPositions)
+
         for p in updatedPositions:
             self.AIScore[p] = self.scorePoint(p, R.AI)
             self.oppScore[p] = self.scorePoint(p, R.opp)
-            # if p == (4, 7):
-            #     print(
-            #         self.patternCache[R.AI][p[0]][p[1]][0],
-            #         self.patternCache[R.AI][p[0]][p[1]][1],
-            #         self.patternCache[R.AI][p[0]][p[1]][2],
-            #         self.patternCache[R.AI][p[0]][p[1]][3],
-            #     )
 
     def scorePoint(self, position, player):
         result = 0
@@ -292,7 +288,6 @@ class Board:
                 return p
         return False
 
-    # TODO: remove a step
     def remove(self, position):
         r = self.board[position]
         if config.debug:
@@ -323,7 +318,7 @@ class Board:
 
     # 棋面估分
     # 这里只算当前分，而不是在空位下一步之后的分
-    def evaluate(self, player=None):
+    def evaluate(self):
         # 这里都是用正整数初始化的，所以初始值是0
         self.AIMaxScore = 0
         self.oppMaxScore = 0
@@ -360,10 +355,29 @@ class Board:
 
     # gen 函数的排序是非常重要的，因为好的排序能极大提升AB剪枝的效率。
     # 而对结果的排序，是要根据role来的
+    def cache(self, result, onlyThree=False):
+        if not config.cache:
+            return
+        if onlyThree:
+            self.gen3Cache[self.zobrist.boardHashing[0]] = result
+        else:
+            self.genCache[self.zobrist.boardHashing[0]] = result
+
+    def getCache(self, onlyThree=False):
+        if not config.cache:
+            return
+        if onlyThree:
+            result = self.gen3Cache.get(self.zobrist.boardHashing[0], None)
+        else:
+            result = self.genCache.get(self.zobrist.boardHashing[0], None)
+        return result
 
     def gen(self, player, onlyThrees=False, starSpread=False):
-        if config.debugGen:
-            print("====== GEN for {} ======".format(player))
+        r = self.getCache(onlyThrees)
+        if r:
+            return r
+        # if config.debugGen:
+        #     print("====== GEN for {} ======".format(player))
         fives = []
         AIfours = []
         oppfours = []
@@ -504,39 +518,45 @@ class Board:
                                 opptwos.append(p)
                             else:
                                 neighbors.append(p)
-        if config.debugGen:
-            print(
-                'fives', fives, '\n',
-                'AIfours', AIfours, '\n',
-                'AI23', AItwothrees, '\n',
-                'AI4s', AIblockedfours, '\n',
-                'AI3s', AIthrees, '\n',
-            )
-            print(
-                'oppfours', oppfours, '\n',
-                'opp23s', opptwothrees, '\n',
-                'opp4s', oppblockedfours, '\n',
-                'opp3s', oppthrees, '\n',
-            )
+        # if config.debugGen:
+        #     print(
+        #         'fives', fives, '\n',
+        #         'AIfours', AIfours, '\n',
+        #         'AI23', AItwothrees, '\n',
+        #         'AI4s', AIblockedfours, '\n',
+        #         'AI3s', AIthrees, '\n',
+        #     )
+        #     print(
+        #         'oppfours', oppfours, '\n',
+        #         'opp23s', opptwothrees, '\n',
+        #         'opp4s', oppblockedfours, '\n',
+        #         'opp3s', oppthrees, '\n',
+        #     )
         # 如果成五，是必杀棋，直接返回
         if fives:
+            self.cache(fives, onlyThrees)
             return fives
         # 自己能活四，则直接活四，不考虑冲四
         if player == R.AI and AIfours:
+            self.cache(fives, onlyThrees)
             return AIfours
         if player == R.opp and oppfours:
+            self.cache(fives, onlyThrees)
             return oppfours
 
         # 对面有活四冲四，自己冲四都没，则只考虑对面活四 （此时对面冲四就不用考虑了)
         if player == R.AI and oppfours and not AIblockedfours:
+            self.cache(fives, onlyThrees)
             return oppfours
         if player == R.opp and AIfours and not oppblockedfours:
+            self.cache(fives, onlyThrees)
             return AIfours
 
         # 对面有活四自己有冲四，则都考虑下
         fours = AIfours + oppfours if player == R.AI else oppfours + AIfours
         blockedfours = AIblockedfours + oppblockedfours if player == R.opp else oppblockedfours + AIblockedfours
         if fours:
+            self.cache(fives, onlyThrees)
             return fours + blockedfours
 
         result = []
@@ -559,10 +579,12 @@ class Board:
 
         # 双三很特殊，因为能形成双三的不一定比一个活三强
         if AItwothrees or opptwothrees:
+            self.cache(fives, onlyThrees)
             return result
 
         # 只返回大于等于活三的棋
         if onlyThrees:
+            self.cache(fives, onlyThrees)
             return result
 
         if player == R.AI:
@@ -577,78 +599,10 @@ class Board:
 
         # 这种分数低的，就不用全部计算了
         if len(result) > config.countLimit:
+            self.cache(fives, onlyThrees)
             return result[:config.countLimit]
-
+        self.cache(fives, onlyThrees)
         return result
-
-    # def genE(self, depth):
-    #     neighbors = []
-    #     nextNeighbors = []
-    #
-    #     for i in range(self.height):
-    #         for j in range(self.width):
-    #             if self.board[i][j] == R.empty:
-    #                 if self.hasNeighbor((i, j), 1, 1):
-    #                     neighbors.append((i, j))
-    #                 elif depth >= 2 and self.hasNeighbor((i, j), 2, 2):
-    #                     nextNeighbors.append((i, j))
-    #     return neighbors + nextNeighbors
-    #
-    # def genEE(self, deep):
-    #     fives = []
-    #     fours = []
-    #     twothrees = []
-    #     threes = []
-    #     twos = []
-    #     neighbors = []
-    #     nextNeighbors = []
-    #
-    #     for i in range(self.height):
-    #         for j in range(self.width):
-    #             if self.board[i][j] != R.empty:
-    #                 continue
-    #             p = (i, j)
-    #             if self.hasNeighbor((i, j), 1, 1):
-    #                 scoreOpp = self.oppScore[i][j]
-    #                 scoreAI = self.AIScore[i][j]
-    #
-    #                 if scoreAI >= score['FIVE']:
-    #                     # 先看电脑能不能连成 5
-    #                     fives.append(p)
-    #                 elif scoreOpp >= score['FIVE']:
-    #                     # 再看玩家能不能连成 5
-    #                     # 别急着返回，因为遍历还没完成，说不定电脑自己能成五
-    #                     fives.append(p)
-    #                 elif scoreAI >= score['FOUR']:
-    #                     fours.insert(0, p)
-    #
-    #                 elif scoreOpp >= score['FOUR']:
-    #                     fours.append(p)
-    #                 elif scoreAI >= 2 * score['THREE']:  # 能成双三也很强
-    #                     twothrees.insert(0, p)
-    #                 elif scoreOpp >= 2 * score['THREE']:
-    #                     twothrees.append(p)
-    #                 elif scoreAI >= score['THREE']:
-    #                     threes.insert(0, p)
-    #                 elif scoreOpp >= score['THREE']:
-    #                     threes.append(p)
-    #                 elif scoreAI >= score['TWO']:
-    #                     twos.insert(0, p)
-    #                 elif scoreOpp >= score['TWO']:
-    #                     twos.insert(0, p)
-    #                 else:
-    #                     neighbors.append(p)
-    #             elif deep >= 2 and self.hasNeighbor((i, j), 2, 2):
-    #                 pass
-    #                 # nextNeighbors.append(p)
-    #     if fives:
-    #         return [fives[0]]
-    #     elif fours:
-    #         return fours
-    #     elif twothrees:
-    #         return twothrees
-    #     else:
-    #         return threes + twos + neighbors + nextNeighbors
 
     def hasNeighbor(self, position, distance, count):
         # 3309    0.013    0.000    0.026    0.000 board.py:545(hasNeighbor) 11 10 3 7
@@ -684,21 +638,21 @@ class Board:
         # 所以这里还没下
         # 先看看能不能 win
         if self.win(player, position):
-            if config.debugAB:
-                print("{} win found!".format(player))
+            # if config.debugAB:
+            #     print("{} win found!".format(player))
                 # print(self.board)
             return self.MAX if player == R.AI else self.MIN
 
         # 然后 player 下这个子
         self.put(position, player, True)
-        if config.debugAB:
-            print("{} takes : {}".format(player, position))
+        # if config.debugAB:
+        #     print("{} takes : {}".format(player, position))
 
         # if is leaf node
         if deep <= 0:
             r = self.evaluate()
-            if config.debugAB:
-                print("{} Score -------> {}".format(player, r))
+            # if config.debugAB:
+            #     print("{} Score -------> {}".format(player, r))
             # 记得撤掉之前 player 下的子
             if self.win(R.get_opponent(player)):
                 self.remove(position)
@@ -719,8 +673,8 @@ class Board:
 
         # 记得撤掉之前 player 下的子
         self.remove(position)
-        if config.debugAB:
-            print("{} Score -------> {} at {}".format(player, result, position))
+        # if config.debugAB:
+        #     print("{} Score -------> {} at {}".format(player, result, position))
         # 然后返回
         return result
 
@@ -728,8 +682,8 @@ class Board:
         v = self.MIN
         # get successors
         successors = self.gen(player, starSpread=False)
-        if config.debugAB:
-            print("MAX({}) node successors: {} =====> Deep: {}".format(player, successors, deep))
+        # if config.debugAB:
+        #     print("MAX({}) node successors: {} =====> Deep: {}".format(player, successors, deep))
         for point in successors:
             v = max(v, self.get_value(player, point, deep, alpha, beta))
             # pruning
@@ -742,8 +696,8 @@ class Board:
         v = self.MAX
         # get successors
         successors = self.gen(player, starSpread=False)
-        if config.debugAB:
-            print("MIN({}) node successors: {} =====> Deep: {}".format(player, successors, deep))
+        # if config.debugAB:
+        #     print("MIN({}) node successors: {} =====> Deep: {}".format(player, successors, deep))
         for point in successors:
             v = min(v, self.get_value(player, point, deep, alpha, beta))
             # pruning
@@ -760,36 +714,36 @@ class Board:
 
         # 生成可选点，最开始的时候不要开启 star 搜索
         candidates = self.gen(R.AI, starSpread=False)
-        if config.debug2:
-            print(" =================> Candidates: {}".format(candidates))
+        # if config.debug2:
+        #     print(" =================> Candidates: {}".format(candidates))
 
         if len(candidates) == 1:
             return candidates[0], 1
         cand_len = len(candidates)
         for i in range(cand_len):
             point = candidates[i]
-            if config.debug:
-                print('++++++++++++++++++ {} ++++++++++++++++++'.format(point))
-                print('time: {}'.format(time.clock() - self.startTime))
+            # if config.debug:
+            #     print('++++++++++++++++++ {} ++++++++++++++++++'.format(point))
+            #     print('time: {}'.format(time.clock() - self.startTime))
             # 超时判定并且截断搜索
             if time.clock() - self.startTime > config.timeLimit:
-                if config.debug2:
-                    print('TIME OUT!')
-                    print('Points left: {}'.format(candidates[i:]))
+                # if config.debug2:
+                #     print('TIME OUT!')
+                #     print('Points left: {}'.format(candidates[i:]))
                 break
-            if config.debugAB:
-                print("ROOT ====> {} <==== TOOR".format(point))
+            # if config.debugAB:
+            #     print("ROOT ====> {} <==== TOOR".format(point))
             v = self.get_value(R.AI, point, deep, self.MIN, self.MAX)
-            if config.debug2:
-                print("{} , score {}".format(point, v))
+            # if config.debug2:
+            #     print("{} , score {}".format(point, v))
             # 如果比之前的一个好，则把当前位子加入待选位子
             if v == best:
                 bestPoints.append(point)
             if v > best:
                 best = v
                 bestPoints = [point]
-        if config.debug2:
-            print(bestPoints)
+        # if config.debug2:
+        #     print(bestPoints)
         bestPoints.sort(key=lambda x: fixFour(self.AIScore[x]), reverse=True)
         result = bestPoints[0]
         return result, 0
@@ -815,9 +769,7 @@ class Board:
             return points[0]
         for i in range(len(points)):
             p = points[i]
-            if config.debug:
-                print('++++++++++++++++++ {} ++++++++++++++++++'.format(p))
-                print('time: {}'.format(time.clock() - self.startTime))
+
             if time.clock() - self.startTime > config.timeLimit:
                 if config.debug:
                     print('TIME OUT!')
@@ -936,105 +888,6 @@ class Board:
                 return player
 
         return False
-
-    # 判断 player 下了这个点之后有没有成 5
-    # def isFive(self, p, player):
-    #     size = self.size
-    #     count = 1
-    #
-    #     def reset():
-    #         nonlocal count
-    #         count = 1
-    #
-    #     # --
-    #     for i in range(p[1] + 1, size + 1):
-    #         if i >= size:
-    #             break
-    #         t = self.board[p[0]][i]
-    #         if t != player:
-    #             break
-    #         count += 1
-    #
-    #     for i in range(p[1] - 1, -1, -1):
-    #         if i < 0:
-    #             break
-    #         t = self.board[p[0]][i]
-    #         if t != player:
-    #             break
-    #         count += 1
-    #
-    #     if count >= 5:
-    #         return True
-    #
-    #     # |
-    #     reset()
-    #     for i in range(p[0] + 1, size + 1):
-    #         if i >= size:
-    #             break
-    #         t = self.board[i][p[1]]
-    #         if t != player:
-    #             break
-    #         count += 1
-    #
-    #     for i in range(p[0] - 1, -1, -1):
-    #         if i < 0:
-    #             break
-    #         t = self.board[i][p[1]]
-    #         if t != player:
-    #             break
-    #         count += 1
-    #
-    #     if count >= 5:
-    #         return True
-    #
-    #     # \
-    #     reset()
-    #     for i in range(1, size + 1):
-    #         x, y = p[0] + i, p[1] + i
-    #         if x >= size or y >= size:
-    #             break
-    #         t = self.board[x][y]
-    #         if t != player:
-    #             break
-    #         count += 1
-    #
-    #     for i in range(1, size + 1):
-    #         x, y = p[0] - i, p[1] - i
-    #         if x < 0 or y < 0:
-    #             break
-    #         t = self.board[x][y]
-    #         if t != player:
-    #             break
-    #         count += 1
-    #
-    #     if count >= 5:
-    #         return True
-    #
-    #     # /
-    #     reset()
-    #
-    #     for i in range(1, size + 1):
-    #         x, y = p[0] + i, p[1] - i
-    #         if x >= size or y < 0:
-    #             break
-    #         t = self.board[x][y]
-    #         if t != player:
-    #             break
-    #         count += 1
-    #
-    #     for i in range(1, size + 1):
-    #         x, y = p[0] - i, p[1] + i
-    #         if x < 0 or y >= size:
-    #             break
-    #         t = self.board[x][y]
-    #         if t != player:
-    #             break
-    #         count += 1
-    #
-    #     if count >= 5:
-    #         return True
-    #
-    #     return False
 
 
 if __name__ == '__main__':
