@@ -3,3 +3,5 @@
 # To ignore uploading a directory
 # just add *directory name* + '/' at a new row
 /Carbon-Gomoku
+/references
+
