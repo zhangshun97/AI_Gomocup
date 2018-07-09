@@ -4,6 +4,8 @@ This project is a competitive project in course [Introduction to Artificial Inte
 
 The Gomoku AIs are based on the Gomocup standard and you can create your own `AI.exe` through `pisqpipe`, the materials and document are [here](https://github.com/zhangshun97/AI_Gomocup/tree/master/pisqpipe).
 
+- The rule is: Free Style
+
 ## Our team
 
 We have three amazing guys here, [Shun Zhang](https://github.com/zhangshun97), [Donghao Li](https://github.com/Lidonghao1996) and [Pingxuan Huang](https://github.com/Explorerhpx).
@@ -18,7 +20,7 @@ We have three amazing guys here, [Shun Zhang](https://github.com/zhangshun97), [
 
 - [Monte-Carlo Tree Search](https://github.com/zhangshun97/AI_Gomocup/tree/master/mcts)
 - Genetic Algorithm
-- Minimax Search
+- [Minimax Search](https://github.com/zhangshun97/AI_Gomocup/tree/master/final)
   - VCX
   - Alpha-beta pruning
   - Zobrist transition table
