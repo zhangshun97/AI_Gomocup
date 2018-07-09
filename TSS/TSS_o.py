@@ -5,6 +5,7 @@ import random
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import copy
+import time
 
 empty = 0
 black = 1
@@ -149,6 +150,8 @@ class Board:
                     # print("Best Placements: ",best_threat)
                     AI_pos = random.choice(best_threat)
                 else:
+                    print("begin search")
+                    tt0 = time.clock()
                     root_node = self.AI.node(None)
                     sol = self.AI.threat_space_search(self.board, root_node, self.p1_c, self.AI_c, self.size)
 
@@ -159,6 +162,7 @@ class Board:
                         AI_pos = self.sol_seq.pop(0)
                     else:
                         AI_pos = self.AI.maximise_own(self.board, self.p1_c, self.AI_c, self.turn)
+                    print("end search: {}".format(time.clock() - tt0))
 
             self.board[AI_pos[0], AI_pos[1]] = self.AI_c
 
@@ -774,5 +778,5 @@ class AI:
         return {(row, col): score}
 
 
-x = Board(15, AI, black)
+x = Board(20, AI, black)
 x.prompt_input()

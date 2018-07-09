@@ -1,0 +1,22 @@
+To make xl read .pos files, see the code below.
+This Win32 code is easy to port to other platform. 
+
+BYTE num;
+BYTE buf[250];
+ReadFile( hFile, &num, 1, &dwByteRead, NULL );
+ReadFile( hFile, buf, 225, &dwByteRead, NULL );
+
+if(num>225)return;
+for( i=0; i<num; i++)
+{
+	p=MAKEPOS(buf[i]%15,14-buf[i]/15);
+	if(!PointInBoard(p)) break;
+	_pos.pos[i]=p;
+	_pos.num++;
+	_map[p]=SIDE(i);
+	_num[p]=i+1;
+}
+
+
+
+ 
