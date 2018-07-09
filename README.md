@@ -16,7 +16,7 @@ We have three amazing guys here, [Shun Zhang](https://github.com/zhangshun97), [
 
 ## Realized Algorithms
 
-- Monte-Carlo Tree Search
+- [Monte-Carlo Tree Search](https://github.com/zhangshun97/AI_Gomocup/tree/master/mcts)
 - Genetic Algorithm
 - Minimax Search
   - VCX
@@ -26,4 +26,4 @@ We have three amazing guys here, [Shun Zhang](https://github.com/zhangshun97), [
 
 *More detailed document please refer to relating page.*
 
-Also, there is a python version of Threat Space Search, which is designed by [Xavier Wee](https://github.com/xavierwwj). However, we found it too slow for a board as big as `20 x 20`. Optimizations are required.
+Also, there is a python version of [Threat Space Search](https://github.com/zhangshun97/AI_Gomocup/tree/master/TSS), which is designed by [Xavier Wee](https://github.com/xavierwwj). However, we found it too slow for a board as big as `20 x 20`. Optimizations are required.
