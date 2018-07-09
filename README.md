@@ -12,6 +12,8 @@ We have three amazing guys here, [Shun Zhang](https://github.com/zhangshun97), [
 - The VCX Algorithm is supported by Donghao.
 - The MCTS Algorithm and Minimax Algorithm are supported by me.
 
+**Note that** all the algorithms listed below can be packed into a win32 exe (less than 20m with bumpy version 1.13.1), which is tested by us. We think the `pisqpipe` platform is far from perfect and there are too many unknown or stupid errors. So we just provide the terminal APIs. You can play with our AIs through command `$python AI-name.py`(more details please refer to relating page). Still, one can easily pack the AIs into win32 exe with the 'help' of [pisqpipe](https://github.com/zhangshun97/AI_Gomocup/tree/master/pisqpipe).
+
 ## Realized Algorithms
 
 - Monte-Carlo Tree Search
@@ -24,4 +26,4 @@ We have three amazing guys here, [Shun Zhang](https://github.com/zhangshun97), [
 
 *More detailed document please refer to relating page.*
 
-Also, there is a python version of Threat Space Search, which is designed by .
+Also, there is a python version of Threat Space Search, which is designed by [Xavier Wee](https://github.com/xavierwwj). However, we found it too slow for a board as big as `20 x 20`. Optimizations are required.
