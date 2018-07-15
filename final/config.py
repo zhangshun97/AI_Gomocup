@@ -7,7 +7,7 @@ class Config:
         self.searchDeep_white = 6  # 搜索深度
         self.countLimit = 15  # gen函数返回的节点数量上限，超过之后将会按照分数进行截断
         self.timeLimit = 9   # MINIMAX 至多算 x 秒
-        self.vcxTimeLimit = 110  # VCX至少算 10 - x 秒
+        self.vcxTimeLimit = 11  # VCX至少算 10 - x 秒
         self.vcxDeep = 15      # 算杀深度
         self.attackRate = 1  # 玄学
 
@@ -24,7 +24,7 @@ class Config:
 
         # 调试
         self.debug = False     # 打印详细的debug信息
-        self.debug2 = True     # 打印每一个候选点的得分
+        self.debug2 = False     # 打印每一个候选点的得分
         self.debug3 = False    # 打印 MINI-MAX 搜索的具体步骤
         self.debugGen = False  # 调试启发式搜索函数
         self.debugVCX = False   # 算杀debug
