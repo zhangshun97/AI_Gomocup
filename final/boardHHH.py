@@ -1,4 +1,5 @@
-# zs: 我在这里使用了字典进行打分，完全取代了 evaluate-point 的方式
+# zs: 我在这里使用了字典进行打分，用整数位数来进行动态更新，完全取代了 evaluate-point 的方式
+#     效率提高了10倍左右
 
 import numpy as np
 from role import role

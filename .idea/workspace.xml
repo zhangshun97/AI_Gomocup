@@ -4,16 +4,7 @@
     <list default="true" id="92e57147-0543-4b2a-896c-fbf61577d8e9" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/AI_Gomocup.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AI_Gomocup.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gobang/test1_gobang.py" beforeDir="false" afterPath="$PROJECT_DIR$/Gobang/test1_gobang.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TSS/TSS_o.py" beforeDir="false" afterPath="$PROJECT_DIR$/TSS/TSS_o.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TSS/test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bbb/ai.py" beforeDir="false" afterPath="$PROJECT_DIR$/bbb/ai.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bbb/boardHHH.py" beforeDir="false" afterPath="$PROJECT_DIR$/bbb/boardHHH.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bbb/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/bbb/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bbb/debugCase.py" beforeDir="false" afterPath="$PROJECT_DIR$/bbb/debugCase.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bbb/testBbb.py" beforeDir="false" afterPath="$PROJECT_DIR$/bbb/testBbb.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transitionTable.py" beforeDir="false" afterPath="$PROJECT_DIR$/transitionTable.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/final/boardHHH.py" beforeDir="false" afterPath="$PROJECT_DIR$/final/boardHHH.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -65,105 +56,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="getPointCache.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bbb/getPointCache.py">
+      <file leaf-file-name="boardHHH.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/final/boardHHH.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4760">
-              <caret line="327" column="11" selection-start-line="327" selection-start-column="11" selection-end-line="327" selection-end-column="11" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="vcx.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bbb/vcx.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2260">
-              <caret line="299" column="17" selection-start-line="299" selection-start-column="17" selection-end-line="299" selection-end-column="17" />
-              <folding>
-                <element signature="e#251#269#0" expanded="true" />
-                <element signature="e#2949#4807#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="config.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/bbb/config.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="27" selection-start-line="11" selection-start-column="27" selection-end-line="11" selection-end-column="27" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="boardHHH.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bbb/boardHHH.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="98">
-              <caret line="928" column="29" selection-start-line="928" selection-start-column="29" selection-end-line="928" selection-end-column="29" />
+            <state relative-caret-position="-965">
+              <caret column="33" selection-start-column="33" selection-end-column="33" />
               <folding>
                 <element signature="e#46#64#0" expanded="true" />
-                <element signature="e#393#899#0" />
-                <element signature="e#931#1230#0" />
-                <element signature="e#3025#6577#0" />
-                <element signature="e#7276#11047#0" />
-                <element signature="e#11101#11645#0" />
-                <element signature="e#11720#12116#0" />
-                <element signature="e#12174#12333#0" />
-                <element signature="e#12375#12624#0" />
-                <element signature="e#12669#13029#0" />
-                <element signature="e#13063#13083#0" />
-                <element signature="e#13156#13980#0" />
-                <element signature="e#14035#14041#0" />
-                <element signature="e#14317#14523#0" />
-                <element signature="e#14574#14822#0" />
-                <element signature="e#14895#24376#0" />
-                <element signature="e#15661#15676#0" />
-                <element signature="e#18432#18444#0" />
-                <element signature="e#24511#29677#0" />
-                <element signature="e#24416#25658#0" />
-                <element signature="e#24440#24518#0" />
-                <element signature="e#25687#25963#0" />
-                <element signature="e#30051#31575#0" />
-                <element signature="e#31635#32651#0" />
-                <element signature="e#32712#33689#0" />
-                <element signature="e#33741#34272#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="testBbb.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bbb/testBbb.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-717">
-              <caret line="34" column="18" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="18" />
-              <folding>
-                <element signature="e#0#17#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="debugCase.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bbb/debugCase.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="247" column="20" selection-start-line="247" selection-start-column="20" selection-end-line="247" selection-end-column="20" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ai.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bbb/ai.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="402">
-              <caret line="29" column="78" selection-start-line="29" selection-start-column="78" selection-end-line="29" selection-end-column="78" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -262,6 +161,7 @@
         <option value="$PROJECT_DIR$/bbb/ai.py" />
         <option value="$PROJECT_DIR$/bbb/boardHHH.py" />
         <option value="$PROJECT_DIR$/bbb/config.py" />
+        <option value="$PROJECT_DIR$/final/boardHHH.py" />
       </list>
     </option>
   </component>
@@ -285,6 +185,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -295,23 +196,12 @@
             <path>
               <item name="AI_Gomocup" type="b2602c69:ProjectViewProjectNode" />
               <item name="AI_Gomocup" type="462c0819:PsiDirectoryNode" />
-              <item name="bbb" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="AI_Gomocup" type="b2602c69:ProjectViewProjectNode" />
-              <item name="AI_Gomocup" type="462c0819:PsiDirectoryNode" />
-              <item name="Gobang" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="AI_Gomocup" type="b2602c69:ProjectViewProjectNode" />
-              <item name="AI_Gomocup" type="462c0819:PsiDirectoryNode" />
-              <item name="TSS" type="462c0819:PsiDirectoryNode" />
+              <item name="final" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -466,6 +356,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="51" y="23" width="1389" height="877" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="4" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5011119" side_tool="true" weight="0.51794875" />
@@ -473,7 +364,6 @@
       <window_info anchor="bottom" id="Version Control" order="6" weight="0.32948717" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49962935" weight="0.2576923" />
       <window_info anchor="right" x="2564" y="212" width="1325" height="529" id="Run" order="8" sideWeight="0.49888808" weight="0.6161841" />
-      <window_info anchor="right" id="Coverage" order="0" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.51666665" />
       <window_info anchor="right" id="Remote Host" order="4" weight="0.3297568" />
       <window_info content_ui="combo" id="Project" order="0" weight="0.19599108" />
@@ -481,9 +371,9 @@
       <window_info anchor="right" id="Database" order="5" weight="0.32987398" />
       <window_info anchor="right" id="SciView" order="7" weight="0.47512993" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Concurrent Activities Diagram" weight="0.32948717" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" id="Debug" order="6" weight="0.46325168" />
+      <window_info anchor="bottom" id="Concurrent Activities Diagram" order="11" weight="0.32948717" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="3" weight="0.4" />
       <window_info anchor="right" id="Commander" order="1" weight="0.4" />
@@ -491,31 +381,32 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3287879" />
+      <window_info anchor="right" id="Coverage" order="0" side_tool="true" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49888808" visible="true" weight="0.29358974" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Remote Host" order="4" weight="0.3297568" />
       <window_info content_ui="combo" id="Project" order="0" weight="0.24759081" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="1" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32948717" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49888808" visible="true" weight="0.29358974" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49962935" weight="0.25897437" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32948717" />
       <window_info anchor="right" id="Database" order="6" weight="0.32987398" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.22692308" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5011119" side_tool="true" weight="0.51794875" />
       <window_info anchor="bottom" id="Database Changes" order="11" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32948717" />
-      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="right" id="SciView" order="5" weight="0.71015567" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.44358975" />
       <window_info anchor="right" id="Coverage" order="0" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49962935" weight="0.25897437" />
+      <window_info id="Favorites" order="2" side_tool="true" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -559,62 +450,9 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/bbb/boardHHH.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="12631">
-          <caret line="743" column="24" selection-start-line="743" selection-start-column="24" selection-end-line="743" selection-end-column="24" />
-          <folding>
-            <element signature="e#46#64#0" expanded="true" />
-            <element signature="e#393#899#0" />
-            <element signature="e#931#1230#0" />
-            <element signature="e#3025#6577#0" />
-            <element signature="e#7276#11047#0" />
-            <element signature="e#11101#11645#0" />
-            <element signature="e#11720#12116#0" />
-            <element signature="e#12174#12333#0" />
-            <element signature="e#12375#12624#0" />
-            <element signature="e#12669#13029#0" />
-            <element signature="e#13063#13083#0" />
-            <element signature="e#13156#13980#0" />
-            <element signature="e#14035#14041#0" />
-            <element signature="e#14317#14523#0" />
-            <element signature="e#14574#14822#0" />
-            <element signature="e#14895#24376#0" />
-            <element signature="e#15661#15676#0" />
-            <element signature="e#18432#18444#0" />
-            <element signature="e#24511#29677#0" />
-            <element signature="e#24416#25658#0" />
-            <element signature="e#24440#24518#0" />
-            <element signature="e#25687#25963#0" />
-            <element signature="e#30051#31575#0" />
-            <element signature="e#31635#32651#0" />
-            <element signature="e#32712#33689#0" />
-            <element signature="e#33741#34272#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pisqpipe.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1564">
-          <caret line="97" lean-forward="true" selection-start-line="97" selection-end-line="97" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="21" column="29" lean-forward="true" selection-start-line="21" selection-start-column="29" selection-end-line="21" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/git_n_in_row.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1484">
-          <caret line="211" column="39" lean-forward="true" selection-start-line="211" selection-start-column="39" selection-end-line="211" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/pisqpipe.py" />
+    <entry file="file://$PROJECT_DIR$/example.py" />
+    <entry file="file://$PROJECT_DIR$/git_n_in_row.py" />
     <entry file="file://$USER_HOME$/anaconda/envs/CV/lib/python3.6/random.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="203">
@@ -622,21 +460,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ttt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/ttt.py" />
     <entry file="file://$PROJECT_DIR$/test2.0beta.py" />
-    <entry file="file://$PROJECT_DIR$/check_win.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="492">
-          <caret line="339" selection-start-line="339" selection-end-line="339" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/check_win.py" />
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
@@ -649,62 +475,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Carbon-Gomoku/test6.0-5.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="60" selection-start-line="3" selection-start-column="60" selection-end-line="3" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test4.0.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="143" selection-start-line="143" selection-end-line="143" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TSS/test_TSS_1.py">
+    <entry file="file://$PROJECT_DIR$/Carbon-Gomoku/test6.0-5.py" />
+    <entry file="file://$PROJECT_DIR$/test4.0.py" />
+    <entry file="file://$PROJECT_DIR$/tss/test_TSS_1.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="56" column="45" lean-forward="true" selection-start-line="56" selection-start-column="45" selection-end-line="56" selection-end-column="45" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/TSS/TSS_o.py">
+    <entry file="file://$PROJECT_DIR$/tss/TSS_o.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="886">
           <caret line="178" column="50" lean-forward="true" selection-start-line="178" selection-start-column="50" selection-end-line="178" selection-end-column="50" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/full_rule.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="526">
-          <caret line="199" column="57" selection-start-line="199" selection-start-column="57" selection-end-line="199" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example3.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="153" column="41" lean-forward="true" selection-start-line="153" selection-start-column="41" selection-end-line="153" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="248" lean-forward="true" selection-start-line="248" selection-end-line="248" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example5_full_rule.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="524" column="12" selection-start-line="524" selection-start-column="12" selection-end-line="524" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/full_rule.py" />
+    <entry file="file://$PROJECT_DIR$/example3.py" />
+    <entry file="file://$PROJECT_DIR$/example.py" />
+    <entry file="file://$PROJECT_DIR$/example5_full_rule.py" />
     <entry file="file://$PROJECT_DIR$/TSS/example_tss_1.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="507">
@@ -712,13 +502,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test2.0.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="303">
-          <caret line="273" column="16" lean-forward="true" selection-start-line="273" selection-start-column="16" selection-end-line="273" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/test2.0.py" />
     <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/python_stubs/1225347545/numpy/random/mtrand.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
@@ -733,14 +517,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/transitionTable.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="31" column="33" selection-start-line="31" selection-start-column="33" selection-end-line="31" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TSS/test_TSS_2.py">
+    <entry file="file://$PROJECT_DIR$/transitionTable.py" />
+    <entry file="file://$PROJECT_DIR$/tss/test_TSS_2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="510">
           <caret line="32" column="47" selection-start-line="32" selection-start-column="47" selection-end-line="32" selection-end-column="47" />
@@ -748,56 +526,14 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bbb/config" />
-    <entry file="file://$PROJECT_DIR$/test5_full_rule_search_uc.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="457">
-          <caret line="483" column="22" lean-forward="true" selection-start-line="483" selection-start-column="22" selection-end-line="483" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Gobang/test1_gobang.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-479">
-          <caret line="9" column="9" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="50" lean-forward="true" selection-start-line="50" selection-end-line="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/negamax.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="23" selection-start-line="9" selection-start-column="23" selection-end-line="9" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/win.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" column="12" selection-start-line="15" selection-start-column="12" selection-end-line="15" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pisqpipe.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3">
-          <caret line="90" column="13" selection-start-line="90" selection-start-column="13" selection-end-line="90" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="11" selection-start-line="2" selection-start-column="11" selection-end-line="2" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TSS/TSS.py">
+    <entry file="file://$PROJECT_DIR$/test5_full_rule_search_uc.py" />
+    <entry file="file://$PROJECT_DIR$/Gobang/test1_gobang.py" />
+    <entry file="file://$PROJECT_DIR$/example2.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/negamax.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/win.py" />
+    <entry file="file://$PROJECT_DIR$/pisqpipe.py" />
+    <entry file="file://$PROJECT_DIR$/test.py" />
+    <entry file="file://$PROJECT_DIR$/tss/TSS.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="490">
           <caret line="116" column="34" selection-start-line="116" selection-start-column="25" selection-end-line="116" selection-end-column="34" />
@@ -813,20 +549,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/evaluate.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="87">
-          <caret line="31" column="21" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/role.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/bbb/evaluate.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/role.py" />
     <entry file="file://$USER_HOME$/anaconda/envs/naiveNumpy/lib/python3.6/site-packages/numpy/core/numeric.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-523">
@@ -834,233 +558,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/score.py">
+    <entry file="file://$PROJECT_DIR$/bbb/score.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/zobrist.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/getPointCache.py" />
+    <entry file="file://$PROJECT_DIR$/test3.0.py" />
+    <entry file="file://$PROJECT_DIR$/boardHHH.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/board.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/vcx.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/exampleBbb.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/ai.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/debugCase.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/testBbb.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/boardHHH.py" />
+    <entry file="file://$PROJECT_DIR$/bbb/config.py" />
+    <entry file="file://$PROJECT_DIR$/final/boardHHH.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/zobrist.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/getPointCache.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4760">
-          <caret line="327" column="11" selection-start-line="327" selection-start-column="11" selection-end-line="327" selection-end-column="11" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test3.0.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4">
-          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding>
-            <element signature="e#157#3182#0" />
-            <element signature="e#401#3182#0" />
-            <element signature="e#626#1094#0" />
-            <element signature="e#805#887#0" />
-            <element signature="e#1139#2981#0" />
-            <element signature="e#1917#2165#0" />
-            <element signature="e#2203#2451#0" />
-            <element signature="e#3008#3182#0" />
-            <element signature="e#3257#3698#0" />
-            <element signature="e#3513#3624#0" />
-            <element signature="e#3737#3777#0" />
-            <element signature="e#3816#4745#0" />
-            <element signature="e#3907#4141#0" />
-            <element signature="e#4168#4745#0" />
-            <element signature="e#4213#4697#0" />
-            <element signature="e#4261#4697#0" />
-            <element signature="e#4306#4697#0" />
-            <element signature="e#4813#6240#0" />
-            <element signature="e#4813#5210#1" />
-            <element signature="e#5415#6240#0" />
-            <element signature="e#5615#5791#0" />
-            <element signature="e#5829#6005#0" />
-            <element signature="e#6896#7232#0" />
-            <element signature="e#6900#7025#0" />
-            <element signature="e#7168#7232#0" />
-            <element signature="e#7394#7732#0" />
-            <element signature="e#7398#7525#0" />
-            <element signature="e#7668#7732#0" />
-            <element signature="e#7817#8132#0" />
-            <element signature="e#7821#7925#0" />
-            <element signature="e#8068#8132#0" />
-            <element signature="e#8213#8526#0" />
-            <element signature="e#8217#8319#0" />
-            <element signature="e#8462#8526#0" />
-            <element signature="e#8633#13412#0" />
-            <element signature="e#8799#10015#0" />
-            <element signature="e#9197#9316#0" />
-            <element signature="e#10051#11135#0" />
-            <element signature="e#10290#10623#0" />
-            <element signature="e#10478#10595#0" />
-            <element signature="e#10744#10846#0" />
-            <element signature="e#10953#11057#0" />
-            <element signature="e#11178#12004#0" />
-            <element signature="e#11298#11794#0" />
-            <element signature="e#11531#11759#0" />
-            <element signature="e#12069#13412#0" />
-            <element signature="e#12172#12270#0" />
-            <element signature="e#12725#13017#0" />
-            <element signature="e#13113#13412#0" />
-            <element signature="e#13201#13373#0" />
-            <element signature="e#13201#13228#0" />
-            <element signature="e#13429#13840#0" />
-            <element signature="e#13500#13586#0" />
-            <element signature="e#13625#13636#0" />
-            <element signature="e#13677#13734#0" />
-            <element signature="e#13776#13840#0" />
-            <element signature="e#13865#14619#0" />
-            <element signature="e#13865#13957#1" />
-            <element signature="e#14329#14467#0" />
-            <element signature="e#14490#14596#0" />
-            <element signature="e#14644#14900#0" />
-            <element signature="e#14686#14738#0" />
-            <element signature="e#14801#14878#0" />
-            <element signature="e#14928#15038#0" />
-            <element signature="e#14962#15016#0" />
-            <element signature="e#15063#15169#0" />
-            <element signature="e#15196#15345#0" />
-            <element signature="e#15379#15544#0" />
-            <element signature="e#15574#15700#0" />
-            <element signature="e#15733#15891#0" />
-            <element signature="e#15846#15878#0" />
-            <element signature="e#15919#15923#0" />
-            <element signature="e#15949#15972#0" />
-            <element signature="e#15997#16507#0" />
-            <element signature="e#16050#16141#0" />
-            <element signature="e#16196#16507#0" />
-            <element signature="e#16350#16489#0" />
-            <element signature="e#16532#16979#0" />
-            <element signature="e#16549#16947#0" />
-            <element signature="e#16708#16750#0" />
-            <element signature="e#16889#16933#0" />
-            <element signature="e#16998#17106#0" />
-            <element signature="e#17073#17106#0" />
-            <element signature="e#17140#17160#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/boardHHH.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="27" lean-forward="true" selection-start-line="4" selection-start-column="27" selection-end-line="4" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/board.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="241" column="62" selection-start-line="241" selection-start-column="62" selection-end-line="241" selection-end-column="62" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <element signature="e#7378#15813#0" />
-            <element signature="e#15819#15843#0" />
-            <element signature="e#18528#19626#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/vcx.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2260">
-          <caret line="299" column="17" selection-start-line="299" selection-start-column="17" selection-end-line="299" selection-end-column="17" />
-          <folding>
-            <element signature="e#251#269#0" expanded="true" />
-            <element signature="e#2949#4807#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/exampleBbb.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="548">
-          <caret line="111" column="27" selection-start-line="111" selection-start-column="27" selection-end-line="111" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/ai.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="402">
-          <caret line="29" column="78" selection-start-line="29" selection-start-column="78" selection-end-line="29" selection-end-column="78" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/debugCase.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="247" column="20" selection-start-line="247" selection-start-column="20" selection-end-line="247" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/testBbb.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-717">
-          <caret line="34" column="18" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#17#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/boardHHH.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="98">
-          <caret line="928" column="29" selection-start-line="928" selection-start-column="29" selection-end-line="928" selection-end-column="29" />
+        <state relative-caret-position="-965">
+          <caret column="33" selection-start-column="33" selection-end-column="33" />
           <folding>
             <element signature="e#46#64#0" expanded="true" />
-            <element signature="e#393#899#0" />
-            <element signature="e#931#1230#0" />
-            <element signature="e#3025#6577#0" />
-            <element signature="e#7276#11047#0" />
-            <element signature="e#11101#11645#0" />
-            <element signature="e#11720#12116#0" />
-            <element signature="e#12174#12333#0" />
-            <element signature="e#12375#12624#0" />
-            <element signature="e#12669#13029#0" />
-            <element signature="e#13063#13083#0" />
-            <element signature="e#13156#13980#0" />
-            <element signature="e#14035#14041#0" />
-            <element signature="e#14317#14523#0" />
-            <element signature="e#14574#14822#0" />
-            <element signature="e#14895#24376#0" />
-            <element signature="e#15661#15676#0" />
-            <element signature="e#18432#18444#0" />
-            <element signature="e#24511#29677#0" />
-            <element signature="e#24416#25658#0" />
-            <element signature="e#24440#24518#0" />
-            <element signature="e#25687#25963#0" />
-            <element signature="e#30051#31575#0" />
-            <element signature="e#31635#32651#0" />
-            <element signature="e#32712#33689#0" />
-            <element signature="e#33741#34272#0" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bbb/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="27" selection-start-line="11" selection-start-column="27" selection-end-line="11" selection-end-column="27" />
         </state>
       </provider>
     </entry>
