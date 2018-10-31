@@ -25,7 +25,7 @@ We have three amazing guys here, [Shun Zhang](https://github.com/zhangshun97), [
   - VCX
   - Alpha-beta pruning
   - Zobrist transition table
-  - dinamic updating with pattern score
+  - dynamic updating with pattern score
 
 *More detailed document please refer to relating page.*
 
