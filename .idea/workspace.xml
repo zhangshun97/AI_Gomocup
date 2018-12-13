@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="92e57147-0543-4b2a-896c-fbf61577d8e9" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/AI_Gomocup.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AI_Gomocup.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final/boardHHH.py" beforeDir="false" afterPath="$PROJECT_DIR$/final/boardHHH.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/final/gomoku.py" beforeDir="false" afterPath="$PROJECT_DIR$/final/gomoku.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -31,6 +30,7 @@
     <SUITE FILE_PATH="coverage/AI_Gomocup$board.coverage" NAME="board Coverage Results" MODIFIED="1530174157153" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bbb" />
     <SUITE FILE_PATH="coverage/AI_Gomocup$test.coverage" NAME="test Coverage Results" MODIFIED="1530163329210" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/TSS" />
     <SUITE FILE_PATH="coverage/AI_Gomocup$test2_0.coverage" NAME="test2.0 Coverage Results" MODIFIED="1527576047333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AI_Gomocup$gomoku.coverage" NAME="gomoku Coverage Results" MODIFIED="1533264162379" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/final" />
     <SUITE FILE_PATH="coverage/AI_Gomocup$score.coverage" NAME="score Coverage Results" MODIFIED="1530161283108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bbb" />
     <SUITE FILE_PATH="coverage/AI_Gomocup$test__1_.coverage" NAME="test (1) Coverage Results" MODIFIED="1530438482170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bbb" />
     <SUITE FILE_PATH="coverage/AI_Gomocup$test2_0beta.coverage" NAME="test2.0beta Coverage Results" MODIFIED="1527596458853" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -56,13 +56,22 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="boardHHH.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="boardHHH.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/final/boardHHH.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-965">
+            <state>
               <caret column="33" selection-start-column="33" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="gomoku.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/final/gomoku.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1177">
+              <caret line="49" selection-start-line="49" selection-end-line="49" />
               <folding>
-                <element signature="e#46#64#0" expanded="true" />
+                <element signature="e#0#17#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -162,6 +171,7 @@
         <option value="$PROJECT_DIR$/bbb/boardHHH.py" />
         <option value="$PROJECT_DIR$/bbb/config.py" />
         <option value="$PROJECT_DIR$/final/boardHHH.py" />
+        <option value="$PROJECT_DIR$/final/gomoku.py" />
       </list>
     </option>
   </component>
@@ -228,7 +238,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.testBbb">
+  <component name="RunManager" selected="Python.gomoku">
     <configuration name="boardHHH" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="AI_Gomocup" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -248,7 +258,7 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="config" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="gomoku" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="AI_Gomocup" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -256,12 +266,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/bbb" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/final" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/bbb/config.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/final/gomoku.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -328,16 +338,16 @@
       <item itemvalue="Python.testBbb" />
       <item itemvalue="Python.test (1)" />
       <item itemvalue="Python.boardHHH" />
-      <item itemvalue="Python.config" />
       <item itemvalue="Python.test3.0" />
+      <item itemvalue="Python.gomoku" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.gomoku" />
         <item itemvalue="Python.testBbb" />
         <item itemvalue="Python.boardHHH" />
         <item itemvalue="Python.test3.0" />
         <item itemvalue="Python.test (1)" />
-        <item itemvalue="Python.config" />
       </list>
     </recent_temporary>
   </component>
@@ -361,18 +371,18 @@
       <window_info anchor="bottom" id="TODO" order="4" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5011119" side_tool="true" weight="0.51794875" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
+      <window_info anchor="right" x="2564" y="212" width="1325" height="529" id="Run" order="8" sideWeight="0.49888808" weight="0.4758723" />
       <window_info anchor="bottom" id="Version Control" order="6" weight="0.32948717" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49962935" weight="0.2576923" />
-      <window_info anchor="right" x="2564" y="212" width="1325" height="529" id="Run" order="8" sideWeight="0.49888808" weight="0.6161841" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.51666665" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.41923076" />
       <window_info anchor="right" id="Remote Host" order="4" weight="0.3297568" />
       <window_info content_ui="combo" id="Project" order="0" weight="0.19599108" />
       <window_info anchor="bottom" id="Docker" order="5" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="5" weight="0.32987398" />
       <window_info anchor="right" id="SciView" order="7" weight="0.47512993" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" id="Debug" order="6" weight="0.46325168" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Concurrent Activities Diagram" order="11" weight="0.32948717" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="3" weight="0.4" />
@@ -450,7 +460,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/pisqpipe.py" />
     <entry file="file://$PROJECT_DIR$/example.py" />
     <entry file="file://$PROJECT_DIR$/git_n_in_row.py" />
     <entry file="file://$USER_HOME$/anaconda/envs/CV/lib/python3.6/random.py">
@@ -495,13 +504,7 @@
     <entry file="file://$PROJECT_DIR$/example3.py" />
     <entry file="file://$PROJECT_DIR$/example.py" />
     <entry file="file://$PROJECT_DIR$/example5_full_rule.py" />
-    <entry file="file://$PROJECT_DIR$/TSS/example_tss_1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="507">
-          <caret line="121" lean-forward="true" selection-start-line="121" selection-end-line="121" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/TSS/example_tss_1.py" />
     <entry file="file://$PROJECT_DIR$/test2.0.py" />
     <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/python_stubs/1225347545/numpy/random/mtrand.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -573,10 +576,17 @@
     <entry file="file://$PROJECT_DIR$/bbb/config.py" />
     <entry file="file://$PROJECT_DIR$/final/boardHHH.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-965">
+        <state>
           <caret column="33" selection-start-column="33" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/final/gomoku.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1177">
+          <caret line="49" selection-start-line="49" selection-end-line="49" />
           <folding>
-            <element signature="e#46#64#0" expanded="true" />
+            <element signature="e#0#17#0" expanded="true" />
           </folding>
         </state>
       </provider>

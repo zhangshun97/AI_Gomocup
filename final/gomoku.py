@@ -7,6 +7,8 @@ import argparse
 parser = argparse.ArgumentParser(description='DC-GAN on PyTorch')
 parser.add_argument('--board-size', default=15,
                     help='board size, assuming the board is a square', type=int)
+parser.add_argument('--first', default='me', type=str,
+                    help="who first? 'me' for player, 'ai' for AI")
 args = parser.parse_args()
 
 MAX_BOARD = args.board_size
@@ -195,7 +197,12 @@ def brain_play():
 
 def main():
     brain_init()
-    brain_turn()
+    if args.first == 'ai':
+        brain_turn()
+    elif args.first == 'me':
+        pass
+    else:
+        raise ValueError("Argument 'first' should be either 'me' or 'ai'!")
     brain_show()
 
     while brain_play() is not None:

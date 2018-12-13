@@ -13,7 +13,7 @@ We have three amazing guys here, [Shun Zhang](https://github.com/zhangshun97), [
 - The Genetic Algorithm is supported by Pingxuan.
 - The VCX Algorithm is supported by Donghao.
 - The MCTS Algorithm and Minimax Algorithm are supported by me.
-- The report is [here](https://github.com/zhangshun97/AI_Gomocup/blob/master/report.pdf).
+- The report is [here](https://nbviewer.jupyter.org/github/zhangshun97/AI_Gomocup/blob/master/report.pdf).
 
 **Note that** all the algorithms listed below can be packed into a win32 exe (less than 20m with numpy version 1.13.1), which is tested by us. We think the `pisqpipe` platform is far from perfect and there are too many unknown or stupid errors. So we just provide the terminal APIs. You can play with our AIs through command `$python AI-name.py`(more details please refer to relating page). Still, one can easily pack the AIs into win32 exe with the 'help' of [pisqpipe](https://github.com/zhangshun97/AI_Gomocup/tree/master/pisqpipe).
 

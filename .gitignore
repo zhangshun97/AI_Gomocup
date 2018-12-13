@@ -4,4 +4,5 @@
 # just add *directory name* + '/' at a new row
 /Carbon-Gomoku
 /references
-
+.DS_Store
+*.DS_Store
